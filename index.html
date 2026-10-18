@@ -11,20 +11,20 @@
 <style>
 /* Layout: shop grid with a slide-in cart on the right; checkout is one page with headed sections and a sticky summary. */
 :root{
-  --bg:#fbf7f2; --surface:#ffffff; --ink:#1d1b19; --muted:#6b625a; --line:#ece7e1;
-  --brand:#a8480f; --accent:#e8792f; --tint:#fdebdc; --tint2:#fff7f0;
+  --bg:#ffffff; --surface:#ffffff; --ink:#222222; --muted:#6e6e6e; --line:#e6e6e6;
+  --brand:#c9600f; --accent:#ef7d1a; --tint:#ffeedd; --tint2:#fff7ef; --pic:#f4f4f4; --soft:#f6f6f6;
   --good:#2f7a3b; --good-tint:#e4f1e6; --warn:#9a5b00; --warn-tint:#fff3d6;
   --shadow:0 16px 40px rgba(40,25,10,.16);
   --font:'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#1b1714; --surface:#25201c; --ink:#f3ede7; --muted:#b3a89e; --line:#3a322b;
-  --brand:#f08a43; --accent:#e8792f; --tint:#3d2a1c; --tint2:#2d231b;
+  --bg:#161616; --surface:#1f1f1f; --ink:#f2f2f2; --muted:#a8a8a8; --line:#333333;
+  --brand:#ff9a45; --accent:#ef7d1a; --tint:#3a2614; --tint2:#2a2019; --pic:#2a2a2a; --soft:#242424;
   --good:#7cc489; --good-tint:#1f3324; --warn:#f0c062; --warn-tint:#3a2f17;
   --shadow:0 16px 40px rgba(0,0,0,.5); color-scheme:dark }}
 :root[data-theme="dark"]{
-  --bg:#1b1714; --surface:#25201c; --ink:#f3ede7; --muted:#b3a89e; --line:#3a322b;
-  --brand:#f08a43; --accent:#e8792f; --tint:#3d2a1c; --tint2:#2d231b;
+  --bg:#161616; --surface:#1f1f1f; --ink:#f2f2f2; --muted:#a8a8a8; --line:#333333;
+  --brand:#ff9a45; --accent:#ef7d1a; --tint:#3a2614; --tint2:#2a2019; --pic:#2a2a2a; --soft:#242424;
   --good:#7cc489; --good-tint:#1f3324; --warn:#f0c062; --warn-tint:#3a2f17;
   --shadow:0 16px 40px rgba(0,0,0,.5); color-scheme:dark }
 *{box-sizing:border-box}
@@ -41,7 +41,7 @@ a{color:var(--brand)}
 .proto button{background:transparent;border:1px solid currentColor;border-radius:6px;padding:3px 10px;color:inherit;font-size:13px}
 
 /* header */
-.strip{background:var(--tint);font-size:14px}
+.strip{background:var(--tint2);font-size:14px;border-bottom:1px solid var(--tint)}
 .strip .wrap{display:flex;justify-content:center;gap:10px 22px;flex-wrap:wrap;padding-block:9px;text-align:center}
 .strip b{font-weight:600}
 header.top{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:20}
@@ -56,6 +56,17 @@ header.top .wrap{display:flex;align-items:center;gap:20px;padding-block:12px}
 .search input{border:0;background:transparent;outline:0;font:inherit;color:var(--ink);flex:1;min-width:0}
 .cartbtn{display:flex;align-items:center;gap:10px;background:transparent;border:0;padding:6px 4px;font-weight:700;font-size:16px}
 .cartbtn .ic{position:relative;display:flex}
+.cartbtn .amt2{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.mini{width:84px;height:4px;border-radius:2px;background:var(--tint);overflow:hidden;display:block}
+.mini i{display:block;height:100%;background:var(--accent);border-radius:2px;transition:width .3s}
+.mini.done i{background:var(--good)}
+.cartpage{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:28px;align-items:start}
+@media (max-width:900px){.cartpage{grid-template-columns:minmax(0,1fr)}}
+.cartpage .lines{gap:0}
+.cartpage .line{padding:14px 0;border-bottom:1px solid var(--line)}
+.cartpage .thumb{width:72px;height:72px;font-size:38px}
+.cartacts{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.cartacts button{height:40px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);padding:0 14px;font-weight:600}
 .badge{position:absolute;top:-7px;right:-9px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--accent);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
 @media (max-width:760px){.addr,.search{display:none} header.top .wrap{justify-content:space-between}}
 
@@ -67,7 +78,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .sechead p{margin:0;color:var(--muted);font-size:14px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(184px,1fr));gap:16px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px}
-.pic{aspect-ratio:4/3;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:52px;max-width:100%}
+.pic{background:var(--pic)!important;aspect-ratio:4/3;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:52px;max-width:100%}
 .price{font-size:18px;font-weight:700}
 .price small{font-size:12px;font-weight:500;color:var(--muted)}
 .pname{font-weight:600;min-height:42px}
@@ -87,24 +98,30 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .drawer.on{transform:none}
 @media (prefers-reduced-motion:reduce){.drawer,.scrim{transition:none}}
 .dhead{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--line)}
-.dhead h2{font-size:20px}
+.dhead{padding:14px 16px 14px 20px}
+.tocart{display:flex;align-items:center;gap:12px;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:8px 12px 8px 8px;text-align:left}
+.tocart .ic{position:relative;width:44px;height:44px;border-radius:10px;background:var(--tint);display:flex;align-items:center;justify-content:center;color:var(--accent)}
+.tocart b{font-size:20px;display:block;line-height:1.1}
+.tocart small{color:var(--muted);font-size:12.5px}
+.tocart:hover{border-color:var(--accent)}
 .x{width:36px;height:36px;border-radius:18px;border:0;background:var(--tint2);font-size:20px;line-height:1}
 .dbody{flex:1;overflow:auto;padding:16px 20px;display:flex;flex-direction:column;gap:16px}
 .dfoot{border-top:1px solid var(--line);padding:16px 20px;display:flex;flex-direction:column;gap:12px;background:var(--surface)}
 
-.goal{border-radius:14px;padding:14px;background:var(--tint2);border:1px solid var(--tint)}
+.goal{border-radius:12px;padding:12px 14px;background:var(--tint2);border:1px solid var(--tint)}
 .goal.done{background:var(--good-tint);border-color:transparent}
 .goal .row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:14px}
 .goal .row b{font-size:15px}
-.bar{margin-top:10px;height:8px;border-radius:4px;background:var(--tint);overflow:hidden}
+.bar{margin-top:8px;height:8px;border-radius:4px;background:var(--tint);overflow:hidden}
 .bar i{display:block;height:100%;border-radius:4px;background:var(--accent);transition:width .3s}
 .goal.done .bar{background:rgba(47,122,59,.18)} .goal.done .bar i{background:var(--good)}
 .goal p{margin:8px 0 0;font-size:13px;color:var(--muted)}
-.fill{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
-.chip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600}
+.fill{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
+.fill .lbl{font-size:13px;color:var(--muted);white-space:nowrap;align-self:center}
+.chip{white-space:nowrap;flex-shrink:0;border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600}
 
 .line{display:flex;align-items:center;gap:12px}
-.thumb{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.thumb{background:var(--pic)!important;width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
 .line .info{flex:1;min-width:0}
 .line .info b{display:block;font-weight:600;font-size:14px}
 .line .info small{color:var(--muted);font-size:12.5px}
@@ -117,9 +134,9 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .costs .pending{color:var(--muted)}
 .costs .total{font-size:17px;font-weight:700;padding-top:8px;border-top:1px solid var(--line);margin-top:4px}
 .costs s{color:var(--muted);font-weight:400;margin-right:6px}
-.hold{font-size:13px;color:var(--muted);background:var(--bg);border-radius:10px;padding:10px 12px;display:flex;gap:10px}
+.hold{font-size:13px;color:var(--muted);background:var(--soft);border-radius:10px;padding:10px 12px;display:flex;gap:10px}
 .hold svg{flex-shrink:0;margin-top:1px}
-.cta{height:52px;border:0;border-radius:12px;background:var(--brand);color:#fff;font-weight:700;font-size:16px;width:100%}
+.cta{height:52px;border:0;border-radius:12px;background:var(--accent);color:#fff;font-weight:700;font-size:16px;width:100%}
 .cta[disabled]{background:var(--line);color:var(--muted);cursor:not-allowed}
 .ghost{height:44px;border-radius:12px;border:1.5px solid var(--line);background:transparent;font-weight:600;width:100%}
 
@@ -135,12 +152,12 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .sec p{margin:0}
 .days{display:flex;gap:8px;flex-wrap:wrap}
 .day{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 14px;font-weight:600}
-.day.on{border-color:var(--brand);background:var(--tint2);color:var(--brand)}
+.day.on{border-color:var(--accent);background:var(--tint2);color:var(--brand)}
 .slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
 .slot{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 12px;text-align:left;display:flex;flex-direction:column;gap:2px}
 .slot b{font-size:15px}
 .slot small{font-size:12.5px;color:var(--good);font-weight:600}
-.slot.on{border-color:var(--brand);background:var(--tint2);box-shadow:inset 0 0 0 1px var(--brand)}
+.slot.on{border-color:var(--accent);background:var(--tint2);box-shadow:inset 0 0 0 1px var(--accent)}
 .slot[disabled]{opacity:.45;cursor:not-allowed}
 .slot[disabled] small{color:var(--muted)}
 .lines{display:flex;flex-direction:column;gap:12px}
@@ -148,8 +165,20 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .warn{background:var(--warn-tint);color:var(--warn);border-radius:10px;padding:10px 12px;font-size:14px;font-weight:600}
 .pay{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
 .pay label{border:1.5px solid var(--line);border-radius:10px;padding:12px;display:flex;align-items:center;gap:10px;font-weight:600;cursor:pointer}
-.pay label:has(input:checked){border-color:var(--brand);background:var(--tint2)}
-.pay input{accent-color:var(--brand)}
+.pay label:has(input:checked){border-color:var(--accent);background:var(--tint2)}
+.pay input{accent-color:var(--accent)}
+.ticket{position:relative;display:flex;align-items:stretch;border:1.5px dashed var(--accent);border-radius:12px;background:var(--tint2);overflow:hidden}
+.ticket::before,.ticket::after{content:"";position:absolute;left:77px;width:14px;height:14px;border-radius:7px;background:var(--surface);border:1.5px dashed var(--accent)}
+.ticket::before{top:-9px}.ticket::after{bottom:-9px}
+.ticket .val{width:84px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:var(--brand);border-right:1.5px dashed var(--accent)}
+.ticket .txt{padding:9px 12px;font-size:13px;display:flex;flex-direction:column;justify-content:center;gap:1px;min-width:0}
+.ticket .txt b{font-size:14px}
+.ticket .txt span{color:var(--muted)}
+.ticket.on{border-color:var(--good);background:var(--good-tint)}
+.ticket.on::before,.ticket.on::after{border-color:var(--good)}
+.ticket.on .val{color:var(--good);border-color:var(--good)}
+.ticket.on .txt span{color:var(--good)}
+.stripv{display:inline-flex;align-items:center;gap:8px;border:1.5px dashed var(--accent);border-radius:8px;padding:2px 10px;background:var(--surface);color:var(--brand)}
 .voucher{display:flex;align-items:center;gap:10px;background:var(--good-tint);color:var(--good);border-radius:10px;padding:10px 12px;font-size:14px;font-weight:600}
 .voucher.wait{background:var(--tint2);color:var(--muted)}
 .summary{position:sticky;top:calc(env(safe-area-inset-top,0px) + 92px);background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px}
@@ -162,10 +191,12 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .done h1{font-size:26px}
 .done p{margin:0;color:var(--muted)}
 .done .costs{width:100%;text-align:left}
-.snack{position:fixed;right:max(24px,env(safe-area-inset-right,0px));bottom:calc(24px + env(safe-area-inset-bottom,0px));width:min(400px,calc(100% - 32px));background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:14px 16px;z-index:45;display:flex;flex-direction:column;gap:10px;animation:up .2s ease}
+.snack{position:fixed;left:50%;margin-left:calc(min(480px,100% - 32px) / -2);bottom:calc(24px + env(safe-area-inset-bottom,0px));width:min(480px,calc(100% - 32px));border-top:4px solid var(--accent)!important;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:14px 16px;z-index:45;display:flex;flex-direction:column;gap:10px;animation:up .2s ease}
 @keyframes up{from{transform:translateY(12px);opacity:0}to{transform:none;opacity:1}}
 @media (prefers-reduced-motion:reduce){.snack{animation:none}}
-@media (max-width:520px){.snack{left:16px;right:16px;width:auto}}
+@media (max-width:520px){.snack{left:16px;right:16px;width:auto;margin-left:0}}
+.snack .bar{height:10px!important}
+.snack.done{border-top-color:var(--good)!important}
 .snack .top1{display:flex;align-items:center;gap:10px}
 .snack .thumb{width:36px;height:36px;font-size:20px;border-radius:8px}
 .snack .what{flex:1;min-width:0;font-size:14px}
@@ -183,7 +214,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
 
 
 <div class="proto"><div class="wrap"><span>Clickable prototype for a case study. Prices are examples; no order is placed and nothing is charged.</span><button type="button" id="reset">Start over as a first-time customer</button></div></div>
-<div class="strip"><div class="wrap"><span><b>First delivery free</b></span><span>€39 minimum order</span><span><b>€20 off your first order,</b> applied in your cart</span></div></div>
+<div class="strip"><div class="wrap"><span><b>First delivery free</b></span><span>€39 minimum order</span><span class="stripv"><b>€20 off</b> your first order · applied in your cart</span></div></div>
 <header class="top"><div class="wrap">
   <a class="logo" href="#" id="home" aria-label="Back to the shop">knuspr<span>.</span></a>
   <div class="addr"><b>Fritz-Werner-Straße 35</b><small>Delivery tomorrow from 6:00</small></div>
@@ -195,7 +226,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
 
 <div class="scrim" id="scrim"></div>
 <aside class="drawer" id="drawer" aria-label="Your cart" aria-hidden="true">
-  <div class="dhead"><h2>Your cart</h2><button class="x" id="closeCart" type="button" aria-label="Close cart">×</button></div>
+  <div class="dhead"><button type="button" class="tocart" id="toCartPage" aria-label="Open the full cart"></button><button class="x" id="closeCart" type="button" aria-label="Close cart">×</button></div>
   <div class="dbody" id="dbody"></div>
   <div class="dfoot" id="dfoot"></div>
 </aside>
@@ -253,18 +284,27 @@ function totals(){
 function stepper(id,q,cls=''){ return `<div class="step ${cls}"><button type="button" data-dec="${id}" aria-label="One less ${byId[id].n}">−</button><span class="num">${q}</span><button type="button" data-inc="${id}" aria-label="One more ${byId[id].n}">+</button></div>`; }
 function priceHtml(x){ return `${x.w?'<small>ca. </small>':''}${eur(x.p)}`; }
 
-function goalHtml(t){
+function goalHtml(t, withFill){
   const pct = Math.min(100, t.items/MIN*100);
-  if(t.reached) return `<div class="goal done"><div class="row"><b>You can order</b><span class="num">${eur(t.items)} of ${eur(MIN)}</span></div><div class="bar"><i style="width:100%"></i></div><p>Minimum reached. Your €20 welcome discount and free first delivery are applied.</p></div>`;
-  const fillers = P.filter(x=>x.p>=Math.min(t.toGo,3) ).sort((a,b)=>Math.abs(a.p-t.toGo)-Math.abs(b.p-t.toGo)).slice(0,3);
-  return `<div class="goal"><div class="row"><b class="num">${eur(t.toGo)} to go</b><span class="num">${eur(t.items)} of ${eur(MIN)} minimum</span></div><div class="bar"><i style="width:${pct}%"></i></div><p>At ${eur(MIN)} you can book a slot, delivery is free and €20 comes off.</p><div class="fill">${fillers.map(x=>`<button type="button" class="chip" data-inc="${x.id}">+ ${x.n} ${eur(x.p)}</button>`).join('')}</div></div>`;
+  if(t.reached) return `<div class="goal done"><div class="row"><b>You can order now</b><span class="num">${eur(t.items)} of ${eur(MIN)}</span></div><div class="bar"><i style="width:100%"></i></div></div>`;
+  return `<div class="goal"><div class="row"><b class="num">${eur(t.toGo)} to go</b><span class="num">${eur(t.items)} of ${eur(MIN)} minimum</span></div><div class="bar"><i style="width:${pct}%"></i></div></div>`;
+}
+function fillHtml(t){
+  if(t.reached) return '';
+  const fillers = P.filter(x=>!S.cart[x.id]).sort((a,b)=>Math.abs(a.p-t.toGo)-Math.abs(b.p-t.toGo)).slice(0,4);
+  return `<div class="fill"><span class="lbl">Reach ${eur(MIN)}:</span>${fillers.map(x=>`<button type="button" class="chip" data-inc="${x.id}">${x.e} ${x.n} ${eur(x.p)}</button>`).join('')}</div>`;
+}
+function ticketHtml(t){
+  return t.reached
+   ? `<div class="ticket on"><span class="val">−€20</span><span class="txt"><b>Welcome voucher applied</b><span>First order · code WELCOME20</span></span></div>`
+   : `<div class="ticket"><span class="val">−€20</span><span class="txt"><b>Welcome voucher</b><span class="num">Applies automatically at ${eur(MIN)}, ${eur(t.toGo)} to go</span></span></div>`;
 }
 function costsHtml(t, final){
   return `<div class="costs num">
     <div><span>Items (${t.count})</span><span>${t.weighed?'ca. ':''}${eur(t.items)}</span></div>
     ${t.dep?`<div><span>Bottle deposit</span><span>${eur(t.dep)}</span></div>`:''}
     <div><span>Delivery</span><span class="free">Free, first order</span></div>
-    ${t.reached?`<div><span>Welcome discount</span><span class="off">−${eur(t.off)}</span></div>`:`<div class="pending"><span>Welcome discount</span><span>−€20.00 at €39</span></div>`}
+    ${t.reached?`<div><span>Welcome voucher</span><span class="off">−${eur(t.off)}</span></div>`:`<div class="pending"><span>Welcome voucher</span><span>−€20.00 at €39</span></div>`}
     <div class="total"><span>${final?'You pay':'Total'}</span><span>${t.weighed?'ca. ':''}${eur(t.total)}</span></div>
   </div>`;
 }
@@ -274,7 +314,7 @@ function holdHtml(t){
 }
 
 function renderHeader(t){
-  document.getElementById('openCart').innerHTML = `<span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M3 4h2l2.5 11h11L21 7H7"/></svg>${t.count?`<span class="badge num">${t.count}</span>`:''}</span><span class="num">${eur(t.items)}</span>`;
+  document.getElementById('openCart').innerHTML = `<span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M3 4h2l2.5 11h11L21 7H7"/></svg>${t.count?`<span class="badge num">${t.count}</span>`:''}</span><span class="amt2"><span class="num">${eur(t.items)}</span><span class="mini ${t.reached?'done':''}" title="Progress to the ${eur(MIN)} minimum"><i style="width:${Math.min(100,t.items/MIN*100)}%"></i></span></span>`;
   document.getElementById('openCart').setAttribute('aria-label', `Open cart, ${t.count} items, ${eur(t.items)}`);
 }
 
@@ -288,11 +328,33 @@ function renderShop(){
 
 function renderDrawer(t){
   const lines = Object.entries(S.cart).filter(([,q])=>q>0);
+  document.getElementById('toCartPage').innerHTML = `<span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M3 4h2l2.5 11h11L21 7H7"/></svg>${t.count?`<span class="badge num">${t.count}</span>`:''}</span><span><b class="num">${eur(t.items)}</b><small>Open full cart</small></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>`;
   document.getElementById('dbody').innerHTML = lines.length ? `${goalHtml(t)}
-    <div class="lines">${lines.map(([id,q])=>{const x=byId[id]; return `<div class="line"><span class="thumb" style="background:${x.c}" aria-hidden="true">${x.e}</span><span class="info"><b>${x.n}</b><small>${x.u}</small></span>${stepper(id,q,'sm')}<span class="amt num">${x.w?'ca. ':''}${eur(x.p*q)}</span></div>`}).join('')}</div>
-    ${costsHtml(t)}` : `<div class="goal"><div class="row"><b>Your cart is empty</b></div><p>Add a few things. At ${eur(MIN)} you can order, delivery is free and €20 comes off.</p></div>`;
+    <div class="lines">${lines.map(([id,q])=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true">${x.e}</span><span class="info"><b>${x.n}</b><small>${x.u}</small></span>${stepper(id,q,'sm')}<span class="amt num">${x.w?'ca. ':''}${eur(x.p*q)}</span></div>`}).join('')}</div>
+    ${fillHtml(t)}
+    ${ticketHtml(t)}
+    ${costsHtml(t)}` : `<div class="goal"><div class="row"><b>Your cart is empty</b></div></div>${ticketHtml(t)}`;
   document.getElementById('dfoot').innerHTML = `${lines.length && t.weighed ? holdHtml(t) : ''}
     <button type="button" class="cta" id="toCheckout" ${t.reached?'':'disabled'}>${t.reached?`Go to checkout · <span class="num">${t.weighed?'ca. ':''}${eur(t.total)}</span>`:`Add ${eur(t.toGo)} to check out`}</button>`;
+}
+
+function renderCart(t){
+  const lines = Object.entries(S.cart).filter(([,q])=>q>0);
+  return `<button type="button" class="back" data-go="shop">← Back to shopping</button>
+  <div class="cartpage">
+    <section aria-labelledby="h-cart"><div class="sechead"><h1 id="h-cart">Your cart</h1><p class="num">${t.count} items</p></div>
+      ${lines.length?`<div class="lines">${lines.map(([id,q])=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true">${x.e}</span><span class="info"><b>${x.n}</b><small>${x.u}</small><br><button type="button" class="rm" data-rm="${id}">Remove</button></span>${stepper(id,q,'sm')}<span class="amt num">${x.w?'ca. ':''}${eur(x.p*q)}</span></div>`}).join('')}</div>
+      <div style="margin-top:16px">${fillHtml(t)}</div>
+      <div class="cartacts"><button type="button" id="emptyCart">Empty the cart</button><button type="button" data-go="shop">+ Add more items</button></div>`:'<p>Your cart is empty.</p>'}
+    </section>
+    <aside class="summary" aria-labelledby="h-csum"><h2 id="h-csum">Summary</h2>
+      ${goalHtml(t)}
+      ${ticketHtml(t)}
+      ${costsHtml(t)}
+      ${t.weighed?holdHtml(t):''}
+      <button type="button" class="cta" id="toCheckout2" ${t.reached?'':'disabled'}>${t.reached?`Go to checkout · <span class="num">${t.weighed?'ca. ':''}${eur(t.total)}</span>`:`Add ${eur(t.toGo)} to check out`}</button>
+    </aside>
+  </div>`;
 }
 
 function renderCheckout(t){
@@ -315,7 +377,7 @@ function renderCheckout(t){
         <button type="button" class="ghost" data-go="shop" style="width:auto;padding:0 16px;align-self:flex-start">+ Add more items</button></section>
       <section class="sec" aria-labelledby="h-pay"><h2 id="h-pay">Payment</h2>
         <div class="pay">${[['card','Card'],['paypal','PayPal'],['gpay','Google Pay']].map(([k,l])=>`<label><input type="radio" name="pay" id="pay-${k}" value="${k}" ${S.pay===k?'checked':''}> ${l}</label>`).join('')}</div>
-        ${t.reached?`<div class="voucher">✓ Welcome discount WELCOME20 applied: −${eur(t.off)}</div>`:`<div class="voucher wait">Welcome discount −€20.00 applies once you reach €39</div>`}
+        ${ticketHtml(t)}
       </section>
     </div>
     <aside class="summary" aria-labelledby="h-sum"><h2 id="h-sum">Summary</h2>
@@ -342,7 +404,7 @@ function render(){
   renderHeader(t);
   const v=document.getElementById('view');
   if(S.view==='checkout' && Object.values(S.cart).every(q=>!q)) S.view='shop';
-  v.innerHTML = S.view==='shop'?renderShop():S.view==='checkout'?renderCheckout(t):renderDone(t);
+  v.innerHTML = S.view==='shop'?renderShop():S.view==='cart'?renderCart(t):S.view==='checkout'?renderCheckout(t):renderDone(t);
   renderDrawer(t);
   const d=document.getElementById('drawer');
   d.classList.toggle('on',S.drawer); d.setAttribute('aria-hidden',String(!S.drawer));
@@ -355,10 +417,10 @@ function snack(id){
   const x=byId[id], t=totals(), el=document.getElementById('snack');
   const pct=Math.min(100,t.items/MIN*100);
   el.className='snack'+(t.reached?' done':'');
-  el.innerHTML=`<div class="top1"><span class="thumb" style="background:${x.c}" aria-hidden="true">${x.e}</span><span class="what"><b>${x.n} added</b><span class="num">Cart ${eur(t.items)} · ${t.count} items</span></span><button type="button" class="view" id="snackView">View cart</button><button type="button" class="x" id="snackClose" aria-label="Dismiss" style="width:28px;height:28px;font-size:16px">×</button></div>
-  <div class="prog num">${t.reached?'<b>You can order now</b><span>Free delivery and −€20 applied</span>':`<b>${eur(t.toGo)} to go</b><span>${eur(t.items)} of ${eur(MIN)} minimum</span>`}</div>
+  el.innerHTML=`<div class="top1"><span class="thumb" aria-hidden="true">${x.e}</span><span class="what"><b>${x.n} added</b><span class="num">Cart ${eur(t.items)} · ${t.count} items</span></span><button type="button" class="view" id="snackView">View cart</button><button type="button" class="x" id="snackClose" aria-label="Dismiss" style="width:28px;height:28px;font-size:16px">×</button></div>
+  <div class="prog num">${t.reached?'<b>Minimum reached, you can order</b><span>Free delivery and −€20 applied</span>':`<b>You've reached ${Math.floor(t.items/MIN*100)}% of the ${eur(MIN)} minimum</b><span>${eur(t.toGo)} to go</span>`}</div>
   <div class="bar"><i style="width:${pct}%"></i></div>`;
-  el.hidden=false; clearTimeout(snackT); snackT=setTimeout(()=>el.hidden=true,4500);
+  el.hidden=false; clearTimeout(snackT); snackT=setTimeout(()=>el.hidden=true,5000);
 }
 let toastT;
 function toast(msg){ const el=document.getElementById('toast'); el.textContent=msg; el.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>el.hidden=true,1800); }
@@ -385,6 +447,9 @@ document.addEventListener('click',e=>{
     case 'snackClose': document.getElementById('snack').hidden=true; break;
     case 'openCart': document.getElementById('snack').hidden=true; S.drawer=true; render(); break;
     case 'closeCart': S.drawer=false; render(); break;
+    case 'toCartPage': S.view='cart'; S.drawer=false; render(); window.scrollTo(0,0); break;
+    case 'emptyCart': S.cart={}; render(); break;
+    case 'toCheckout2':
     case 'toCheckout': S.view='checkout'; S.drawer=false; render(); window.scrollTo(0,0); break;
     case 'place': S.view='done'; render(); window.scrollTo(0,0); break;
     case 'home': e.preventDefault(); S.view='shop'; render(); break;
