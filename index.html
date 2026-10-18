@@ -118,7 +118,10 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .rec{margin-top:28px}
 .rec h2{font-size:20px;margin-bottom:12px}
 .rec .grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
-.fab{position:fixed;right:max(24px,calc(env(safe-area-inset-right,0px) + 16px));bottom:calc(24px + env(safe-area-inset-bottom,0px));width:56px;height:56px;border-radius:28px;border:1px solid var(--line);background:var(--surface);color:var(--ink);box-shadow:0 6px 18px rgba(0,0,0,.14);display:flex;align-items:center;justify-content:center;z-index:35}
+.fab{position:fixed;right:max(24px,calc(env(safe-area-inset-right,0px) + 16px));bottom:calc(24px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:12px;padding:8px 18px 8px 8px;border-radius:32px;border:0;background:var(--ink);color:var(--bg);box-shadow:0 10px 28px rgba(0,0,0,.25);z-index:35;text-align:left}
+.fab .dot{width:38px;height:38px;border-radius:19px;background:var(--bg);color:var(--ink);display:flex;align-items:center;justify-content:center}
+.fab b{display:block;font-size:15px}.fab small{font-size:12.5px;opacity:.8}
+@media (max-width:520px){.fab small{display:none}}
 @media (max-width:520px){.snack{bottom:calc(96px + env(safe-area-inset-bottom,0px))}}
 .goal.done{background:var(--good-tint);border-color:transparent}
 .goal .row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:14px}
@@ -244,7 +247,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
   <div class="dfoot" id="dfoot"></div>
 </aside>
 <div class="snack" id="snack" role="status" aria-live="polite" hidden></div>
-<button type="button" class="fab" id="aiFab" aria-label="Ask the AI assistant"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11 2.5 12.9 8.1 18.5 10 12.9 11.9 11 17.5 9.1 11.9 3.5 10 9.1 8.1z"/><path d="M18.5 14l.9 2.6 2.6.9-2.6.9-.9 2.6-.9-2.6-2.6-.9 2.6-.9z"/></svg></button>
+<button type="button" class="fab" id="aiFab" aria-label="Ask AI to plan meals or build a basket"><span class="dot"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11 2.5 12.9 8.1 18.5 10 12.9 11.9 11 17.5 9.1 11.9 3.5 10 9.1 8.1z"/><path d="M18.5 14l.9 2.6 2.6.9-2.6.9-.9 2.6-.9-2.6-2.6-.9 2.6-.9z"/></svg></span><span><b>Ask AI</b><small>Plan meals, build a basket</small></span></button>
 <div class="toast" id="toast" hidden></div>
 
 <script>
