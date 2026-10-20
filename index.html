@@ -741,7 +741,10 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .xban:hover{filter:brightness(1.05)}
 .xban .xbadge{flex-shrink:0;height:32px;padding:0 12px;border:1.5px solid rgba(255,255,255,.85);border-radius:999px;display:flex;align-items:center;font-weight:800;font-style:italic;font-size:14px;background:rgba(255,255,255,.12)}
 .xban .xbt{flex:1;font-weight:600;line-height:1.35}
-.cxban{margin:4px 0 12px}
+.cxban{margin:16px 0 12px}
+.aitop{display:flex;align-items:center;gap:8px;margin:4px 0 0;font-size:13.5px;color:var(--muted)}
+.aiic{width:24px;height:24px;border-radius:12px;background:var(--tint2);color:var(--accent);display:grid;place-items:center;flex-shrink:0}
+.aiic svg{width:15px;height:15px}.aiic svg path{fill:currentColor}
 .xban.xhdr{width:auto;min-height:0;padding:7px 14px 7px 8px;border-radius:12px;box-shadow:none;font-size:13px}
 .xban.xhdr .xbadge{height:30px}
 .xban .xt{flex:1;display:flex;flex-direction:column;gap:1px;text-align:left}.xban .xt b{display:block;font-size:14px;color:#fff}.xban .xt small{color:rgba(255,255,255,.88);font-size:12.5px;line-height:1.35}
@@ -1144,8 +1147,7 @@ const GEN={mil:2,egg:1,bre:1,ban:3,app:2,gou:1,pas:1,tom:1,yog:1,chi:1};
 function genHtml(){ return `<button type="button" class="genb" id="genBasket"><span class="genic" aria-hidden="true">${MAIA_SVG}</span><span class="gent"><b>Generate your ideal basket</b><small>Maia fills your cart with everyday basics up to the €${MIN} minimum</small></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>`; }
 function fillHtml(t){
   if(t.reached) return '';
-  const fillers = P.filter(x=>!S.cart[x.id]).sort((a,b)=>Math.abs(a.p-t.toGo)-Math.abs(b.p-t.toGo)).slice(0,4);
-  return `<div class="fill"><span class="lbl">Reach ${eur(MIN)}:</span>${fillers.map(x=>`<button type="button" class="chip" data-inc="${x.id}">${x.n} ${eur(x.p)}</button>`).join('')}</div>`;
+  return `<p class="aitop"><span class="aiic" aria-hidden="true">${MAIA_SVG}</span><span>Not sure what else to add? <button type="button" class="linkb" id="topUp">Let Maia top up your cart to €${MIN}</button></span></p>`;
 }
 function offNow(t){ return t.off<WELCOME ? `${eur(t.off)} off` : `€${WELCOME} off`; }
 function offLine(t){ return t.reached ? `<b>${offNow(t)}</b> at checkout${t.off<WELCOME?`. Add ${eur(Math.round((WELCOME*2-t.items)*100)/100)} to get the full €${WELCOME}`:''}` : `<b>50% off, up to €${WELCOME}</b> on your first order`; }
@@ -1225,9 +1227,10 @@ function renderShop(){
 function renderDrawer(t){
   const lines = Object.entries(S.cart).filter(([,q])=>q>0);
   document.getElementById('toCartPage').innerHTML = `<span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M3 4h2l2.5 11h11L21 7H7"/></svg>${t.count?`<span class="badge num ${t.reached?'ok':''}">${t.count}</span>`:''}</span><span><b class="num">${eur(t.items)}</b><small>Open full cart</small></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>`;
-  document.getElementById('dbody').innerHTML = lines.length ? `${goalHtml(t)}${xtraBanner()}
+  document.getElementById('dbody').innerHTML = lines.length ? `${goalHtml(t)}
     <div class="lines">${grouped(lines,(id,q)=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true"><img src="${x.img}" alt="" width="96" height="96"></span><span class="info"><b>${x.n}</b><small>${x.u}</small></span>${stepper(id,q,'sm')}<span class="amt num">${eur(x.p*q)}</span></div>`})}</div>
-    ${fillHtml(t)}` : `${genHtml()}<div class="emptyc"><b>Your cart is empty</b><span>Add a few things to get started.</span></div>`;
+    ${fillHtml(t)}
+    ${xtraBanner()}` : `${genHtml()}<div class="emptyc"><b>Your cart is empty</b><span>Add a few things to get started.</span></div>`;
   document.getElementById('dfoot').innerHTML = `${lines.length?`<div class="dtotal num"><b>Total</b><b class="amt">${t.weighed?`<span class="ca">ca.</span>`:''}${eur(t.cartTotal)}</b></div>
     ${t.reached?`<p class="dmsg g">✓ Free delivery, and ${offNow(t)} your first order at checkout</p>`:''}
     ${t.weighed?'<p class="dmsg">ca. because some items are priced by weight. You pay the exact amount after packing.</p>':''}`:''}
@@ -1251,9 +1254,9 @@ function renderCart(t){
   <div class="cartpage">
     <section aria-labelledby="h-cart"><div class="sechead"><h1 id="h-cart">Your cart</h1><p class="num">${t.count} items</p></div>
       ${t.count&&!t.reached?`<div class="cgoal">${goalHtml(t)}</div>`:''}
-      ${t.count?`<div class="cxban">${xtraBanner()}</div>`:''}
       ${lines.length?`<div class="lines">${grouped(lines,(id,q)=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true"><img src="${x.img}" alt="" width="96" height="96"></span><span class="info"><b>${x.n}</b><small>${x.u}</small><br><button type="button" class="rm" data-rm="${id}">Remove</button></span>${stepper(id,q,'sm')}<span class="amt num">${eur(x.p*q)}</span></div>`})}</div>
       <div style="margin-top:16px">${fillHtml(t)}</div>
+      <div class="cxban">${xtraBanner()}</div>
       <div class="cartacts"><button type="button" id="emptyCart">Empty the cart</button><button type="button" data-go="shop">+ Add more items</button></div>`:`${genHtml()}<div class="emptyc"><b>Your cart is empty</b><span>Add a few things to get started.</span></div>`}
       ${recHtml()}
     </section>
@@ -1538,6 +1541,7 @@ document.addEventListener('click',e=>{
       { const m=S.modal; closeModal(); toast(m==='contact'?'Contact updated':m==='addr'?'Delivery address updated':m==='slot'?'Delivery time updated':'Payment method updated'); }
       break;
     case 'snackView': document.getElementById('snack').hidden=true; S.drawer=true; render(); break;
+    case 'topUp': { const before=totals().items; for(const id of Object.keys(GEN)){ if(totals().reached) break; S.cart[id]=(S.cart[id]||0)+1; } render(); const t=totals(); toast(`Maia added ${eur(t.items-before)} of everyday basics. You've reached the €${MIN} minimum.`); } break;
     case 'genBasket': S.cart={...GEN}; render(); { const t=totals(); toast(`Maia added ${t.count} everyday items, ${eur(t.items)}. Change anything you like.`); } break;
     case 'aiFab': toast('Maia is not part of this prototype'); break;
     case 'themeBtn': setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'); break;
