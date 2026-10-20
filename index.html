@@ -341,13 +341,19 @@ h1,h2,h3{margin:0;text-wrap:balance}
 :root[data-theme="dark"] .paybtn.pb-gpay{background:#000!important;color:#fff!important;border-color:#5f6368}
 .cta.paybtn[disabled]{background:var(--line)!important;color:var(--muted)!important;border-color:transparent}
 .cta.paybtn[disabled] i{color:inherit!important}
+.canote{margin:6px 0 0;font-size:12.5px;color:var(--muted);line-height:1.4}
+.dfoot .canote{margin:-6px 0 0}
+.infocards{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+.infocard{display:flex;gap:12px;align-items:flex-start;background:var(--soft);border-radius:12px;padding:12px 14px;color:var(--ink)}
+.infocard span{flex-shrink:0;color:var(--muted)}
+.infocard p{margin:0;font-size:13.5px;line-height:1.45}
 </style>
 </head>
 <body>
 
 
 <div class="proto"><div class="wrap"><span>Clickable prototype for a case study. Prices are examples; no order is placed and nothing is charged.</span><span style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" id="themeBtn" aria-pressed="false">Dark mode</button><button type="button" id="reset">Start over as a first-time customer</button></span></div></div>
-<div class="strip"><div class="wrap"><span><b>First delivery free</b></span><span>€39 minimum order</span><span class="stripv"><b>€20 off</b> your first order · applied in your cart</span></div></div>
+<div class="strip"><div class="wrap"><span><b>First delivery free</b></span><span>€39 minimum order</span><span class="stripv"><b>€20 off</b> your first order at checkout</span></div></div>
 <header class="top"><div class="wrap">
   <a class="logo" href="#" id="home" aria-label="Back to the shop">knuspr<span>.</span></a>
   <div class="addr" id="hdrAddr"></div>
@@ -415,7 +421,8 @@ function totals(){
   const off = reached ? Math.min(WELCOME, items) : 0;
   const total = Math.round((items - off + dep)*100)/100;
   const hold = Math.round((total + weighed*BUFFER)*100)/100;
-  return {items, weighed, dep, count, reached, off, total, hold, toGo: Math.max(0, Math.round((MIN-items)*100)/100)};
+  const cartTotal = Math.round((items + dep)*100)/100;
+  return {items, weighed, dep, count, reached, off, total, hold, cartTotal, toGo: Math.max(0, Math.round((MIN-items)*100)/100)};
 }
 
 function stepper(id,q,cls=''){ return `<div class="step ${cls}"><button type="button" data-dec="${id}" aria-label="One less ${byId[id].n}">−</button><span class="num">${q}</span><button type="button" data-inc="${id}" aria-label="One more ${byId[id].n}">+</button></div>`; }
@@ -431,20 +438,30 @@ function fillHtml(t){
   const fillers = P.filter(x=>!S.cart[x.id]).sort((a,b)=>Math.abs(a.p-t.toGo)-Math.abs(b.p-t.toGo)).slice(0,4);
   return `<div class="fill"><span class="lbl">Reach ${eur(MIN)}:</span>${fillers.map(x=>`<button type="button" class="chip" data-inc="${x.id}">${x.e} ${x.n} ${eur(x.p)}</button>`).join('')}</div>`;
 }
-function ticketHtml(t){
+function ticketHtml(t, atCheckout){
+  if(atCheckout && t.reached) return `<div class="ticket on"><span class="val">€20<small>off</small></span><span class="txt"><b>Welcome voucher applied</b><span>First order, code WELCOME20</span></span></div>`;
   return t.reached
-   ? `<div class="ticket on"><span class="val">€20<small>off</small></span><span class="txt"><b>Welcome voucher applied</b><span>First order · code WELCOME20</span></span></div>`
-   : `<div class="ticket"><span class="val">€20<small>off</small></span><span class="txt"><b>Welcome voucher</b><span class="num">Applies automatically at ${eur(MIN)}, ${eur(t.toGo)} to go</span></span></div>`;
+   ? `<div class="ticket on"><span class="val">€20<small>off</small></span><span class="txt"><b>You're eligible for €20 off</b><span>We take it off at checkout</span></span></div>`
+   : `<div class="ticket"><span class="val">€20<small>off</small></span><span class="txt"><b>Welcome voucher</b><span class="num">Unlocks at ${eur(MIN)} before the voucher, ${eur(t.toGo)} to go</span></span></div>`;
 }
 function costsHtml(t, final){
+  const ca = t.weighed?'ca. ':'';
   return `<div class="costs num">
-    <div><span>Items (${t.count})</span><span>${t.weighed?'ca. ':''}${eur(t.items)}</span></div>
+    <div><span>Items (${t.count})</span><span>${ca}${eur(t.items)}</span></div>
     ${t.dep?`<div><span>Bottle deposit</span><span>${eur(t.dep)}</span></div>`:''}
     <div><span>Delivery</span><span class="free">Free, first order</span></div>
-    ${t.reached?`<div><span>Welcome voucher</span><span class="off">−${eur(t.off)}</span></div>`:`<div class="pending"><span>Welcome voucher</span><span>€20 off at €39</span></div>`}
-    <div class="total"><span>${final?'You pay':'Total'}</span><span>${t.weighed?'ca. ':''}${eur(t.total)}</span></div>
+    ${final
+      ? (t.reached?`<div><span>Welcome voucher</span><span class="off">−${eur(t.off)}</span></div>`:'')
+      : `<div class="pending"><span>Welcome voucher</span><span>${t.reached?'Applied at checkout':'Unlocks at €39'}</span></div>`}
+    <div class="total"><span>${final?'You pay':'Total'}</span><span>${ca}${eur(final?t.total:t.cartTotal)}</span></div>
+    ${t.weighed&&!final?`<p class="canote">ca. because ${weighedCount()} ${weighedCount()===1?'item is':'items are'} priced by weight. You pay the exact amount after packing.</p>`:''}
   </div>`;
 }
+function weighedCount(){ return Object.entries(S.cart).filter(([id,q])=>q>0&&byId[id]&&byId[id].w).length; }
+function infoCards(){ return `<div class="infocards">
+  <div class="infocard"><span aria-hidden="true">${'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v8a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2z"/><path d="m9 15 6-6"/><circle cx="9.5" cy="9.5" r=".8"/><circle cx="14.5" cy="14.5" r=".8"/></svg>'}</span><p>Your €20 welcome voucher comes off at checkout, once your cart is at €39 or more.</p></div>
+  <div class="infocard"><span aria-hidden="true">${'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h11l-3-3M20 17H9l3 3"/></svg>'}</span><p>If something is out of stock, we suggest a similar product. You can turn it down.</p></div>
+</div>`; }
 function holdHtml(t){
   if(!t.weighed) return `<div class="hold"><span>Nothing in your cart is weighed, so you pay exactly ${eur(t.total)}.</span></div>`;
   return `<div class="hold">${'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>'}<span>Fruit, veg and meat are weighed when we pack them, so the price can move a little. We reserve up to <b class="num">${eur(t.hold)}</b> on your card and charge the exact amount after packing, usually less.</span></div>`;
@@ -471,7 +488,7 @@ function renderDrawer(t){
   document.getElementById('dbody').innerHTML = lines.length ? `${goalHtml(t)}
     <div class="lines">${lines.map(([id,q])=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true">${x.e}</span><span class="info"><b>${x.n}</b><small>${x.u}</small></span>${stepper(id,q,'sm')}<span class="amt num">${x.w?'ca. ':''}${eur(x.p*q)}</span></div>`}).join('')}</div>
     ${fillHtml(t)}` : `<div class="goal"><div class="row"><b>Your cart is empty</b></div></div>`;
-  document.getElementById('dfoot').innerHTML = `${lines.length?`<div class="dtotal num"><span><b>Total</b><small>${t.reached?'<span class="g">Free delivery · €20 voucher applied</span>':'Free delivery + €20 voucher once you reach €39'}</small></span><b>${t.weighed?'ca. ':''}${eur(t.total)}</b></div>`:''}
+  document.getElementById('dfoot').innerHTML = `${lines.length?`<div class="dtotal num"><span><b>Total</b><small>${t.reached?'<span class="g">✓ Free delivery and €20 off at checkout</span>':'Free delivery + €20 voucher once you reach €39'}</small></span><b>${t.weighed?'ca. ':''}${eur(t.cartTotal)}</b></div>${t.weighed?`<p class="canote">ca. because some items are priced by weight. You pay the exact amount after packing.</p>`:''}`:''}
     <button type="button" class="cta" id="toCheckout" ${t.reached?'':'disabled'}>${t.reached?'Go to checkout':`Add ${eur(t.toGo)} to check out`}</button>`;
 }
 
@@ -494,8 +511,8 @@ function renderCart(t){
       ${goalHtml(t)}
       ${ticketHtml(t)}
       ${costsHtml(t)}
-      ${t.weighed?holdHtml(t):''}
       <button type="button" class="cta" id="toCheckout2" ${t.reached?'':'disabled'}>${t.reached?'Go to checkout':`Add ${eur(t.toGo)} to check out`}</button>
+      ${infoCards()}
     </aside>
   </div>`;
 }
@@ -530,7 +547,7 @@ function renderCheckout(t){
       <section aria-labelledby="h-pay"><h2 class="sh" id="h-pay">Payment</h2>
         <div class="sec rows">
           <div role="radiogroup" aria-label="Payment method">${PAYS.map(x=>`<label class="prow ${S.pay===x.k?'on':''}"><span class="pmark pm-${x.k}" aria-hidden="true">${PMARK[x.k]}</span><span class="sumtxt"><b>${x.l}</b><span class="${S.pay===x.k?'chg num':''}">${S.pay===x.k?charge:x.s}</span></span><input type="radio" name="pay" value="${x.k}" ${S.pay===x.k?'checked':''}></label>`).join('')}</div>
-          <div class="offrow"><span class="offlbl">Offers and savings</span>${ticketHtml(t)}</div>
+          <div class="offrow"><span class="offlbl">Offers and savings</span>${ticketHtml(t,true)}</div>
         </div>
       </section>
     </div>
@@ -620,7 +637,7 @@ function snack(id){
   el.className='snack'+(t.reached?' done':'');
   const prev=Math.min(100,Math.max(0,(t.items-x.p)/MIN*100));
   const w=v=>`calc(${v}% - 4px)`;
-  el.innerHTML=`<div class="msg num">${t.reached?`<b>Minimum reached.</b> Free delivery and €20 off are applied.<button type="button" class="view" id="snackView">View cart</button>`:`Still <b>${eur(t.toGo)}</b> to the €${MIN} minimum order.<span class="msub">Your €20 discount and free delivery apply once you reach it.</span>`}</div>
+  el.innerHTML=`<div class="msg num">${t.reached?`<b>Minimum reached.</b> You get free delivery and €20 off at checkout.<button type="button" class="view" id="snackView">View cart</button>`:`Still <b>${eur(t.toGo)}</b> to the €${MIN} minimum order.<span class="msub">Reach it for free delivery and €20 off at checkout.</span>`}</div>
   <div class="track num" role="img" aria-label="${eur(t.items)} of ${eur(MIN)}"><span class="goalv">${eur(MIN).replace('.00','')}</span><span class="fillb" id="snackFill" style="width:${w(prev)}">${eur(t.items)}</span></div>`;
   requestAnimationFrame(()=>requestAnimationFrame(()=>{const f=document.getElementById('snackFill'); if(f) f.style.width=w(pct);}));
   el.hidden=false; clearTimeout(snackT); snackT=setTimeout(()=>el.hidden=true,5000);
@@ -631,7 +648,7 @@ function change(id,d,quiet){
   const before=totals().reached;
   S.cart[id]=Math.max(0,(S.cart[id]||0)+d); if(!S.cart[id]) delete S.cart[id];
   const after=totals().reached;
-  if(!before&&after&&!quiet) toast('Minimum reached: free delivery and €20 voucher applied');
+  if(!before&&after&&!quiet) toast('Minimum reached: free delivery and €20 off at checkout');
   if(before&&!after&&S.view==='checkout') toast('Below the €39 minimum again');
 }
 
