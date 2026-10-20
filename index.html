@@ -351,6 +351,9 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .infocard{display:flex;gap:12px;align-items:flex-start;background:var(--soft);border-radius:12px;padding:12px 14px;color:var(--ink)}
 .infocard span{flex-shrink:0;color:var(--muted)}
 .infocard p{margin:0;font-size:13.5px;line-height:1.45}
+.infocard p b{display:block;font-size:14.5px;margin-bottom:2px}
+.infocard:first-child{background:var(--tint2);box-shadow:inset 0 0 0 1.5px var(--tint)}
+.infocard:first-child span{color:var(--brand)}
 .costs .sub{padding-top:8px;border-top:1px solid var(--line);margin-top:4px;font-weight:600}
 .costs .grand{font-size:18px}
 .bufl{display:inline-flex;align-items:center;gap:6px}
@@ -468,7 +471,7 @@ function costsHtml(t, final){
 }
 function weighedCount(){ return Object.entries(S.cart).filter(([id,q])=>q>0&&byId[id]&&byId[id].w).length; }
 function infoCards(){ return `<div class="infocards">
-  <div class="infocard"><span aria-hidden="true">${'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v8a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2z"/><path d="m9 15 6-6"/><circle cx="9.5" cy="9.5" r=".8"/><circle cx="14.5" cy="14.5" r=".8"/></svg>'}</span><p>As a new customer, your €20 first-order discount comes off at checkout once your cart is at €39 or more.</p></div>
+  <div class="infocard"><span aria-hidden="true">${'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v8a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2z"/><path d="m9 15 6-6"/><circle cx="9.5" cy="9.5" r=".8"/><circle cx="14.5" cy="14.5" r=".8"/></svg>'}</span><p><b>Your €20 first-order discount isn’t in this total yet.</b> We can only take it off at checkout, on the next step, once your cart is at €39 or more.</p></div>
   <div class="infocard"><span aria-hidden="true">${'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h11l-3-3M20 17H9l3 3"/></svg>'}</span><p>If something is out of stock, we suggest a similar product. You can turn it down.</p></div>
 </div>`; }
 function finalCosts(t, done){
