@@ -461,7 +461,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <style>
 /* Layout: shop grid with a slide-in cart on the right; checkout is one page with headed sections and a sticky summary. */
-:root{
+:root{--mapbg:#efeae2;--maproad:#ffffff;--mappark:#cfe6c4;--mapriver:#bcd8ee;
   --bg:#ffffff; --surface:#ffffff; --ink:#222222; --muted:#6e6e6e; --line:#e6e6e6;
   --brand:#c9600f; --accent:#ef7d1a; --tint:#ffeedd; --tint2:#fff7ef; --pic:#f4f4f4; --soft:#f6f6f6;
   --good:#2f7a3b; --good-tint:#e4f1e6; --warn:#9a5b00; --warn-tint:#fff3d6;
@@ -474,7 +474,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
   --brand:#ff9a45; --accent:#ef7d1a; --tint:#3a2614; --tint2:#2a2019; --pic:#2a2a2a; --soft:#242424;
   --good:#7cc489; --good-tint:#1f3324; --warn:#f0c062; --warn-tint:#3a2f17;
   --shadow:0 16px 40px rgba(0,0,0,.5); color-scheme:dark }}
-:root[data-theme="dark"]{
+:root[data-theme="dark"]{--mapbg:#2a2724;--maproad:#45403a;--mappark:#2f4a2c;--mapriver:#28425a;
   --bg:#161616; --logo-ink:#f2f2f2; --logo-mute:#a8a8a8; --surface:#1f1f1f; --ink:#f2f2f2; --muted:#a8a8a8; --line:#333333;
   --brand:#ff9a45; --accent:#ef7d1a; --tint:#3a2614; --tint2:#2a2019; --pic:#2a2a2a; --soft:#242424;
   --good:#7cc489; --good-tint:#1f3324; --warn:#f0c062; --warn-tint:#3a2f17;
@@ -728,6 +728,28 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .mbody{padding:18px 20px;overflow:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:14px}
 .mfoot{padding:14px 20px 18px;border-top:1px solid var(--line)}
 .mnote{margin:0;font-size:13px;color:var(--muted)}
+.amap{position:relative;height:170px;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.amap svg{display:block;width:100%;height:100%}
+.apin{position:absolute;left:50%;top:50%;transform:translate(-50%,-90%);filter:drop-shadow(0 2px 3px rgba(0,0,0,.25))}
+.alab{position:absolute;left:50%;top:50%;transform:translate(-50%,10px);background:var(--surface);color:var(--ink);font-size:12.5px;font-weight:600;padding:3px 10px;border-radius:999px;box-shadow:0 1px 4px rgba(0,0,0,.15);white-space:nowrap}
+.locbtn{display:flex;align-items:center;justify-content:center;gap:8px;height:44px;margin-top:10px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit;font-weight:600;cursor:pointer}
+.locbtn svg{color:var(--accent)}.locbtn:hover{border-color:var(--accent)}
+.wh{font-size:15px;margin:0 0 -4px}
+.editl{color:var(--accent);font-weight:700;font-size:14px;flex-shrink:0}
+.pcform{display:flex;flex-direction:column;gap:8px}
+.pcform label{font-size:13px;font-weight:600;margin-top:6px}
+.pcform input{height:52px;border:1.5px solid var(--line);border-radius:12px;padding:0 14px;font:inherit;font-size:20px;letter-spacing:.06em;color:var(--ink);background:var(--surface)}
+.pcform input:focus-visible{outline:2px solid var(--accent);outline-offset:0}
+.pcform .cta{margin-top:6px;height:50px}
+.pcsign{margin:4px 0 0;font-size:14px;color:var(--muted);text-align:center}
+.linkb{border:0;background:none;padding:0;font:inherit;font-weight:700;color:var(--accent);text-decoration:underline;cursor:pointer}
+.pcok{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:8px 4px}
+.pcok h3{font-size:21px;margin:4px 0 0}.pcok p{margin:0;color:var(--muted);font-size:14px;max-width:38ch}
+.pcbig{width:56px;height:56px;border-radius:28px;background:#1f8a4c;color:#fff;display:grid;place-items:center;font-size:28px;font-weight:700}
+.pcbig.no{background:var(--warn)}
+.pcfacts{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.pcfacts li{border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:13.5px}
+.pcfoot{display:flex;gap:10px}.pcfoot>*{flex:1;height:48px}
 .opts{display:flex;flex-direction:column;gap:10px}
 .opt{display:flex;gap:12px;align-items:flex-start;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer}
 .opt:has(input:checked){border-color:var(--accent);background:var(--tint2)}
@@ -1048,9 +1070,13 @@ let S;
 const HOME={id:'home',label:'Home',name:'Touba Shahzad',street:'Fritz-Werner-Straße 35',zip:'12107',city:'Berlin',note:'3rd floor, ring “Shahzad”'};
 const PAYS=[{k:'card',l:'Visa ending 4242',s:'Expires 08/28',cta:'Pay with Visa ···· 4242'},{k:'apple',l:'Apple Pay',s:'Confirm with Face ID or Touch ID',cta:'Pay with Apple Pay'},{k:'gpay',l:'Google Pay',s:'Confirm on your phone',cta:'Pay with Google Pay'},{k:'paypal',l:'PayPal',s:'You log in to PayPal to confirm',cta:'Pay with PayPal'}];
 function cur(){ const c=(S.contacts||[]).find(x=>x.id===S.cid)||(S.contacts||[])[0]||{first:'',last:'',phone:''}; return {...c, name:[c.first,c.last].filter(Boolean).join(' ')}; }
-function fresh(){ return {cart:{...START}, view:'shop', drawer:false, day:'today', slot:null, dmode:null, pay:'card', q:'', addrs:[HOME], addr:'home', contacts:[{id:'me',first:'Touba',last:'Shahzad',phone:'+49 151 2345 6789'}], cid:'me', modal:null, draft:{}, adding:false, editId:null}; }
-function load(){ try{ const s=JSON.parse(localStorage.getItem('kfo')); if(s&&s.cart){ const f=fresh(); return {...f,...s, contacts:(s.contacts&&s.contacts.length)?s.contacts:f.contacts, cid:(s.contacts&&s.cid)?s.cid:'me', dmode:s.dmode||(s.slot?'custom':null), drawer:false, modal:null, adding:false, editId:null}; } }catch(e){} return fresh(); }
-function save(){ try{ localStorage.setItem('kfo', JSON.stringify({favs:S.favs, cart:S.cart, view:S.view, day:S.day, slot:S.slot, dmode:S.dmode, pay:S.pay, addrs:S.addrs, addr:S.addr, contacts:S.contacts, cid:S.cid})); }catch(e){} }
+function fresh(){ return {cart:{...START}, view:'shop', drawer:false, day:'today', slot:null, dmode:null, pay:'card', q:'', addrs:[], addr:null, zip:null, contacts:[{id:'me',first:'Touba',last:'Shahzad',phone:'+49 151 2345 6789'}], cid:'me', modal:'pc', pcStep:'ask', draft:{}, adding:false, editId:null}; }
+function load(){ try{ const s=JSON.parse(localStorage.getItem('kfo')); if(s&&s.cart){ const f=fresh(); return {...f,...s, contacts:(s.contacts&&s.contacts.length)?s.contacts:f.contacts, cid:(s.contacts&&s.cid)?s.cid:'me', dmode:s.dmode||(s.slot?'custom':null), drawer:false, modal:s.zip?null:'pc', pcStep:'ask', adding:false, editId:null}; } }catch(e){} return fresh(); }
+function curAddr(){ return S.addrs.find(x=>x.id===S.addr)||S.addrs[0]||null; }
+const ZONES=[[/^1[0-4]/,'Berlin'],[/^14[4-7]/,'Potsdam'],[/^(60|61|63|65)/,'Frankfurt area'],[/^(80|81|82|85)/,'Munich area']];
+function zoneOf(z){ const m=[...ZONES].reverse().find(([re])=>re.test(z)); return m?m[1]:null; }
+function mapSvg(label){ return `<div class="amap" role="img" aria-label="Map preview${label?': '+label:''}"><svg viewBox="0 0 400 170" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="400" height="170" fill="var(--mapbg)"/><path d="M-10 120 C80 100 140 140 230 118 S360 90 420 104" stroke="var(--mapriver)" stroke-width="14" fill="none"/><rect x="250" y="12" width="90" height="56" rx="10" fill="var(--mappark)"/><g stroke="var(--maproad)" stroke-linecap="round" fill="none"><path d="M0 60 H400" stroke-width="10"/><path d="M120 0 V170" stroke-width="10"/><path d="M0 20 L180 150" stroke-width="6"/><path d="M220 0 V170" stroke-width="6"/><path d="M300 80 L400 30" stroke-width="6"/><path d="M40 0 V170" stroke-width="4"/><path d="M0 150 H400" stroke-width="4"/></g></svg><span class="apin"><svg width="34" height="34" viewBox="0 0 24 24"><path d="M12 22s-7-6.4-7-12a7 7 0 0 1 14 0c0 5.6-7 12-7 12z" fill="var(--accent)"/><circle cx="12" cy="10" r="2.7" fill="#fff"/></svg></span>${label?`<span class="alab">${label}</span>`:''}</div>`; }
+function save(){ try{ localStorage.setItem('kfo', JSON.stringify({favs:S.favs, cart:S.cart, view:S.view, day:S.day, slot:S.slot, dmode:S.dmode, pay:S.pay, addrs:S.addrs, addr:S.addr, zip:S.zip, contacts:S.contacts, cid:S.cid})); }catch(e){} }
 S = load();
 
 function totals(){
@@ -1123,8 +1149,10 @@ function holdHtml(t){
 }
 
 function renderHeader(t){
-  { const ad=S.addrs.find(x=>x.id===S.addr)||S.addrs[0], dy=DAYS.find(d=>d.k===S.day);
-    document.getElementById('hdrAddr').innerHTML=`<b>${ad.street}</b><small>${S.slot?`Your slot: ${slotWord(dy)}, ${S.slot}`:'Choose a delivery time'}</small>`; }
+  { const ad=curAddr(), dy=DAYS.find(d=>d.k===S.day), el=document.getElementById('hdrAddr');
+    el.innerHTML = ad ? `<b>${ad.street}</b><small>${S.slot?`Your slot: ${slotWord(dy)}, ${S.slot}`:'Choose a delivery time'}</small>`
+      : S.zip ? `<b>${zoneOf(S.zip)||''} ${S.zip}</b><small>Enter your exact address</small>` : `<b>Where do we deliver?</b><small>Enter your postcode</small>`;
+    el.dataset.edit = S.zip ? 'when' : 'pc'; el.setAttribute('aria-label', S.zip?'Delivery address and time':'Enter your postcode'); }
   document.getElementById('openCart').innerHTML = `<span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M3 4h2l2.5 11h11L21 7H7"/></svg>${t.count?`<span class="badge num ${t.reached?'ok':''}">${t.count}</span>`:''}</span><span class="camt num">${eur(t.items)}</span>`;
   { const nf=Object.values(S.favs||{}).filter(Boolean).length, fb=document.getElementById('favBtn');
     fb.innerHTML=`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.2-9.4C1.6 7.6 4 4.5 7.3 4.5c2 0 3.6 1.1 4.7 2.7 1.1-1.6 2.7-2.7 4.7-2.7 3.3 0 5.7 3.1 4.5 6.6-1.7 4.8-9.2 9.4-9.2 9.4z"/></svg>${nf?`<span class="badge num">${nf}</span>`:''}`;
@@ -1192,8 +1220,8 @@ function rowState(ok){ return ok?'<span class="rok" title="Saved"><svg width="12
 function renderCheckout(t){
   const lines = Object.entries(S.cart).filter(([,q])=>q>0);
   const day = DAYS.find(d=>d.k===S.day);
-  const ready = t.reached && S.slot && cur().phone;
-  const ad = S.addrs.find(x=>x.id===S.addr)||S.addrs[0];
+  const ready = t.reached && S.slot && cur().phone && curAddr();
+  const ad = curAddr();
   const pm = PAYS.find(x=>x.k===S.pay)||PAYS[0];
   const c = cur(); const whereOk = !!(c.name&&c.phone);
   const charge = `Will be charged ${eur(t.hold)}`;
@@ -1203,7 +1231,7 @@ function renderCheckout(t){
       <section aria-labelledby="h-addr"><h2 class="sh" id="h-addr">Where</h2>
         <div class="sec rows">
           <button type="button" class="prow drow wrow" data-edit="contact" aria-label="Change contact"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></span><span class="sumtxt"><b>${c.name||'Add your name'}</b>${c.phone?`<span class="num">${c.phone}</span>`:'<span class="miss">Add a phone number so the driver can reach you</span>'}</span>${rowState(c.name&&c.phone)}<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
-          <button type="button" class="prow drow wrow" data-edit="addr" aria-label="Change delivery address"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span class="sumtxt"><b>${ad.label}</b><span>${ad.street}, ${ad.zip} ${ad.city}</span>${ad.note?`<small>${ad.note}</small>`:''}</span>${rowState(true)}<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+          <button type="button" class="prow drow wrow" data-edit="addr" aria-label="Change delivery address"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span class="sumtxt">${ad?`<b>${ad.label}</b><span>${ad.street}, ${ad.zip} ${ad.city}</span>${ad.note?`<small>${ad.note}</small>`:''}`:`<b>${zoneOf(S.zip||'')||''} ${S.zip||''}</b><span class="miss">Add your exact address</span>`}</span>${rowState(!!ad)}<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
         </div></section>
       <section aria-labelledby="h-slot"><h2 class="sh" id="h-slot">When</h2>
         <div class="sec rows" role="radiogroup" aria-label="Delivery time">
@@ -1237,7 +1265,7 @@ function renderCheckout(t){
 function renderDone(t){
   const day = DAYS.find(d=>d.k===S.day);
   return `<div class="orderdone"><span class="tick"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--good)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
-    <h1>Order placed</h1><p>Arriving ${day.date}, ${S.slot}, at ${(S.addrs.find(x=>x.id===S.addr)||S.addrs[0]).street}.</p>
+    <h1>Order placed</h1><p>Arriving ${day.date}, ${S.slot}, at ${curAddr().street}.</p>
     ${finalCosts(t,true)}
     <p style="font-size:13px">You can still add items until 22:00 the evening before. We'll email the final receipt after packing.</p>
     <button type="button" class="ghost" id="again" style="max-width:280px">Start over as a first-time customer</button></div>`;
@@ -1253,13 +1281,18 @@ function modalHtml(){
     title='Delivery address';
     const ed=S.editId?S.addrs.find(x=>x.id===S.editId):null, lab=ed?ed.label:'Home';
     const kinds=['Home','Office','Other'];
-    body=S.adding?`<form id="newAddr" class="nform" novalidate><h3>${ed?'Edit address':'New address'}</h3>
+    if(!S.addrs.length) S.adding=true;
+    const first=!S.addrs.length, loc=S.locFill||null;
+    title=first?'Your delivery address':'Delivery address';
+    body=S.adding?`<form id="newAddr" class="nform ${first?'plain':''}" novalidate>${first?'':`<h3>${ed?'Edit address':'New address'}</h3>`}
+      ${mapSvg(loc?loc.street:(S.zip?`${zoneOf(S.zip)||''} ${S.zip}`:''))}
+      <button type="button" class="locbtn" id="useLoc"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="7.5"/></svg>Use my current location</button>
       <span class="flabel">Type</span><div class="kinds" role="radiogroup" aria-label="Address type">${kinds.map(k=>`<label class="kind"><input type="radio" name="label" value="${k}" ${(kinds.includes(lab)?lab:'Other')===k?'checked':''}>${k}</label>`).join('')}</div>
-      <label for="na-street">Street and number</label><input id="na-street" name="street" autocomplete="street-address" value="${ed?ed.street:''}" required>
-      <div class="two"><span><label for="na-zip">Postcode</label><input id="na-zip" name="zip" inputmode="numeric" autocomplete="postal-code" value="${ed?ed.zip:''}" required></span><span><label for="na-city">City</label><input id="na-city" name="city" autocomplete="address-level2" value="${ed?ed.city:'Berlin'}" required></span></div>
+      <label for="na-street">Street and number</label><input id="na-street" name="street" autocomplete="street-address" value="${ed?ed.street:loc?loc.street:''}" required>
+      <div class="two"><span><label for="na-zip">Postcode</label><input id="na-zip" name="zip" inputmode="numeric" autocomplete="postal-code" value="${ed?ed.zip:loc?loc.zip:(S.zip||'')}" required></span><span><label for="na-city">City</label><input id="na-city" name="city" autocomplete="address-level2" value="${ed?ed.city:loc?loc.city:(zoneOf(S.zip||'')==='Berlin'?'Berlin':'')}" required></span></div>
       <label for="na-note">Floor, doorbell, notes for the driver</label><input id="na-note" name="note" autocomplete="off" value="${ed?ed.note.replace(/"/g,'&quot;'):''}">
       <p class="ferr" id="naErr" hidden>Add the street, postcode and city to save this address.</p>
-      <div class="frow"><button type="button" class="ghost" id="cancelAddr">Cancel</button><button type="submit" class="cta">Save address</button></div></form>`
+      <div class="frow">${first?'':'<button type="button" class="ghost" id="cancelAddr">Cancel</button>'}<button type="submit" class="cta">Save address</button></div></form>`
     :`<div class="opts" role="radiogroup" aria-label="Saved addresses">${S.addrs.map(x=>`<div class="optw"><label class="opt"><input type="radio" name="maddr" value="${x.id}" ${d.addr===x.id?'checked':''}><span><b>${x.label}</b><span>${x.street}, ${x.zip} ${x.city}</span>${x.note?`<small>${x.note}</small>`:''}</span></label><button type="button" class="editb sm" data-eaddr="${x.id}" aria-label="Edit ${x.label} address">Edit</button></div>`).join('')}</div>
     <button type="button" class="addnew" id="addAddr">+ Add new address</button>`;
     save=S.adding?'':'Use this address';
@@ -1288,11 +1321,25 @@ function modalHtml(){
       </dl>
 `;
     save='';
+  } else if(m==='pc'){
+    const st=S.pcStep, z=st==='no'?(S.badZip||''):(S.zip||''), zone=zoneOf(z);
+    title=st==='ok'?'Good news':st==='no'?'Not in your area yet':'Where should we deliver?';
+    body = st==='ok' ? `<div class="pcok"><span class="pcbig" aria-hidden="true">✓</span><h3>Yay, we deliver to ${zone} ${z}</h3><p>Shop as you like. You can add your exact address any time before checkout.</p>
+        <ul class="pcfacts"><li><b>Free</b> first delivery</li><li><b>€39</b> minimum order</li><li><b>€20 off</b> your first order at checkout</li></ul></div>`
+      : st==='no' ? `<div class="pcok"><span class="pcbig no" aria-hidden="true">!</span><h3>We don’t deliver to ${z} yet</h3><p>Knuspr delivers in Berlin, Potsdam, the Frankfurt area and the Munich area. Try another postcode, or browse to see what we have.</p></div>`
+      : `<form id="pcForm" class="pcform" novalidate><p class="mnote">Enter your postcode so you know we deliver to you before you start filling your cart.</p>
+        <label for="pc-in">Postcode</label><input id="pc-in" name="pc" inputmode="numeric" autocomplete="postal-code" maxlength="5" placeholder="e.g. 12107" value="${z}">
+        <p class="ferr" id="pcErr" hidden>Enter a 5-digit postcode.</p>
+        <button type="submit" class="cta">Check postcode</button>
+        <p class="pcsign">Already have an account? <button type="button" class="linkb" id="pcSignIn">Sign in</button></p></form>`;
+    save='';
   } else if(m==='when'){
-    title='When should we deliver?';
+    title='Delivery';
+    const wad=curAddr();
+    const addrRow=`<button type="button" class="prow drow wrow whenaddr" id="whenAddr"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span class="sumtxt">${wad?`<b>${wad.street}</b><span>${wad.zip} ${wad.city}</span>`:`<b>${zoneOf(S.zip||'')||''} ${S.zip||''}</b><span class="miss">Enter your exact address</span>`}</span><span class="editl">${wad?'Change':'Add address'}</span></button>`;
     const opt=(k,ic,t,sub,note)=>`<button type="button" class="prow drow wopt ${S.dmode===k?'on':''}" data-quick="${k}" aria-pressed="${S.dmode===k}"><span class="sumic" aria-hidden="true">${ic}</span><span class="sumtxt"><b>${t}</b><span class="num">${sub}</span>${note?`<small>${note}</small>`:''}</span><span class="freeb">Free</span>${S.dmode===k?'<span class="rchk" aria-hidden="true">✓</span>':'<span class="rdot" aria-hidden="true"></span>'}</button>`;
     const cday=DAYS.find(x=>x.k===S.day);
-    body=`<div class="sec rows wbox">
+    body=`<h3 class="wh">Where</h3><div class="sec rows">${addrRow}</div><h3 class="wh">When</h3><div class="sec rows wbox">
       ${opt('fast','<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>','Fastest','Today, 14:00–15:00','')}
       ${opt('bundle','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 4l9 6.5V20H3z"/><path d="M9 20v-6h6v6"/></svg>','Bundled delivery','Today, 20:00–21:00','Outside peak hours, so we can bundle deliveries on your street.')}
       <button type="button" class="prow drow wopt other ${S.dmode==='custom'?'on':''}" id="toSlotGrid"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg></span><span class="sumtxt">${S.dmode==='custom'?`<b>${['today','tue'].includes(cday.k)?cday.label+', ':''}${cday.date}</b><span class="num">${S.slot}</span>`:'<b>Choose a time</b><span>Any day, any 1-hour slot</span>'}</span>${S.dmode==='custom'?'<span class="rchk" aria-hidden="true">✓</span>':''}<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
@@ -1330,9 +1377,9 @@ function modalHtml(){
     body=`<div class="opts" role="radiogroup" aria-label="Payment methods">${PAYS.map(x=>`<label class="opt"><input type="radio" name="mpay" value="${x.k}" ${d.pay===x.k?'checked':''}><span><b>${x.l}</b><span>${x.s}</span></span></label>`).join('')}</div>`;
     save='Use this method';
   }
-  return `<div class="mscrim" id="mscrim"></div><div class="modal ${m==='pd'?'wide':''}" role="dialog" aria-modal="true" aria-labelledby="m-title">${m==='pd'?'<button type="button" class="x pdx" id="modalClose" aria-label="Close">×</button>':`<div class="mhead"><h2 id="m-title">${title}</h2><button type="button" class="x" id="modalClose" aria-label="Close">×</button></div>`}<div class="mbody">${body}</div>${m==='pd'?pdFoot():save?`<div class="mfoot"><button type="button" class="cta" id="modalSave">${save}</button></div>`:(m==='disc'||m==='repl')?'<div class="mfoot right"><button type="button" class="ghost" id="modalClose2">Close</button></div>':''}</div>`;
+  return `<div class="mscrim" id="mscrim"></div><div class="modal ${m==='pd'?'wide':''}" role="dialog" aria-modal="true" aria-labelledby="m-title">${m==='pd'?'<button type="button" class="x pdx" id="modalClose" aria-label="Close">×</button>':`<div class="mhead"><h2 id="m-title">${title}</h2><button type="button" class="x" id="modalClose" aria-label="Close">×</button></div>`}<div class="mbody">${body}</div>${m==='pc'&&S.pcStep==='ok'?'<div class="mfoot pcfoot"><button type="button" class="ghost" id="pcSignIn">Sign in or register</button><button type="button" class="cta" id="pcGo">Start shopping</button></div>':m==='pc'&&S.pcStep==='no'?'<div class="mfoot pcfoot"><button type="button" class="ghost" id="pcBrowse">Browse anyway</button><button type="button" class="cta" id="pcRetry">Try another postcode</button></div>':m==='pd'?pdFoot():save?`<div class="mfoot"><button type="button" class="cta" id="modalSave">${save}</button></div>`:(m==='disc'||m==='repl')?'<div class="mfoot right"><button type="button" class="ghost" id="modalClose2">Close</button></div>':''}</div>`;
 }
-function openModal(m){ S.modal=m; S.adding=false; S.editId=null; S.editCid=null; S.draft={cid:S.cid, addr:S.addr, pay:S.pay, day:S.day, sday:S.day, slot:S.slot}; render(); setTimeout(()=>{const f=document.querySelector('#modal .modal input:checked, #modal .modal .slot.on, #modal .modal button'); f&&f.focus();},0); }
+function openModal(m){ if(m==='pc') S.pcStep='ask'; S.modal=m; S.locFill=null; S.adding=false; S.editId=null; S.editCid=null; S.draft={cid:S.cid, addr:S.addr, pay:S.pay, day:S.day, sday:S.day, slot:S.slot}; render(); setTimeout(()=>{const f=document.querySelector('#modal .modal input:checked, #modal .modal .slot.on, #modal .modal button'); f&&f.focus();},0); }
 function closeModal(){ const m=S.modal; S.modal=null; S.adding=false; render(); const b=document.querySelector(`[data-edit="${m}"],[data-info="${m}"]`); b&&b.focus(); }
 function render(){
   const t=totals();
@@ -1397,6 +1444,12 @@ document.addEventListener('click',e=>{
     case 'modalClose': closeModal(); break;
     case 'modalClose2': closeModal(); break;
     case 'xtraBtn': case 'acctBtn': case 'catBtn': case 'favBtn': toast('Favourites list isn\'t part of this prototype'); break;
+    case 'pcGo': S.modal=null; render(); document.getElementById('q')?.focus(); break;
+    case 'pcBrowse': S.modal=null; S.zip=null; render(); break;
+    case 'pcRetry': S.pcStep='ask'; render(); setTimeout(()=>document.getElementById('pc-in')?.focus(),0); break;
+    case 'pcSignIn': toast('Sign-in isn’t part of this prototype. You can create your account at checkout.'); break;
+    case 'whenAddr': S.modal='addr'; S.adding=!S.addrs.length; S.editId=null; S.locFill=null; S.draft={...S.draft, addr:S.addr}; S.fromWhenAddr=true; render(); break;
+    case 'useLoc': S.locFill={street:'Fritz-Werner-Straße 35', zip:'12107', city:'Berlin'}; render(); toast('Location found: Fritz-Werner-Straße 35'); break;
     case 'toSlotGrid': S.modal='slot'; S.draft={...S.draft, day:S.day||'today', sday:S.day, slot:S.slot}; S.fromWhen=true; render(); break;
     case 'bufInfo': { const n=document.getElementById('bufNote'); n.hidden=!n.hidden; b.setAttribute('aria-expanded',String(!n.hidden)); } break;
     case 'addAddr': S.adding=true; S.editId=null; render(); setTimeout(()=>document.getElementById('na-label')?.focus(),0); break;
@@ -1433,8 +1486,11 @@ document.addEventListener('submit',e=>{ if(e.target.id==='promo'){ e.preventDefa
   if(!v('street')||!v('zip')||!v('city')){ const er=document.getElementById('naErr'); er.hidden=false; (!v('street')?document.getElementById('na-street'):!v('zip')?document.getElementById('na-zip'):document.getElementById('na-city')).focus(); return; }
   const data={label:v('label')||'Home',street:v('street'),zip:v('zip'),city:v('city'),note:v('note')};
   if(S.editId){ Object.assign(S.addrs.find(x=>x.id===S.editId),data); S.draft.addr=S.editId; }
-  else { const id='a'+Date.now(); S.addrs.push({id,name:cur().name,...data}); S.draft.addr=id; }
-  S.adding=false; S.editId=null; render(); toast('Address saved'); });
+  else { const id='a'+Date.now(); S.addrs.push({id,name:cur().name,...data}); S.draft.addr=id; if(S.addrs.length===1){ S.addr=id; S.zip=data.zip; S.adding=false; S.locFill=null; const back=S.fromWhenAddr; S.fromWhenAddr=false; S.modal=back?'when':null; render(); toast('Address saved'); return; } }
+  S.adding=false; S.editId=null; S.locFill=null; render(); toast('Address saved'); });
+document.addEventListener('submit',e=>{ if(e.target.id!=='pcForm') return; e.preventDefault(); const v=(e.target.pc.value||'').replace(/\D/g,'');
+  if(v.length!==5){ document.getElementById('pcErr').hidden=false; document.getElementById('pc-in').focus(); return; }
+  S.zip=v; S.pcStep=zoneOf(v)?'ok':'no'; if(S.pcStep==='no') S.zip=null, S.badZip=v; render(); });
 document.addEventListener('submit',e=>{ if(e.target.id!=='contactF') return; e.preventDefault(); const f=new FormData(e.target); const v=k=>(f.get(k)||'').toString().trim();
   if(!v('first')||!v('last')||v('phone').replace(/\D/g,'').length<6){ document.getElementById('ctErr').hidden=false; (!v('first')?document.getElementById('ct-first'):!v('last')?document.getElementById('ct-last'):document.getElementById('ct-phone')).focus(); return; }
   const data={first:v('first'),last:v('last'),phone:v('phone')};
@@ -1443,6 +1499,7 @@ document.addEventListener('submit',e=>{ if(e.target.id!=='contactF') return; e.p
 document.addEventListener('change',e=>{ if(e.target.name==='dmode'){ const q=QUICK[e.target.value]; S.dmode=e.target.value; S.day=q.day; S.slot=q.slot; render(); document.querySelector(`input[name=dmode][value=${S.dmode}]`)?.focus(); return; } if(e.target.name==='pay'){ S.pay=e.target.value; render(); document.querySelector(`input[name=pay][value=${S.pay}]`)?.focus(); return; } if(e.target.name==='maddr') S.draft.addr=e.target.value; if(e.target.name==='mct') S.draft.cid=e.target.value; if(e.target.name==='mpay') S.draft.pay=e.target.value; });
 document.getElementById('q').addEventListener('input',e=>{ S.q=e.target.value; if(S.view!=='shop') S.view='shop'; document.getElementById('view').innerHTML=renderShop(); });
 render();
+if(S.modal==='pc') setTimeout(()=>document.getElementById('pc-in')?.focus(),0);
 </script>
 
 </body>
