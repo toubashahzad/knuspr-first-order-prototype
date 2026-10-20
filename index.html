@@ -732,6 +732,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
 :root[data-theme="dark"] .snack .view{color:#c9600f}
 :root[data-theme="dark"] .snack .track{background:#ececec;box-shadow:inset 0 0 0 2px #ececec}
 .snack.done .fillb{background:#22c55e;color:#0b2e16}
+@media (min-width:641px){.snack:not(.pbanner){width:min(900px,calc(100% - 32px))}.snack:not(.pbanner) .msub{white-space:nowrap}.snack:not(.pbanner) .track{flex-basis:260px}}
 @media (max-width:640px){.snack{flex-direction:column;align-items:stretch;gap:10px;padding:14px 16px;bottom:auto}.snack .track{flex-basis:auto}.snack .msg{font-size:15px}}
 .sumrow{display:flex;align-items:flex-start;gap:14px}
 .sumic{width:40px;height:40px;border-radius:20px;background:var(--tint2);color:var(--brand);display:flex;align-items:center;justify-content:center;flex-shrink:0}
