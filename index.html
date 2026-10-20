@@ -931,7 +931,6 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .pairimg{border:0;background:#fff;padding:0;border-radius:10px;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .pairimg img{width:80%;height:80%;object-fit:contain}
 .pairtxt{display:flex;flex-direction:column;gap:2px;font-size:13px}.pairtxt b{font-size:15px}
-.pairadd{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:17px;border:0;background:var(--accent);color:#fff;font-size:20px;font-weight:700;cursor:pointer}
 .pdfoot{display:flex;gap:12px;align-items:center}
 .pdstep{margin:0;height:52px;flex:1}.pdstep button{width:64px}.pdstep .num{font-size:18px}
 .pdadd{flex:1;height:52px}
@@ -1248,7 +1247,7 @@ function modalHtml(){
     title=x.n;
     const labels=t.filter(k=>ATTR[k]).map(k=>`<span class="pdlab"><span class="attr ${ATTR[k][1]}" aria-hidden="true">${ATTR[k][2]}</span>${k==='bio'?'Organic':ATTR[k][0]}</span>`).join('');
     const deal=x.pct?`<span class="pdeal ${x.save?'r-save':'r-sale'}">−${x.pct}%${x.save?' Save the food':''}</span>`:(t.includes('best')?'<span class="pdeal r-best">Best price</span>':'');
-    const pairs=(PAIRS[x.id]||[]).map(id=>byId[id]).map(y=>`<div class="pair"><button type="button" class="pairimg" data-pd="${y.id}" aria-label="${y.n}"><img src="${y.img}" alt="" width="120" height="120"></button><div class="pairtxt"><b class="num">${priceHtml(y)}</b><span>${y.n}</span></div><button type="button" class="pairadd" data-pairadd="${y.id}" aria-label="Add ${y.n}">${S.cart[y.id]?`<span class="num">${S.cart[y.id]}</span>`:'+'}</button></div>`).join('');
+    const pairs=(PAIRS[x.id]||[]).map(id=>byId[id]).map(y=>`<div class="pair"><button type="button" class="pairimg" data-pd="${y.id}" aria-label="${y.n}"><img src="${y.img}" alt="" width="120" height="120"></button><div class="pairtxt"><b class="num">${priceHtml(y)}</b><span>${y.n}</span></div>${S.cart[y.id]?stepper(y.id,S.cart[y.id]):`<button type="button" class="add" data-add="${y.id}" aria-label="Add ${y.n}">+ Add</button>`}</div>`).join('');
     body=`<div class="pdimg"><img src="${x.img}" alt="" width="360" height="360"></div>
     <div class="pdinfo">
       <h2 class="pdname" id="m-title">${x.n}</h2>
@@ -1356,7 +1355,7 @@ document.addEventListener('click',e=>{
   const im=e.target.closest('[data-pdimg]'); if(im && !e.target.closest('button')){ openPd(im.dataset.pdimg); return; }
   const b=e.target.closest('button,a'); if(!b) return;
   const ds=b.dataset;
-  if(b.closest('.pdfoot')){ if(ds.add) change(ds.add,1,true); else if(ds.inc) change(ds.inc,1,true); else if(ds.dec) change(ds.dec,-1); render(); (document.querySelector('.pdfoot [data-inc]')||document.querySelector('.pdfoot [data-add]'))?.focus(); return; }
+  if(b.closest('.modal') && (ds.add||ds.inc||ds.dec)){ const id=ds.add||ds.inc||ds.dec, foot=!!b.closest('.pdfoot'); if(ds.dec) change(id,-1); else change(id,1,true); render(); const sc=foot?'.pdfoot ':'.pairs '; (document.querySelector(`${sc}[data-inc="${id}"]`)||document.querySelector(`${sc}[data-add="${id}"]`))?.focus({preventScroll:true}); return; }
   if(ds.add){ change(ds.add,1,true); render(); snack(ds.add); return; }
   if(ds.inc){ const inCard=!!b.closest('.card'); change(ds.inc,1,inCard); render(); if(inCard) snack(ds.inc); return; }
   if(ds.dec){ change(ds.dec,-1); render(); return; }
@@ -1366,7 +1365,6 @@ document.addEventListener('click',e=>{
   if(ds.go){ S.view=ds.go; S.drawer=false; render(); window.scrollTo(0,0); return; }
   if(ds.fav){ S.favs=S.favs||{}; S.favs[ds.fav]=!S.favs[ds.fav]; render(); toast(S.favs[ds.fav]?'Added to your favourites':'Removed from your favourites'); document.querySelector(`[data-fav="${ds.fav}"]`)?.focus(); return; }
   if(ds.pd){ openPd(ds.pd); return; }
-  if(ds.pairadd){ change(ds.pairadd,1,true); render(); toast(byId[ds.pairadd].n+' added'); return; }
   if(ds.edit){ openModal(ds.edit); return; }
   if(ds.quick){ const q=QUICK[ds.quick]; S.dmode=ds.quick; S.day=q.day; S.slot=q.slot; closeModal(); toast('Delivery time updated'); return; }
   if(ds.info){ openModal(ds.info); S.lastInfo=ds.info; return; }
