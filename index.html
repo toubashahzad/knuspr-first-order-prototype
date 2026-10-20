@@ -443,7 +443,7 @@ const FULL = {tue:['07:00–08:00','18:00–19:00'], wed:['19:00–20:00'], thu:
 let S;
 const HOME={id:'home',label:'Home',name:'Touba Shahzad',street:'Fritz-Werner-Straße 35',zip:'12107',city:'Berlin',note:'3rd floor, ring “Shahzad”'};
 const PAYS=[{k:'card',l:'Visa ending 4242',s:'Expires 08/28',cta:'Pay with Visa ···· 4242'},{k:'apple',l:'Apple Pay',s:'Confirm with Face ID or Touch ID',cta:'Pay with Apple Pay'},{k:'gpay',l:'Google Pay',s:'Confirm on your phone',cta:'Pay with Google Pay'},{k:'paypal',l:'PayPal',s:'You log in to PayPal to confirm',cta:'Pay with PayPal'}];
-function fresh(){ return {cart:{...START}, view:'shop', drawer:false, day:'tue', slot:'06:00–07:00', pay:'card', q:'', addrs:[HOME], addr:'home', contact:{name:'Touba Shahzad', phone:'+49 151 2345 6789'}, modal:null, draft:{}, adding:false, editId:null}; }
+function fresh(){ return {cart:{...START}, view:'shop', drawer:false, day:'tue', slot:null, pay:'card', q:'', addrs:[HOME], addr:'home', contact:{name:'Touba Shahzad', phone:'+49 151 2345 6789'}, modal:null, draft:{}, adding:false, editId:null}; }
 function load(){ try{ const s=JSON.parse(localStorage.getItem('kfo')); if(s&&s.cart){ const f=fresh(); return {...f,...s, contact:(s.contact&&s.contact.phone)?s.contact:f.contact, drawer:false, modal:null, adding:false, editId:null}; } }catch(e){} return fresh(); }
 function save(){ try{ localStorage.setItem('kfo', JSON.stringify({cart:S.cart, view:S.view, day:S.day, slot:S.slot, pay:S.pay, addrs:S.addrs, addr:S.addr, contact:S.contact})); }catch(e){} }
 S = load();
@@ -740,7 +740,7 @@ document.addEventListener('click',e=>{
     case 'modalSave':
       if(S.modal==='addr') S.addr=S.draft.addr;
       if(S.modal==='pay') S.pay=S.draft.pay;
-      if(S.modal==='slot'){ if(S.draft.slot && S.draft.sday){ S.day=S.draft.sday; S.slot=S.draft.slot; } }
+      if(S.modal==='slot'){ if(!S.draft.slot){ toast('Pick a delivery time first'); break; } S.day=S.draft.sday; S.slot=S.draft.slot; }
       { const m=S.modal; closeModal(); toast(m==='addr'?'Delivery address updated':m==='slot'?'Delivery time updated':'Payment method updated'); }
       break;
     case 'snackView': document.getElementById('snack').hidden=true; S.drawer=true; render(); break;
