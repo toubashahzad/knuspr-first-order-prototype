@@ -483,7 +483,7 @@ function costsHtml(t, final){
 function weighedCount(){ return Object.entries(S.cart).filter(([id,q])=>q>0&&byId[id]&&byId[id].w).length; }
 const IC_V='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v8a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2z"/><path d="m9 15 6-6"/><circle cx="9.5" cy="9.5" r=".8"/><circle cx="14.5" cy="14.5" r=".8"/></svg>', IC_R='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h11l-3-3M20 17H9l3 3"/></svg>';
 function infoCards(){ return `<div class="infocards">
-  <div class="infocard"><span class="iic" aria-hidden="true">${IC_V}</span><div><p>Your €20 first-order discount comes off at checkout, once your order is finalised.</p><button type="button" class="ilink" data-info="disc">How the discount works</button></div></div>
+  <div class="infocard"><span class="iic" aria-hidden="true">${IC_V}</span><div><p>Any vouchers and offers you have are applied at checkout, once your order is finalised.</p><button type="button" class="ilink" data-info="disc">Vouchers and offers</button></div></div>
   <div class="infocard"><span class="iic" aria-hidden="true">${IC_R}</span><div><p>If something is out of stock, we suggest a similar product. You can turn it down.</p><button type="button" class="ilink" data-info="repl">How replacements work</button></div></div>
 </div>`; }
 function finalCosts(t, done){
@@ -629,7 +629,7 @@ function modalHtml(){
     save=S.adding?'':'Use this address';
   } else if(m==='disc' || m==='repl'){
     const D = m==='disc'
-      ? {t:'First-order discount', ic:IC_V, h:'We take the €20 off once your order is finalised.', p:'New customers get €20 off a first order of €39 or more. Your cart shows the full price. The discount appears in your checkout summary, before you pay.'}
+      ? {t:'Vouchers and offers', ic:IC_V, h:'We apply your vouchers and offers once your order is finalised.', p:'Your cart shows the full price. At checkout we check which vouchers and offers your order qualifies for, like the €20 first-order discount for new customers, and take them off in your summary before you pay.'}
       : {t:'Replacements', ic:IC_R, h:'If something is out of stock, we suggest a similar product.', p:'You see the replacement on your order before delivery and can turn it down. You only pay for what you keep.'};
     title=D.t;
     body=`<div class="infobig"><span class="infoart" aria-hidden="true">${D.ic.replace('width="24" height="24"','width="56" height="56"')}</span><h3>${D.h}</h3><p>${D.p}</p></div>`;
