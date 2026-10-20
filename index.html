@@ -85,10 +85,11 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .sechead p{margin:0;color:var(--muted);font-size:14px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(184px,1fr));gap:16px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px}
-.pic{background:var(--pic)!important;aspect-ratio:4/3;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:52px;max-width:100%}
+.pic{position:relative;background:#fff;aspect-ratio:1/1;border-radius:12px;display:flex;align-items:center;justify-content:center;max-width:100%;overflow:hidden}
+.pic img{width:88%;height:88%;object-fit:contain}
 .price{font-size:18px;font-weight:700}
 .price small{font-size:12px;font-weight:500;color:var(--muted)}
-.pname{font-weight:600;min-height:42px}
+.pname{font-weight:600;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .unit{color:var(--muted);font-size:13px}
 .tag{align-self:flex-start;font-size:12px;font-weight:600;padding:2px 8px;border-radius:6px;background:var(--tint);color:var(--brand)}
 .add{margin-top:auto;height:40px;border:0;border-radius:10px;background:var(--accent);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px}
@@ -144,7 +145,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .chip{white-space:nowrap;flex-shrink:0;border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600}
 
 .line{display:flex;align-items:center;gap:12px}
-.thumb{background:var(--pic)!important;width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.thumb{background:#fff!important;border:1px solid var(--line);overflow:hidden;width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
 .line .info{flex:1;min-width:0}
 .line .info b{display:block;font-weight:600;font-size:14px}
 .line .info small{color:var(--muted);font-size:12.5px}
@@ -399,6 +400,24 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .wopt{cursor:pointer}.wopt:hover{background:var(--soft)}
 .wopt.on{background:var(--tint2)}
 .rdot{width:20px;height:20px;border-radius:10px;border:1.5px solid var(--muted);flex-shrink:0}
+.thumb img{width:86%;height:86%;object-fit:contain}
+.fav{position:absolute;top:8px;right:8px;width:36px;height:36px;border-radius:18px;border:0;background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);box-shadow:0 1px 4px rgba(0,0,0,.12);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.fav svg{fill:none;stroke:#1d1b19;stroke-width:1.9}
+.fav:hover{background:rgba(255,255,255,.92)}
+.fav.on svg{fill:#e5484d;stroke:#e5484d}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:-2px}
+.pt{font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;line-height:1.2}
+.t-bio{background:#e3f4e1;color:#1f6b2a}
+.t-own{background:var(--tint);color:var(--brand)}
+.t-best{background:#e8eefb;color:#2c4fa3}
+.t-local{background:#f1ecfa;color:#5b3c99}
+.t-dep{background:var(--soft);color:var(--muted)}
+.t-sale{background:#e5484d;color:#fff}
+.price .sale{color:#d1343a}
+.price .oldp{font-size:13px;font-weight:500;color:var(--muted);margin-left:4px}
+:root[data-theme="dark"] .t-bio{background:#1f3324;color:#8fd49a}
+:root[data-theme="dark"] .t-best{background:#1e2a44;color:#9db7f0}
+:root[data-theme="dark"] .t-local{background:#2c2440;color:#c5b2ef}
 </style>
 </head>
 <body>
@@ -429,25 +448,30 @@ h1,h2,h3{margin:0;text-wrap:balance}
 <script>
 const MIN = 39, WELCOME = 20, BUFFER = 0.15;
 const P = [
- {id:'ban', n:'Bananas', u:'ca. 850 g · €1.79/kg', p:1.52, w:true, e:'🍌', c:'#fbf1cf'},
- {id:'cuc', n:'Cucumber', u:'1 pc', p:0.59, e:'🥒', c:'#e3f0dc'},
- {id:'app', n:'Pink Lady apples', u:'ca. 1 kg · €3.59/kg', p:3.59, w:true, e:'🍎', c:'#f8e1de'},
- {id:'pep', n:'Red peppers', u:'ca. 460 g · €2.99/kg', p:1.38, w:true, e:'🫑', c:'#f8e1de'},
- {id:'mil', n:'Fresh whole milk 3.5%', u:'1 l', p:1.29, e:'🥛', c:'#e6eef6'},
- {id:'egg', n:'Free-range eggs', u:'10 pc', p:3.49, e:'🥚', c:'#f6efe3'},
- {id:'bre', n:'Sourdough bread', u:'750 g', p:3.99, e:'🍞', c:'#f4e8d8'},
- {id:'gou', n:'Gouda, sliced', u:'400 g', p:3.79, e:'🧀', c:'#fbf1cf'},
- {id:'chi', n:'Chicken breast fillet', u:'ca. 500 g · €13.98/kg', p:6.99, w:true, e:'🍗', c:'#f8e1de'},
- {id:'yog', n:'Greek yogurt 10%', u:'1 kg', p:3.29, e:'🥣', c:'#e6eef6'},
- {id:'pas', n:'Knuspr organic penne', u:'500 g', p:1.49, e:'🍝', c:'#f6efe3', tag:'Own brand'},
- {id:'tom', n:'Tomato passata', u:'700 g', p:1.19, e:'🍅', c:'#f8e1de'},
- {id:'cof', n:'Coffee beans, crema', u:'1 kg', p:13.99, e:'☕', c:'#efe4da'},
- {id:'wat', n:'Sparkling water', u:'6 × 1.5 l', p:3.54, dep:1.50, e:'💧', c:'#e6eef6', tag:'+ €1.50 deposit'},
- {id:'avo', n:'Avocado, ready to eat', u:'2 pc', p:2.49, e:'🥑', c:'#e3f0dc'},
- {id:'cho', n:'Dark chocolate 70%', u:'100 g', p:1.89, e:'🍫', c:'#efe4da'},
+ {id:'ban', n:'BIO banana, 1 pc', u:'ca. 180 g', p:0.36, w:true, tags:['bio']},
+ {id:'cuc', n:'Cucumber, 1 pc', u:'1 pc', p:0.99, tags:['best']},
+ {id:'app', n:'Pink Lady® apple, 1 pc', u:'ca. 160 g', p:0.60, w:true},
+ {id:'pep', n:'Red pepper, 1 pc', u:'ca. 210 g', p:0.62, w:true},
+ {id:'mil', n:'Miil fresh whole milk 3.5%', u:'1 l', p:0.95, tags:['own','best']},
+ {id:'egg', n:'Löwendorfer BIO eggs, 10 pc', u:'10 pc', p:5.49, tags:['bio']},
+ {id:'bre', n:'Märkisches Landbrot BIO carrot-walnut bread', u:'750 g', p:3.81, old:6.59, pct:42, save:true, tags:['bio','local']},
+ {id:'gou', n:'Miil Gouda slices 48%', u:'150 g', p:0.99, tags:['own','best']},
+ {id:'chi', n:'Chicken breast fillet, barbecue', u:'ca. 490 g', p:5.16, w:true},
+ {id:'yog', n:'Miil BIO natural yoghurt 3.8%', u:'400 g', p:0.99, tags:['bio','own']},
+ {id:'pas', n:'Kitchin BIO wholegrain penne', u:'500 g', p:0.85, tags:['bio','own']},
+ {id:'tom', n:'Kitchin passata', u:'500 g', p:0.65, tags:['own','best']},
+ {id:'cof', n:'Lavazza Caffè Crema Classico, beans', u:'1 kg', p:15.99, old:19.99, pct:20},
+ {id:'wat', n:'Bad Liebenwerda sparkling water', u:'6 × 1.5 l', p:5.59, dep:1.50, tags:['dep']},
+ {id:'avo', n:'Avocado ready to eat, 2 pc', u:'2 pc', p:3.29},
+ {id:'cho', n:'Alnatura BIO dark chocolate 70%', u:'100 g', p:2.39, tags:['bio']},
 ];
+P.forEach(x=>{ x.img='img/'+x.id+'.jpg'; x.e=''; });
+const TAGS={bio:['BIO','t-bio'],own:['Own brand','t-own'],best:['Best price','t-best'],local:['Local','t-local'],dep:['+ €1.50 deposit','t-dep']};
+function chipsHtml(x){ const c=[]; if(x.pct) c.push(`<span class="pt t-sale">−${x.pct}%${x.save?' · Save the food':''}</span>`); (x.tags||[]).forEach(t=>c.push(`<span class="pt ${TAGS[t][1]}">${TAGS[t][0]}</span>`)); return c.length?`<div class="chips">${c.join('')}</div>`:''; }
+function picHtml(x){ return `<div class="pic"><img src="${x.img}" alt="" loading="lazy" width="360" height="360"><button type="button" class="fav ${S.favs&&S.favs[x.id]?'on':''}" data-fav="${x.id}" aria-pressed="${!!(S.favs&&S.favs[x.id])}" aria-label="${S.favs&&S.favs[x.id]?'Remove from':'Add to'} favourites: ${x.n}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.2-9.4C1.6 7.6 4 4.5 7.3 4.5c2 0 3.6 1.1 4.7 2.7 1.1-1.6 2.7-2.7 4.7-2.7 3.3 0 5.7 3.1 4.5 6.6-1.7 4.8-9.2 9.4-9.2 9.4z"/></svg></button></div>`; }
+function cardHtml(x){ const n=S.cart[x.id]||0; return `<article class="card">${picHtml(x)}<div class="price num">${priceHtml(x)}</div><div class="pname">${x.n}</div>${chipsHtml(x)}<div class="unit">${x.u}</div>${n?stepper(x.id,n):`<button type="button" class="add" data-add="${x.id}" aria-label="Add ${x.n}">+ Add</button>`}</article>`; }
 const byId = Object.fromEntries(P.map(x=>[x.id,x]));
-const START = {ban:1,cuc:1,mil:2,egg:1,bre:1,gou:1,chi:1,yog:1,pas:2};
+const START = {ban:1,cuc:1,mil:2,egg:1,bre:1,gou:1,chi:1,yog:1,pas:2,tom:1,cho:1,pep:1,app:1,avo:1};
 const DAYS = [
   {k:'today', label:'Today', date:'Tue 20 Oct'},
   {k:'tue', label:'Tomorrow', date:'Wed 21 Oct'},
@@ -463,7 +487,7 @@ const PAYS=[{k:'card',l:'Visa ending 4242',s:'Expires 08/28',cta:'Pay with Visa 
 function cur(){ const c=(S.contacts||[]).find(x=>x.id===S.cid)||(S.contacts||[])[0]||{first:'',last:'',phone:''}; return {...c, name:[c.first,c.last].filter(Boolean).join(' ')}; }
 function fresh(){ return {cart:{...START}, view:'shop', drawer:false, day:'today', slot:null, dmode:null, pay:'card', q:'', addrs:[HOME], addr:'home', contacts:[{id:'me',first:'Touba',last:'Shahzad',phone:'+49 151 2345 6789'}], cid:'me', modal:null, draft:{}, adding:false, editId:null}; }
 function load(){ try{ const s=JSON.parse(localStorage.getItem('kfo')); if(s&&s.cart){ const f=fresh(); return {...f,...s, contacts:(s.contacts&&s.contacts.length)?s.contacts:f.contacts, cid:(s.contacts&&s.cid)?s.cid:'me', dmode:s.dmode||(s.slot?'custom':null), drawer:false, modal:null, adding:false, editId:null}; } }catch(e){} return fresh(); }
-function save(){ try{ localStorage.setItem('kfo', JSON.stringify({cart:S.cart, view:S.view, day:S.day, slot:S.slot, dmode:S.dmode, pay:S.pay, addrs:S.addrs, addr:S.addr, contacts:S.contacts, cid:S.cid})); }catch(e){} }
+function save(){ try{ localStorage.setItem('kfo', JSON.stringify({favs:S.favs, cart:S.cart, view:S.view, day:S.day, slot:S.slot, dmode:S.dmode, pay:S.pay, addrs:S.addrs, addr:S.addr, contacts:S.contacts, cid:S.cid})); }catch(e){} }
 S = load();
 
 const eur = v => '€' + v.toFixed(2);
@@ -479,8 +503,8 @@ function totals(){
   return {items, weighed, dep, count, reached, off, total, hold, cartTotal, toGo: Math.max(0, Math.round((MIN-items)*100)/100)};
 }
 
-function stepper(id,q,cls=''){ return `<div class="step ${cls}"><button type="button" data-dec="${id}" aria-label="One less ${byId[id].n}">−</button><span class="num">${q}</span><button type="button" data-inc="${id}" aria-label="One more ${byId[id].n}">+</button></div>`; }
-function priceHtml(x){ return `${x.w?'<small>ca. </small>':''}${eur(x.p)}`; }
+function stepper(id,q,cls=''){ return `<div class="step ${cls}"><button type="button" data-dec="${id}" aria-label="${q===1?'Remove':'One less'} ${byId[id].n}">${q===1?'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>':'−'}</button><span class="num">${q}</span><button type="button" data-inc="${id}" aria-label="One more ${byId[id].n}">+</button></div>`; }
+function priceHtml(x){ return x.old?`<span class="sale">${eur(x.p)}</span> <s class="oldp">${eur(x.old)}</s>`:`${x.w?'<small>ca. </small>':''}${eur(x.p)}`; }
 
 function goalHtml(t, withFill){
   const pct = Math.min(100, t.items/MIN*100);
@@ -490,7 +514,7 @@ function goalHtml(t, withFill){
 function fillHtml(t){
   if(t.reached) return '';
   const fillers = P.filter(x=>!S.cart[x.id]).sort((a,b)=>Math.abs(a.p-t.toGo)-Math.abs(b.p-t.toGo)).slice(0,4);
-  return `<div class="fill"><span class="lbl">Reach ${eur(MIN)}:</span>${fillers.map(x=>`<button type="button" class="chip" data-inc="${x.id}">${x.e} ${x.n} ${eur(x.p)}</button>`).join('')}</div>`;
+  return `<div class="fill"><span class="lbl">Reach ${eur(MIN)}:</span>${fillers.map(x=>`<button type="button" class="chip" data-inc="${x.id}">${x.n} ${eur(x.p)}</button>`).join('')}</div>`;
 }
 function ticketHtml(t, atCheckout){
   if(atCheckout && t.reached) return `<div class="ticket on"><span class="val">€20<small>off</small></span><span class="txt"><b>First-order discount applied</b><span>€20 off for new customers, code WELCOME20</span></span></div>`;
@@ -547,7 +571,7 @@ function renderShop(){
   const q=S.q.trim().toLowerCase();
   const list=P.filter(x=>!q||x.n.toLowerCase().includes(q));
   return `<div class="sechead"><h1>Popular this week</h1><p>Tap + to add. Open the cart any time from the top right.</p></div>
-  <div class="grid">${list.map(x=>{const n=S.cart[x.id]||0; return `<article class="card"><div class="pic" style="background:${x.c}" aria-hidden="true">${x.e}</div>${x.tag?`<span class="tag">${x.tag}</span>`:''}<div class="price num">${priceHtml(x)}</div><div class="pname">${x.n}</div><div class="unit">${x.u}</div>${n?stepper(x.id,n):`<button type="button" class="add" data-add="${x.id}" aria-label="Add ${x.n}">+ Add</button>`}</article>`}).join('')}</div>
+  <div class="grid">${list.map(cardHtml).join('')}</div>
   ${list.length?'':'<p>No products match that search.</p>'}`;
 }
 
@@ -555,7 +579,7 @@ function renderDrawer(t){
   const lines = Object.entries(S.cart).filter(([,q])=>q>0);
   document.getElementById('toCartPage').innerHTML = `<span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M3 4h2l2.5 11h11L21 7H7"/></svg>${t.count?`<span class="badge num ${t.reached?'ok':''}">${t.count}</span>`:''}</span><span><b class="num">${eur(t.items)}</b><small>Open full cart</small></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>`;
   document.getElementById('dbody').innerHTML = lines.length ? `${goalHtml(t)}
-    <div class="lines">${lines.map(([id,q])=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true">${x.e}</span><span class="info"><b>${x.n}</b><small>${x.u}</small></span>${stepper(id,q,'sm')}<span class="amt num">${eur(x.p*q)}</span></div>`}).join('')}</div>
+    <div class="lines">${lines.map(([id,q])=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true"><img src="${x.img}" alt="" width="96" height="96"></span><span class="info"><b>${x.n}</b><small>${x.u}</small></span>${stepper(id,q,'sm')}<span class="amt num">${eur(x.p*q)}</span></div>`}).join('')}</div>
     ${fillHtml(t)}` : `<div class="goal"><div class="row"><b>Your cart is empty</b></div></div>`;
   document.getElementById('dfoot').innerHTML = `${lines.length?`<div class="dtotal num"><b>Total</b><b class="amt">${t.weighed?`<span class="ca">ca.</span>`:''}${eur(t.cartTotal)}</b></div>
     ${t.reached?'<p class="dmsg g">✓ Free delivery and your €20 first-order discount at checkout</p>':''}
@@ -572,7 +596,7 @@ function pbannerHtml(t){
 function recHtml(){
   const recs=P.filter(x=>!S.cart[x.id]).slice(0,4);
   if(!recs.length) return '';
-  return `<div class="rec"><h2>Recommended for you</h2><div class="grid">${recs.map(x=>`<article class="card"><div class="pic" aria-hidden="true">${x.e}</div><div class="price num">${priceHtml(x)}</div><div class="pname">${x.n}</div><div class="unit">${x.u}</div><button type="button" class="add" data-add="${x.id}" aria-label="Add ${x.n}">+ Add</button></article>`).join('')}</div></div>`;
+  return `<div class="rec"><h2>Recommended for you</h2><div class="grid">${recs.map(cardHtml).join('')}</div></div>`;
 }
 function renderCart(t){
   const lines = Object.entries(S.cart).filter(([,q])=>q>0);
@@ -580,7 +604,7 @@ function renderCart(t){
   <div class="cartpage">
     <section aria-labelledby="h-cart"><div class="sechead"><h1 id="h-cart">Your cart</h1><p class="num">${t.count} items</p></div>
       ${t.count&&!t.reached?`<div class="cgoal">${goalHtml(t)}</div>`:''}
-      ${lines.length?`<div class="lines">${lines.map(([id,q])=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true">${x.e}</span><span class="info"><b>${x.n}</b><small>${x.u}</small><br><button type="button" class="rm" data-rm="${id}">Remove</button></span>${stepper(id,q,'sm')}<span class="amt num">${eur(x.p*q)}</span></div>`}).join('')}</div>
+      ${lines.length?`<div class="lines">${lines.map(([id,q])=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true"><img src="${x.img}" alt="" width="96" height="96"></span><span class="info"><b>${x.n}</b><small>${x.u}</small><br><button type="button" class="rm" data-rm="${id}">Remove</button></span>${stepper(id,q,'sm')}<span class="amt num">${eur(x.p*q)}</span></div>`}).join('')}</div>
       <div style="margin-top:16px">${fillHtml(t)}</div>
       <div class="cartacts"><button type="button" id="emptyCart">Empty the cart</button><button type="button" data-go="shop">+ Add more items</button></div>`:'<p>Your cart is empty.</p>'}
       ${recHtml()}
@@ -626,7 +650,7 @@ function renderCheckout(t){
       <section aria-labelledby="h-items"><div class="shrow"><h2 class="sh" id="h-items">Your items</h2><span class="shnote num">${t.count} items, still editable</span></div>
         <div class="sec">
         ${t.reached?'':`<div class="warn">You're ${eur(t.toGo)} under the €39 minimum. Add something to keep your slot and the €20 first-order discount.</div>`}
-        <div class="lines">${lines.map(([id,q])=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true">${x.e}</span><span class="info"><b>${x.n}</b><small>${x.u}</small><br><button type="button" class="rm" data-rm="${id}">Remove</button></span>${stepper(id,q,'sm')}<span class="amt num">${eur(x.p*q)}</span></div>`}).join('')}</div>
+        <div class="lines">${lines.map(([id,q])=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true"><img src="${x.img}" alt="" width="96" height="96"></span><span class="info"><b>${x.n}</b><small>${x.u}</small><br><button type="button" class="rm" data-rm="${id}">Remove</button></span>${stepper(id,q,'sm')}<span class="amt num">${eur(x.p*q)}</span></div>`}).join('')}</div>
         <button type="button" class="ghost" data-go="shop" style="width:auto;padding:0 16px;align-self:flex-start">+ Add more items</button></div></section>
       <section aria-labelledby="h-pay"><h2 class="sh" id="h-pay">Payment</h2>
         <div class="sec rows">
@@ -765,6 +789,7 @@ document.addEventListener('click',e=>{
   if(ds.day){ S.day=ds.day; if((FULL[S.day]||[]).includes(S.slot)) S.slot=null; render(); return; }
   if(ds.slot){ S.slot=ds.slot; render(); return; }
   if(ds.go){ S.view=ds.go; S.drawer=false; render(); window.scrollTo(0,0); return; }
+  if(ds.fav){ S.favs=S.favs||{}; S.favs[ds.fav]=!S.favs[ds.fav]; render(); toast(S.favs[ds.fav]?'Added to your favourites':'Removed from your favourites'); document.querySelector(`[data-fav="${ds.fav}"]`)?.focus(); return; }
   if(ds.edit){ openModal(ds.edit); return; }
   if(ds.quick){ const q=QUICK[ds.quick]; S.dmode=ds.quick; S.day=q.day; S.slot=q.slot; closeModal(); toast('Delivery time updated'); return; }
   if(ds.info){ openModal(ds.info); S.lastInfo=ds.info; return; }
