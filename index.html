@@ -1094,7 +1094,7 @@ function costsHtml(t, final){
       ? (t.reached?`<div><span>First-order discount</span><span class="off">−${eur(t.off)}</span></div>`:'')
       : `<div class="pending"><span>First-order discount</span><span>${t.reached?'Applied at checkout':'Unlocks at €39'}</span></div>`}
     <div class="total"><span>${final?'You pay':'Total'}</span><span>${ca}${eur(final?t.total:t.cartTotal)}</span></div>
-    ${t.weighed&&!final?`<p class="canote">ca. because ${weighedCount()} ${weighedCount()===1?'item is':'items are'} priced by weight. You pay the exact amount after packing.</p>`:''}
+    ${t.weighed&&!final?`<p class="canote">ca. because some items are priced by weight. You pay the exact amount after packing.</p>`:''}
   </div>`;
 }
 function weighedCount(){ return Object.entries(S.cart).filter(([id,q])=>q>0&&byId[id]&&byId[id].w).length; }
@@ -1148,7 +1148,7 @@ function renderDrawer(t){
     ${fillHtml(t)}` : `<div class="goal"><div class="row"><b>Your cart is empty</b></div></div>`;
   document.getElementById('dfoot').innerHTML = `${lines.length?`<div class="dtotal num"><b>Total</b><b class="amt">${t.weighed?`<span class="ca">ca.</span>`:''}${eur(t.cartTotal)}</b></div>
     ${t.reached?'<p class="dmsg g">✓ Free delivery and your €20 first-order discount at checkout</p>':''}
-    ${t.weighed?'<p class="dmsg">ca. because weighed items get their exact price after packing.</p>':''}`:''}
+    ${t.weighed?'<p class="dmsg">ca. because some items are priced by weight. You pay the exact amount after packing.</p>':''}`:''}
     ${t.reached?'<button type="button" class="cta" id="toCheckout">Go to checkout</button>':`<button type="button" class="cta" id="toCheckout" disabled>Add ${eur(t.toGo)} more to check out</button>`}`;
 }
 
