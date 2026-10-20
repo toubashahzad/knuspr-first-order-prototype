@@ -430,6 +430,11 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .a-gf{background:#b7791f}
 .info{font-size:12px;font-weight:600;color:var(--muted);margin-left:2px}
 .info + .info::before{content:"·";margin-right:6px}
+.attrs{position:absolute;left:6px;bottom:6px;display:flex;gap:6px;z-index:1}
+.attrs .attr{width:32px;height:32px;border-radius:16px;box-shadow:0 0 0 2px #fff}
+.attrs .attr svg{width:18px;height:18px}
+.attrs .abio{font-size:10.5px}
+.unit{margin-top:-4px}
 </style>
 </head>
 <body>
@@ -459,6 +464,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
 
 <script>
 const MIN = 39, WELCOME = 20, BUFFER = 0.15;
+const eur = v => '€' + v.toFixed(2);
 const P = [
  {id:'ban', n:'BIO banana, 1 pc', u:'ca. 180 g', p:0.36, w:true, tags:['bio']},
  {id:'cuc', n:'Cucumber, 1 pc', u:'1 pc', p:0.99, tags:['best']},
@@ -477,20 +483,25 @@ const P = [
  {id:'avo', n:'Avocado ready to eat, 2 pc', u:'2 pc', p:3.29, tags:['vegan','gf']},
  {id:'cho', n:'Alnatura BIO dark chocolate 70%', u:'100 g', p:2.39, tags:['bio','vegan']},
 ];
-P.forEach(x=>{ x.img='img/'+x.id+'.jpg'; x.e=''; });
+const QTY={ban:[0.18,'kg'],cuc:[1,'pc'],app:[0.16,'kg'],pep:[0.21,'kg'],mil:[1,'l'],egg:[10,'pc'],bre:[0.75,'kg'],gou:[0.15,'kg'],chi:[0.49,'kg'],yog:[0.4,'kg'],pas:[0.5,'kg'],tom:[0.5,'kg'],cof:[1,'kg'],wat:[9,'l'],avo:[2,'pc'],cho:[0.1,'kg']};
+P.forEach(x=>{ x.img='img/'+x.id+'.jpg'; x.e=''; const [a,u]=QTY[x.id]; const per=x.p/a;
+  const amt = u==='pc' ? (a===1?'1 piece':a+' pieces') : u==='l' ? (x.id==='wat'?'6 × 1.5 l':a+' l') : (a<1?Math.round(a*1000)+' g':a+' kg');
+  const base = u==='pc' ? (a>1?` (1 piece = ${eur(per)})`:'') : ` (1 ${u} = ${eur(per)})`;
+  x.u = (x.w?`1 piece approx. ${amt}`:amt).replace(/ (?=[gl]\b|kg\b)/g,'\u00a0')+base.replace(/ /g,'\u00a0').replace(/^\u00a0/,' '); });
 const ATTR={
  bio:['BIO','a-bio','<span class="abio">BIO</span>'],
  vegan:['Vegan','a-vegan','<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21c.5 -4.5 2.5 -8 7 -10"/><path d="M9 18c6.218 0 10.5 -3.288 11 -12v-2h-4.014c-9 0 -11.986 4 -12 9c0 1 0 3 2 5h3z"/></svg>'],
  gf:['Gluten-free','a-gf','<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M12 21.5v-3.75"/><path d="M5.916 9.49l-.43 1.604c-.712 2.659 .866 5.392 3.524 6.104c.997 .268 1.994 .535 2.99 .802v-3.44c-.164 -2.105 -1.637 -3.879 -3.677 -4.426l-2.407 -.644z"/><path d="M10.249 4.251c.007 -.007 .014 -.014 .021 -.021l1.73 -1.73"/><path d="M10.27 11.15c-.589 -.589 -1.017 -1.318 -1.246 -2.118"/><path d="M14.988 8.988c.229 -.834 .234 -1.713 .013 -2.549c-.221 -.836 -.659 -1.598 -1.271 -2.209l-1.73 -1.73"/><path d="M16.038 10.037l2.046 -.547l.431 1.604c.142 .53 .193 1.063 .162 1.583"/><path d="M16.506 16.505c-.45 .307 -.959 .544 -1.516 .694c-.997 .268 -1.994 .535 -2.99 .801v-3.44c.055 -.708 .259 -1.379 .582 -1.978"/></svg>']};
 const INFO={own:'Own brand',local:'Local',dep:'+ €1.50 deposit'};
-function chipsHtml(x){ const t=x.tags||[]; const a=t.filter(k=>ATTR[k]).map(k=>`<span class="attr ${ATTR[k][1]}" role="img" aria-label="${ATTR[k][0]}" title="${ATTR[k][0]}">${ATTR[k][2]}</span>`); const i=t.filter(k=>INFO[k]).map(k=>`<span class="info">${INFO[k]}</span>`); return (a.length||i.length)?`<div class="chips">${a.join('')}${i.join('')}</div>`:''; }
+function attrsHtml(x){ const a=(x.tags||[]).filter(k=>ATTR[k]).map(k=>`<span class="attr ${ATTR[k][1]}" role="img" aria-label="${ATTR[k][0]}" title="${ATTR[k][0]}">${ATTR[k][2]}</span>`); return a.length?`<div class="attrs">${a.join('')}</div>`:''; }
+function chipsHtml(x){ const i=(x.tags||[]).filter(k=>INFO[k]).map(k=>`<span class="info">${INFO[k]}</span>`); return i.length?`<div class="chips">${i.join('')}</div>`:''; }
 function ribbonHtml(x){ const t=x.tags||[];
   if(x.pct&&x.save) return `<span class="ribbon r-save">−${x.pct}% Save the food</span>`;
   if(x.pct) return `<span class="ribbon r-sale">−${x.pct}%</span>`;
   if(t.includes('best')) return `<span class="ribbon r-best"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M18 13l-6 6M6 13l6 6"/></svg>Best price</span>`;
   return ''; }
-function picHtml(x){ return `<div class="pic"><img src="${x.img}" alt="" loading="lazy" width="360" height="360"><button type="button" class="fav ${S.favs&&S.favs[x.id]?'on':''}" data-fav="${x.id}" aria-pressed="${!!(S.favs&&S.favs[x.id])}" aria-label="${S.favs&&S.favs[x.id]?'Remove from':'Add to'} favourites: ${x.n}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.2-9.4C1.6 7.6 4 4.5 7.3 4.5c2 0 3.6 1.1 4.7 2.7 1.1-1.6 2.7-2.7 4.7-2.7 3.3 0 5.7 3.1 4.5 6.6-1.7 4.8-9.2 9.4-9.2 9.4z"/></svg></button></div>`; }
-function cardHtml(x){ const n=S.cart[x.id]||0; return `<article class="card">${ribbonHtml(x)}${picHtml(x)}<div class="price num">${priceHtml(x)}</div><div class="pname">${x.n}</div>${chipsHtml(x)}<div class="unit">${x.u}</div>${n?stepper(x.id,n):`<button type="button" class="add" data-add="${x.id}" aria-label="Add ${x.n}">+ Add</button>`}</article>`; }
+function picHtml(x){ return `<div class="pic"><img src="${x.img}" alt="" loading="lazy" width="360" height="360"><button type="button" class="fav ${S.favs&&S.favs[x.id]?'on':''}" data-fav="${x.id}" aria-pressed="${!!(S.favs&&S.favs[x.id])}" aria-label="${S.favs&&S.favs[x.id]?'Remove from':'Add to'} favourites: ${x.n}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.2-9.4C1.6 7.6 4 4.5 7.3 4.5c2 0 3.6 1.1 4.7 2.7 1.1-1.6 2.7-2.7 4.7-2.7 3.3 0 5.7 3.1 4.5 6.6-1.7 4.8-9.2 9.4-9.2 9.4z"/></svg></button>${attrsHtml(x)}</div>`; }
+function cardHtml(x){ const n=S.cart[x.id]||0; return `<article class="card">${ribbonHtml(x)}${picHtml(x)}<div class="price num">${priceHtml(x)}</div><div class="pname">${x.n}</div><div class="unit">${x.u}</div>${chipsHtml(x)}${n?stepper(x.id,n):`<button type="button" class="add" data-add="${x.id}" aria-label="Add ${x.n}">+ Add</button>`}</article>`; }
 const byId = Object.fromEntries(P.map(x=>[x.id,x]));
 const START = {ban:1,cuc:1,mil:2,egg:1,bre:1,gou:1,chi:1,yog:1,pas:2,tom:1,cho:1,pep:1,app:1,avo:1};
 const DAYS = [
@@ -511,7 +522,6 @@ function load(){ try{ const s=JSON.parse(localStorage.getItem('kfo')); if(s&&s.c
 function save(){ try{ localStorage.setItem('kfo', JSON.stringify({favs:S.favs, cart:S.cart, view:S.view, day:S.day, slot:S.slot, dmode:S.dmode, pay:S.pay, addrs:S.addrs, addr:S.addr, contacts:S.contacts, cid:S.cid})); }catch(e){} }
 S = load();
 
-const eur = v => '€' + v.toFixed(2);
 function totals(){
   let items=0, weighed=0, dep=0, count=0;
   for(const [id,q] of Object.entries(S.cart)){ const x=byId[id]; if(!x||!q) continue; items+=x.p*q; count+=q; if(x.w) weighed+=x.p*q; if(x.dep) dep+=x.dep*q; }
