@@ -456,7 +456,7 @@ function ticketHtml(t, atCheckout){
 function costsHtml(t, final){
   const ca = t.weighed?'ca. ':'';
   return `<div class="costs num">
-    <div><span>Items (${t.count})</span><span>${ca}${eur(t.items)}</span></div>
+    <div><span>Items (${t.count})</span><span>${eur(t.items)}</span></div>
     ${t.dep?`<div><span>Bottle deposit</span><span>${eur(t.dep)}</span></div>`:''}
     <div><span>Delivery</span><span class="free">Free, first order</span></div>
     ${final
@@ -509,7 +509,7 @@ function renderDrawer(t){
   const lines = Object.entries(S.cart).filter(([,q])=>q>0);
   document.getElementById('toCartPage').innerHTML = `<span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M3 4h2l2.5 11h11L21 7H7"/></svg>${t.count?`<span class="badge num ${t.reached?'ok':''}">${t.count}</span>`:''}</span><span><b class="num">${eur(t.items)}</b><small>Open full cart</small></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>`;
   document.getElementById('dbody').innerHTML = lines.length ? `${goalHtml(t)}
-    <div class="lines">${lines.map(([id,q])=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true">${x.e}</span><span class="info"><b>${x.n}</b><small>${x.u}</small></span>${stepper(id,q,'sm')}<span class="amt num">${x.w?'ca. ':''}${eur(x.p*q)}</span></div>`}).join('')}</div>
+    <div class="lines">${lines.map(([id,q])=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true">${x.e}</span><span class="info"><b>${x.n}</b><small>${x.u}</small></span>${stepper(id,q,'sm')}<span class="amt num">${eur(x.p*q)}</span></div>`}).join('')}</div>
     ${fillHtml(t)}` : `<div class="goal"><div class="row"><b>Your cart is empty</b></div></div>`;
   document.getElementById('dfoot').innerHTML = `${lines.length?`<div class="dtotal num"><b>Total</b><b class="amt">${t.weighed?`<span class="ca">ca.</span>`:''}${eur(t.cartTotal)}</b></div>
     ${t.reached?'<p class="dmsg g">✓ Free delivery and your €20 first-order discount at checkout</p>':''}
@@ -527,7 +527,7 @@ function renderCart(t){
   return `<button type="button" class="back" data-go="shop">← Back to shopping</button>
   <div class="cartpage">
     <section aria-labelledby="h-cart"><div class="sechead"><h1 id="h-cart">Your cart</h1><p class="num">${t.count} items</p></div>
-      ${lines.length?`<div class="lines">${lines.map(([id,q])=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true">${x.e}</span><span class="info"><b>${x.n}</b><small>${x.u}</small><br><button type="button" class="rm" data-rm="${id}">Remove</button></span>${stepper(id,q,'sm')}<span class="amt num">${x.w?'ca. ':''}${eur(x.p*q)}</span></div>`}).join('')}</div>
+      ${lines.length?`<div class="lines">${lines.map(([id,q])=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true">${x.e}</span><span class="info"><b>${x.n}</b><small>${x.u}</small><br><button type="button" class="rm" data-rm="${id}">Remove</button></span>${stepper(id,q,'sm')}<span class="amt num">${eur(x.p*q)}</span></div>`}).join('')}</div>
       <div style="margin-top:16px">${fillHtml(t)}</div>
       <div class="cartacts"><button type="button" id="emptyCart">Empty the cart</button><button type="button" data-go="shop">+ Add more items</button></div>`:'<p>Your cart is empty.</p>'}
       ${recHtml()}
@@ -567,7 +567,7 @@ function renderCheckout(t){
       <section aria-labelledby="h-items"><div class="shrow"><h2 class="sh" id="h-items">Your items</h2><span class="shnote num">${t.count} items, still editable</span></div>
         <div class="sec">
         ${t.reached?'':`<div class="warn">You're ${eur(t.toGo)} under the €39 minimum. Add something to keep your slot and the €20 first-order discount.</div>`}
-        <div class="lines">${lines.map(([id,q])=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true">${x.e}</span><span class="info"><b>${x.n}</b><small>${x.u}</small><br><button type="button" class="rm" data-rm="${id}">Remove</button></span>${stepper(id,q,'sm')}<span class="amt num">${x.w?'ca. ':''}${eur(x.p*q)}</span></div>`}).join('')}</div>
+        <div class="lines">${lines.map(([id,q])=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true">${x.e}</span><span class="info"><b>${x.n}</b><small>${x.u}</small><br><button type="button" class="rm" data-rm="${id}">Remove</button></span>${stepper(id,q,'sm')}<span class="amt num">${eur(x.p*q)}</span></div>`}).join('')}</div>
         <button type="button" class="ghost" data-go="shop" style="width:auto;padding:0 16px;align-self:flex-start">+ Add more items</button></div></section>
       <section aria-labelledby="h-pay"><h2 class="sh" id="h-pay">Payment</h2>
         <div class="sec rows">
