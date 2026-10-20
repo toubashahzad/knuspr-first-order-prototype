@@ -1077,12 +1077,12 @@ const HOME={id:'home',label:'Home',name:'Touba Shahzad',street:'Fritz-Werner-Str
 const PAYS=[{k:'apple',l:'Apple Pay',s:'Confirm with Face ID or Touch ID'},{k:'gpay',l:'Google Pay',s:'Confirm on your phone'},{k:'paypal',l:'PayPal',s:'You log in to PayPal to confirm'},{k:'card',l:'Credit or debit card',s:'Visa, Mastercard, American Express'}];
 function cur(){ const c=(S.contacts||[]).find(x=>x.id===S.cid)||(S.contacts||[])[0]||{first:'',last:'',phone:''}; return {...c, name:[c.first,c.last].filter(Boolean).join(' ')}; }
 function fresh(){ return {cart:{...START}, view:'shop', drawer:false, day:'today', slot:null, dmode:null, pay:'apple', q:'', card:{}, addrs:[], addr:null, zip:null, contacts:[], cid:null, modal:'pc', pcStep:'ask', draft:{}, adding:false, editId:null}; }
-function load(){ try{ const s=JSON.parse(localStorage.getItem('kfo')); if(s&&s.cart){ const f=fresh(); return {...f,...s, contacts:s.contacts||[], cid:s.cid||null, card:{}, dmode:s.dmode||(s.slot?'custom':null), drawer:false, modal:s.zip?null:'pc', pcStep:'ask', adding:false, editId:null}; } }catch(e){} return fresh(); }
+function load(){ try{ const s=JSON.parse(localStorage.getItem('kfo2')); if(s&&s.cart){ const f=fresh(); return {...f,...s, contacts:s.contacts||[], cid:s.cid||null, card:{}, dmode:s.dmode||(s.slot?'custom':null), drawer:false, modal:s.zip?null:'pc', pcStep:'ask', adding:false, editId:null}; } }catch(e){} return fresh(); }
 function curAddr(){ return S.addrs.find(x=>x.id===S.addr)||S.addrs[0]||null; }
 const ZONES=[[/^1[0-4]/,'Berlin'],[/^14[4-7]/,'Potsdam'],[/^(60|61|63|65)/,'Frankfurt area'],[/^(80|81|82|85)/,'Munich area']];
 function zoneOf(z){ const m=[...ZONES].reverse().find(([re])=>re.test(z)); return m?m[1]:null; }
 function mapSvg(label){ return `<div class="amap" role="img" aria-label="Map preview${label?': '+label:''}"><svg viewBox="0 0 400 170" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="400" height="170" fill="var(--mapbg)"/><path d="M-10 120 C80 100 140 140 230 118 S360 90 420 104" stroke="var(--mapriver)" stroke-width="14" fill="none"/><rect x="250" y="12" width="90" height="56" rx="10" fill="var(--mappark)"/><g stroke="var(--maproad)" stroke-linecap="round" fill="none"><path d="M0 60 H400" stroke-width="10"/><path d="M120 0 V170" stroke-width="10"/><path d="M0 20 L180 150" stroke-width="6"/><path d="M220 0 V170" stroke-width="6"/><path d="M300 80 L400 30" stroke-width="6"/><path d="M40 0 V170" stroke-width="4"/><path d="M0 150 H400" stroke-width="4"/></g></svg><span class="apin"><svg width="34" height="34" viewBox="0 0 24 24"><path d="M12 22s-7-6.4-7-12a7 7 0 0 1 14 0c0 5.6-7 12-7 12z" fill="var(--accent)"/><circle cx="12" cy="10" r="2.7" fill="#fff"/></svg></span>${label?`<span class="alab">${label}</span>`:''}</div>`; }
-function save(){ try{ localStorage.setItem('kfo', JSON.stringify({favs:S.favs, cart:S.cart, view:S.view, day:S.day, slot:S.slot, dmode:S.dmode, pay:S.pay, addrs:S.addrs, addr:S.addr, zip:S.zip, contacts:S.contacts, cid:S.cid, email:S.email})); }catch(e){} }
+function save(){ try{ localStorage.setItem('kfo2', JSON.stringify({favs:S.favs, cart:S.cart, view:S.view, day:S.day, slot:S.slot, dmode:S.dmode, pay:S.pay, addrs:S.addrs, addr:S.addr, zip:S.zip, contacts:S.contacts, cid:S.cid, email:S.email})); }catch(e){} }
 S = load();
 
 function totals(){
@@ -1090,7 +1090,7 @@ function totals(){
   for(const [id,q] of Object.entries(S.cart)){ const x=byId[id]; if(!x||!q) continue; items+=x.p*q; count+=q; if(x.w) weighed+=x.p*q; if(x.dep) dep+=x.dep*q; }
   items=Math.round(items*100)/100;
   const reached = items >= MIN;
-  const off = reached ? Math.min(WELCOME, items) : 0;
+  const off = reached ? Math.min(WELCOME, Math.floor(items*0.5*100)/100) : 0;
   const total = Math.round((items - off + dep)*100)/100;
   const hold = Math.round((total + weighed*BUFFER)*100)/100;
   const cartTotal = Math.round((items + dep)*100)/100;
@@ -1110,11 +1110,14 @@ function fillHtml(t){
   const fillers = P.filter(x=>!S.cart[x.id]).sort((a,b)=>Math.abs(a.p-t.toGo)-Math.abs(b.p-t.toGo)).slice(0,4);
   return `<div class="fill"><span class="lbl">Reach ${eur(MIN)}:</span>${fillers.map(x=>`<button type="button" class="chip" data-inc="${x.id}">${x.n} ${eur(x.p)}</button>`).join('')}</div>`;
 }
+function partialNote(t){ return t.off<WELCOME ? `${eur(t.off)} of €${WELCOME} used. Vouchers cover up to 50% of your order. Add ${eur(Math.round((WELCOME*2-t.items)*100)/100)} to use the full €${WELCOME}.` : ''; }
 function ticketHtml(t, atCheckout){
-  if(atCheckout && t.reached) return `<div class="ticket on"><span class="val">€20<small>off</small></span><span class="txt"><b>First-order discount applied</b><span>€20 off for new customers, code WELCOME20</span></span></div>`;
+  const val = t.reached&&t.off<WELCOME ? `<span style="font-size:.72em">${eur(t.off)}</span>` : `€${WELCOME}<small>off</small>`;
+  const part = t.reached ? partialNote(t) : '';
+  if(atCheckout && t.reached) return `<div class="ticket on"><span class="val">${val}</span><span class="txt"><b>First-order discount applied</b><span class="num">${part||`€${WELCOME} off for new customers, code WELCOME20`}</span></span></div>`;
   return t.reached
-   ? `<div class="ticket on"><span class="val">€20<small>off</small></span><span class="txt"><b>First-order discount: you're eligible</b><span>€20 off for new customers, taken off at checkout</span></span></div>`
-   : `<div class="ticket"><span class="val">€20<small>off</small></span><span class="txt"><b>First-order discount</b><span class="num">€20 off for new customers. Unlocks at €${MIN}, ${eur(t.toGo)} to go</span></span></div>`;
+   ? `<div class="ticket on"><span class="val">${val}</span><span class="txt"><b>First-order discount: you're eligible</b><span class="num">${part||`€${WELCOME} off for new customers, taken off at checkout`}</span></span></div>`
+   : `<div class="ticket"><span class="val">€${WELCOME}<small>off</small></span><span class="txt"><b>First-order discount</b><span class="num">€${WELCOME} off for new customers, up to 50% of your order. Unlocks at €${MIN}, ${eur(t.toGo)} to go</span></span></div>`;
 }
 function costsHtml(t, final){
   const ca = t.weighed?'ca. ':'';
