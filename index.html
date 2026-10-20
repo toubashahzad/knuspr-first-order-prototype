@@ -347,6 +347,11 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .infocard{display:flex;gap:12px;align-items:flex-start;background:var(--soft);border-radius:12px;padding:12px 14px;color:var(--ink)}
 .infocard span{flex-shrink:0;color:var(--muted)}
 .infocard p{margin:0;font-size:13.5px;line-height:1.45}
+.costs .sub{padding-top:8px;border-top:1px solid var(--line);margin-top:4px;font-weight:600}
+.costs .grand{font-size:18px}
+.bufl{display:inline-flex;align-items:center;gap:6px}
+.infob{width:18px;height:18px;border-radius:9px;border:1.5px solid var(--muted);background:transparent;color:var(--muted);font-size:11px;font-weight:700;line-height:1;padding:0;display:inline-flex;align-items:center;justify-content:center;font-style:italic}
+.bufnote{margin:0;font-size:12.5px;color:var(--muted);background:var(--soft);border-radius:8px;padding:8px 10px;line-height:1.4}
 </style>
 </head>
 <body>
@@ -462,6 +467,20 @@ function infoCards(){ return `<div class="infocards">
   <div class="infocard"><span aria-hidden="true">${'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v8a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2z"/><path d="m9 15 6-6"/><circle cx="9.5" cy="9.5" r=".8"/><circle cx="14.5" cy="14.5" r=".8"/></svg>'}</span><p>Your €20 welcome voucher comes off at checkout, once your cart is at €39 or more.</p></div>
   <div class="infocard"><span aria-hidden="true">${'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h11l-3-3M20 17H9l3 3"/></svg>'}</span><p>If something is out of stock, we suggest a similar product. You can turn it down.</p></div>
 </div>`; }
+function finalCosts(t, done){
+  const buf = Math.round((t.hold - t.total)*100)/100;
+  return `<div class="costs num">
+    <div><span>Items (${t.count})</span><span>${eur(t.items)}</span></div>
+    ${t.dep?`<div><span>Bottle deposit</span><span>${eur(t.dep)}</span></div>`:''}
+    <div><span>Delivery</span><span class="free">Free, first order</span></div>
+    ${t.reached?`<div><span>Welcome voucher</span><span class="off">−${eur(t.off)}</span></div>`:''}
+    <div class="sub"><span>Order total</span><span>${eur(t.total)}</span></div>
+    ${buf>0?`<div><span class="bufl">Weight buffer <button type="button" class="infob" id="bufInfo" aria-label="What is the weight buffer?" aria-expanded="false">i</button></span><span>+${eur(buf)}</span></div>
+    <p class="bufnote" id="bufNote" hidden>Fruit, veg and meat are weighed when we pack them. The buffer covers a slightly heavier pick. Anything not used goes straight back to you.</p>`:''}
+    <div class="total grand"><span>${done?'Total paid':'You pay'}</span><span>${eur(t.hold)}</span></div>
+    ${buf>0?`<p class="canote">${done?`If your weighed items come in lighter, we refund the difference after packing. Your receipt shows the exact amount.`:`This is the most you'll pay. If your weighed items come in lighter, we refund the difference after packing.`}</p>`:''}
+  </div>`;
+}
 function holdHtml(t){
   if(!t.weighed) return `<div class="hold"><span>Nothing in your cart is weighed, so you pay exactly ${eur(t.total)}.</span></div>`;
   return `<div class="hold">${'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>'}<span>Fruit, veg and meat are weighed when we pack them, so the price can move a little. We reserve up to <b class="num">${eur(t.hold)}</b> on your card and charge the exact amount after packing, usually less.</span></div>`;
@@ -528,7 +547,7 @@ function renderCheckout(t){
   const ad = S.addrs.find(x=>x.id===S.addr)||S.addrs[0];
   const pm = PAYS.find(x=>x.k===S.pay)||PAYS[0];
   const c = S.contact||{}; const whereOk = !!(c.name&&c.phone);
-  const charge = `Will be charged ${t.weighed?'ca. ':''}${eur(t.total)}`;
+  const charge = `Will be charged ${eur(t.hold)}`;
   return `<button type="button" class="back" data-go="shop">← Back to shopping</button>
   <div class="co">
     <div class="costack">
@@ -553,10 +572,9 @@ function renderCheckout(t){
     </div>
     <aside aria-labelledby="h-sum" class="sumwrap"><h2 class="sh" id="h-sum">Summary</h2>
       <div class="summary">
-      ${costsHtml(t,true)}
-      ${holdHtml(t)}
+      ${finalCosts(t,false)}
       <button type="button" class="cta paybtn pb-${pm.k}" id="place" ${ready?'':'disabled'}>${PBTN[pm.k]}</button>
-      <p class="hint">${!t.reached?`Add ${eur(t.toGo)} to reach the €39 minimum.`:!S.slot?'Choose a delivery time to place your order.':!(S.contact&&S.contact.phone)?'Add your phone number under Where to place your order.':`Delivery ${day.date}, ${S.slot}. Nothing is charged until we pack.`}</p>
+      <p class="hint">${!t.reached?`Add ${eur(t.toGo)} to reach the €39 minimum.`:!S.slot?'Choose a delivery time to place your order.':!(S.contact&&S.contact.phone)?'Add your phone number under Where to place your order.':`Delivery ${day.date}, ${S.slot}.`}</p>
       </div>
     </aside>
   </div>`;
@@ -565,9 +583,8 @@ function renderCheckout(t){
 function renderDone(t){
   const day = DAYS.find(d=>d.k===S.day);
   return `<div class="orderdone"><span class="tick"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--good)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
-    <h1>Order placed</h1><p>Arriving ${day.date}, ${S.slot}, at Fritz-Werner-Straße 35.</p>
-    ${costsHtml(t,true)}
-    ${holdHtml(t)}
+    <h1>Order placed</h1><p>Arriving ${day.date}, ${S.slot}, at ${(S.addrs.find(x=>x.id===S.addr)||S.addrs[0]).street}.</p>
+    ${finalCosts(t,true)}
     <p style="font-size:13px">You can still add items until 22:00 the evening before. We'll email the final receipt after packing.</p>
     <button type="button" class="ghost" id="again" style="max-width:280px">Start over as a first-time customer</button></div>`;
 }
@@ -669,6 +686,7 @@ document.addEventListener('click',e=>{
   switch(b.id){
     case 'modalClose': closeModal(); break;
     case 'modalClose2': closeModal(); break;
+    case 'bufInfo': { const n=document.getElementById('bufNote'); n.hidden=!n.hidden; b.setAttribute('aria-expanded',String(!n.hidden)); } break;
     case 'addAddr': S.adding=true; S.editId=null; render(); setTimeout(()=>document.getElementById('na-label')?.focus(),0); break;
     case 'cancelAddr': S.adding=false; S.editId=null; render(); break;
     case 'modalSave':
