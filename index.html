@@ -231,6 +231,35 @@ h1,h2,h3{margin:0;text-wrap:balance}
 :root[data-theme="dark"] .snack .track{background:#ececec;box-shadow:inset 0 0 0 2px #ececec}
 .snack.done .fillb{background:#22c55e;color:#0b2e16}
 @media (max-width:640px){.snack{flex-direction:column;align-items:stretch;gap:10px;padding:14px 16px;bottom:calc(96px + env(safe-area-inset-bottom,0px))}.snack .track{flex-basis:auto}.snack .msg{font-size:15px}}
+.sumrow{display:flex;align-items:flex-start;gap:14px}
+.sumic{width:40px;height:40px;border-radius:20px;background:var(--tint2);color:var(--brand);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sumtxt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.sumtxt b{font-size:15px}.sumtxt span{font-size:14.5px}.sumtxt small{font-size:13px;color:var(--muted)}.sumtxt .g{color:var(--good);font-weight:600}
+.editb{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:7px 12px;font-weight:600;font-size:14px;color:var(--brand)}
+.editb:hover{border-color:var(--accent)}
+.mscrim{position:fixed;inset:0;background:rgba(20,12,6,.45);z-index:70}
+.modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,calc(100% - 32px));max-height:min(720px,calc(100% - 48px));background:var(--surface);border-radius:20px;box-shadow:var(--shadow);z-index:71;display:flex;flex-direction:column}
+@media (max-width:600px){.modal{top:auto;bottom:0;transform:translateX(-50%);width:100%;border-radius:20px 20px 0 0;max-height:88%;padding-bottom:env(safe-area-inset-bottom,0px)}}
+.mhead{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--line)}
+.mhead h2{font-size:19px}
+.mbody{padding:18px 20px;overflow:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:14px}
+.mfoot{padding:14px 20px 18px;border-top:1px solid var(--line)}
+.mnote{margin:0;font-size:13px;color:var(--muted)}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;gap:12px;align-items:flex-start;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer}
+.opt:has(input:checked){border-color:var(--accent);background:var(--tint2)}
+.opt input{accent-color:var(--accent);margin-top:3px}
+.opt span{display:flex;flex-direction:column;gap:2px;font-size:14px}.opt b{font-size:15px}.opt small{color:var(--muted);font-size:13px}
+.addnew{border:1.5px dashed var(--line);background:transparent;border-radius:12px;padding:12px;font-weight:600;color:var(--brand);text-align:left}
+.addnew:hover{border-color:var(--accent)}
+.nform{display:flex;flex-direction:column;gap:6px;border:1.5px solid var(--line);border-radius:12px;padding:14px}
+.nform h3{font-size:16px;margin-bottom:4px}
+.nform label{font-size:13px;font-weight:600;margin-top:6px}
+.nform input{height:44px;border:1.5px solid var(--line);border-radius:10px;padding:0 12px;font:inherit;color:var(--ink);background:var(--surface)}
+.nform input:focus-visible{outline:2px solid var(--accent);outline-offset:0}
+.nform .two{display:grid;grid-template-columns:1fr 1.4fr;gap:10px}.nform .two span{display:flex;flex-direction:column;gap:6px}
+.ferr{margin:6px 0 0;color:#c0392b;font-size:13px;font-weight:600}
+.frow{display:flex;gap:10px;margin-top:10px}.frow .ghost{width:auto;padding:0 18px;height:48px}.frow .cta{height:48px;flex:1}
 </style>
 </head>
 <body>
@@ -240,7 +269,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
 <div class="strip"><div class="wrap"><span><b>First delivery free</b></span><span>€39 minimum order</span><span class="stripv"><b>€20 off</b> your first order · applied in your cart</span></div></div>
 <header class="top"><div class="wrap">
   <a class="logo" href="#" id="home" aria-label="Back to the shop">knuspr<span>.</span></a>
-  <div class="addr"><b>Fritz-Werner-Straße 35</b><small>Delivery tomorrow from 6:00</small></div>
+  <div class="addr" id="hdrAddr"></div>
   <label class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" placeholder="Search products" aria-label="Search products"></label>
   <button class="cartbtn" id="openCart" type="button"></button>
 </div></header>
@@ -255,6 +284,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
 </aside>
 <div class="snack" id="snack" role="status" aria-live="polite" hidden></div>
 <button type="button" class="fab" id="aiFab" aria-label="Open Maia, Knuspr's AI assistant"><span class="dot"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11.9524 1.09524C5.92857 1.09524 1 6.02381 1 12.0476V23H22.9048V12.0476C22.9048 10.4376 22.5433 8.90429 21.919 7.52429L20.561 10.5033C20.6486 11.0071 20.7143 11.5 20.7143 12.0476C20.7143 16.8995 16.8043 20.8095 11.9524 20.8095C7.10048 20.8095 3.19048 16.8995 3.19048 12.0476V11.9052C4.60071 11.377 5.88685 10.5635 6.96854 9.51575C8.05022 8.46799 8.90421 7.20841 9.47714 5.81571C10.6604 7.27011 12.1971 8.39642 13.9403 9.08678C15.6835 9.77715 17.5747 10.0085 19.4329 9.75857L17.8119 6.1881L12.6095 3.83333L16.4757 2.08095C15.0957 1.45667 13.5624 1.09524 11.9524 1.09524Z" fill="currentColor"/><path d="M10.088 16.5157C10.3329 16.5015 10.6058 16.7258 10.8137 16.8568C11.4527 17.2618 12.427 17.3316 13.095 16.9638C13.358 16.8189 13.6581 16.5839 13.9479 16.5181C14.1256 16.4778 14.3056 16.6739 14.2629 16.8818C14.2192 17.0944 14.1602 17.1524 14.0067 17.272C13.2468 17.8964 12.207 18.1493 11.2938 17.8808C10.8249 17.7429 10.1728 17.4896 9.90437 17.0207C9.76673 16.7801 9.89142 16.6156 10.088 16.5157Z" fill="currentColor"/><path d="M7.69861 12.1748C7.95535 11.9181 8.30357 11.7738 8.66667 11.7738C9.02976 11.7738 9.37798 11.9181 9.63473 12.1748C9.89148 12.4315 10.0357 12.7798 10.0357 13.1429C10.0357 13.506 9.89148 13.8542 9.63473 14.1109C9.37798 14.3677 9.02976 14.5119 8.66667 14.5119C8.30357 14.5119 7.95535 14.3677 7.69861 14.1109C7.44186 13.8542 7.29762 13.506 7.29762 13.1429C7.29762 12.7798 7.44186 12.4315 7.69861 12.1748Z" fill="currentColor"/><path d="M14.27 12.1748C14.5268 11.9181 14.875 11.7738 15.2381 11.7738C15.6012 11.7738 15.9494 11.9181 16.2062 12.1748C16.4629 12.4315 16.6071 12.7798 16.6071 13.1429C16.6071 13.506 16.4629 13.8542 16.2062 14.1109C15.9494 14.3677 15.6012 14.5119 15.2381 14.5119C14.875 14.5119 14.5268 14.3677 14.27 14.1109C14.0133 13.8542 13.8691 13.506 13.8691 13.1429C13.8691 12.7798 14.0133 12.4315 14.27 12.1748Z" fill="currentColor"/><path d="M18.9729 2.63952L20.1667 0L21.3714 2.63952L24 3.83333L21.3714 5.02714L20.1667 7.66667L18.9729 5.02714L16.3333 3.83333L18.9729 2.63952Z" fill="currentColor"/></svg></span><span><b>Ask Maia</b><small>Help with shopping and cooking</small></span></button>
+<div id="modal"></div>
 <div class="toast" id="toast" hidden></div>
 
 <script>
@@ -280,17 +310,19 @@ const P = [
 const byId = Object.fromEntries(P.map(x=>[x.id,x]));
 const START = {ban:1,cuc:1,mil:2,egg:1,bre:1,gou:1,chi:1,yog:1,pas:2};
 const DAYS = [
-  {k:'tue', label:'Tomorrow', date:'Tue 20 Oct'},
-  {k:'wed', label:'Wednesday', date:'Wed 21 Oct'},
-  {k:'thu', label:'Thursday', date:'Thu 22 Oct'},
+  {k:'tue', label:'Tomorrow', date:'Wed 21 Oct'},
+  {k:'wed', label:'Thursday', date:'Thu 22 Oct'},
+  {k:'thu', label:'Friday', date:'Fri 23 Oct'},
 ];
 const SLOTS = ['06:00–07:00','07:00–08:00','08:00–09:00','12:00–13:00','17:00–18:00','18:00–19:00','19:00–20:00','20:00–21:00'];
 const FULL = {tue:['07:00–08:00','18:00–19:00'], wed:['19:00–20:00'], thu:[]};
 
 let S;
-function fresh(){ return {cart:{...START}, view:'shop', drawer:false, day:'tue', slot:null, pay:'card', q:''}; }
-function load(){ try{ const s=JSON.parse(localStorage.getItem('kfo')); if(s&&s.cart) return {...fresh(),...s, drawer:false}; }catch(e){} return fresh(); }
-function save(){ try{ localStorage.setItem('kfo', JSON.stringify({cart:S.cart, view:S.view, day:S.day, slot:S.slot, pay:S.pay})); }catch(e){} }
+const HOME={id:'home',label:'Home',name:'Touba Shahzad',street:'Fritz-Werner-Straße 35',zip:'12107',city:'Berlin',note:'3rd floor, ring “Shahzad”'};
+const PAYS=[{k:'card',l:'Visa ending 4242',s:'Expires 08/28'},{k:'paypal',l:'PayPal',s:'You confirm in PayPal after placing the order'},{k:'gpay',l:'Google Pay',s:'You confirm on your phone'}];
+function fresh(){ return {cart:{...START}, view:'shop', drawer:false, day:'tue', slot:'06:00–07:00', pay:'card', q:'', addrs:[HOME], addr:'home', modal:null, draft:{}, adding:false}; }
+function load(){ try{ const s=JSON.parse(localStorage.getItem('kfo')); if(s&&s.cart) return {...fresh(),...s, drawer:false, modal:null, adding:false}; }catch(e){} return fresh(); }
+function save(){ try{ localStorage.setItem('kfo', JSON.stringify({cart:S.cart, view:S.view, day:S.day, slot:S.slot, pay:S.pay, addrs:S.addrs, addr:S.addr})); }catch(e){} }
 S = load();
 
 const eur = v => '€' + v.toFixed(2);
@@ -338,6 +370,8 @@ function holdHtml(t){
 }
 
 function renderHeader(t){
+  { const ad=S.addrs.find(x=>x.id===S.addr)||S.addrs[0], dy=DAYS.find(d=>d.k===S.day);
+    document.getElementById('hdrAddr').innerHTML=`<b>${ad.street}</b><small>${S.slot?`Your slot: ${dy.label==='Tomorrow'?'tomorrow':dy.date}, ${S.slot}`:'Choose a delivery time'}</small>`; }
   document.getElementById('openCart').innerHTML = `<span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M3 4h2l2.5 11h11L21 7H7"/></svg>${t.count?`<span class="badge num ${t.reached?'ok':''}">${t.count}</span>`:''}</span><span class="camt num">${eur(t.items)}</span>`;
   document.getElementById('openCart').setAttribute('aria-label', `Open cart, ${t.count} items, ${eur(t.items)}`);
 }
@@ -390,21 +424,21 @@ function renderCheckout(t){
   const full = FULL[S.day]||[];
   const day = DAYS.find(d=>d.k===S.day);
   const ready = t.reached && S.slot;
+  const ad = S.addrs.find(x=>x.id===S.addr)||S.addrs[0];
+  const pm = PAYS.find(x=>x.k===S.pay)||PAYS[0];
   return `<button type="button" class="back" data-go="shop">← Back to shopping</button>
   <div class="co">
     <div>
-      <section class="sec" aria-labelledby="h-addr"><h2 id="h-addr">Delivery address <span class="ok">✓ Saved</span></h2>
-        <p><b>Touba Shahzad</b><br>Fritz-Werner-Straße 35, 12107 Berlin<br><span style="color:var(--muted)">3rd floor · ring “Shahzad”</span></p></section>
-      <section class="sec" aria-labelledby="h-slot"><h2 id="h-slot">Delivery time ${S.slot?`<span class="ok">✓ ${day.date}, ${S.slot}</span>`:'<span class="need">Choose a slot</span>'}</h2>
-        <div class="days" role="tablist">${DAYS.map(d=>`<button type="button" role="tab" aria-selected="${d.k===S.day}" class="day ${d.k===S.day?'on':''}" data-day="${d.k}">${d.label}<br><small style="font-weight:500">${d.date}</small></button>`).join('')}</div>
-        <div class="slots">${SLOTS.map(s=>{const off=full.includes(s); const on=S.slot===s&&!off; return `<button type="button" class="slot ${on?'on':''}" data-slot="${s}" ${off?'disabled':''} aria-pressed="${on}"><b class="num">${s}</b><small>${off?'Full':'Free, first order'}</small></button>`}).join('')}</div>
-        <p style="font-size:13px;color:var(--muted)">Every slot shows its price before you pick it. You can add items until the evening before.</p></section>
+      <section class="sec" aria-labelledby="h-addr"><h2 id="h-addr">Delivery address</h2>
+        <div class="sumrow"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span class="sumtxt"><b>${ad.name}</b><span>${ad.street}, ${ad.zip} ${ad.city}</span>${ad.note?`<small>${ad.note}</small>`:''}</span><button type="button" class="editb" data-edit="addr" aria-label="Change delivery address"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Edit</button></div></section>
+      <section class="sec" aria-labelledby="h-slot"><h2 id="h-slot">Delivery time</h2>
+        <div class="sumrow"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span class="sumtxt">${S.slot?`<b>${day.label==='Tomorrow'?'Tomorrow, ':''}${day.date}</b><span class="num">${S.slot}</span><small class="g">Free, first order</small>`:'<b>No time chosen yet</b><span>Pick a 1-hour slot</span>'}</span><button type="button" class="editb" data-edit="slot" aria-label="Change delivery time"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>${S.slot?'Edit':'Choose'}</button></div></section>
       <section class="sec" aria-labelledby="h-items"><h2 id="h-items">Your items <span style="font-size:13px;color:var(--muted);font-weight:500">${t.count} items, still editable</span></h2>
         ${t.reached?'':`<div class="warn">You're ${eur(t.toGo)} under the €39 minimum. Add something to keep your slot and the €20 discount.</div>`}
         <div class="lines">${lines.map(([id,q])=>{const x=byId[id]; return `<div class="line"><span class="thumb" style="background:${x.c}" aria-hidden="true">${x.e}</span><span class="info"><b>${x.n}</b><small>${x.u}</small><br><button type="button" class="rm" data-rm="${id}">Remove</button></span>${stepper(id,q,'sm')}<span class="amt num">${x.w?'ca. ':''}${eur(x.p*q)}</span></div>`}).join('')}</div>
         <button type="button" class="ghost" data-go="shop" style="width:auto;padding:0 16px;align-self:flex-start">+ Add more items</button></section>
       <section class="sec" aria-labelledby="h-pay"><h2 id="h-pay">Payment</h2>
-        <div class="pay">${[['card','Card'],['paypal','PayPal'],['gpay','Google Pay']].map(([k,l])=>`<label><input type="radio" name="pay" id="pay-${k}" value="${k}" ${S.pay===k?'checked':''}> ${l}</label>`).join('')}</div>
+        <div class="sumrow"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 10h19"/></svg></span><span class="sumtxt"><b>${pm.l}</b><span>${pm.s}</span></span><button type="button" class="editb" data-edit="pay" aria-label="Change payment method"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Edit</button></div>
         ${ticketHtml(t)}
       </section>
     </div>
@@ -427,6 +461,37 @@ function renderDone(t){
     <button type="button" class="ghost" id="again" style="max-width:280px">Start over as a first-time customer</button></div>`;
 }
 
+function modalHtml(){
+  const m=S.modal, d=S.draft; if(!m) return '';
+  let title='', body='', save='';
+  if(m==='addr'){
+    title='Delivery address';
+    body=`<div class="opts" role="radiogroup" aria-label="Saved addresses">${S.addrs.map(x=>`<label class="opt"><input type="radio" name="maddr" value="${x.id}" ${d.addr===x.id?'checked':''}><span><b>${x.label}</b><span>${x.name}, ${x.street}, ${x.zip} ${x.city}</span>${x.note?`<small>${x.note}</small>`:''}</span></label>`).join('')}</div>
+    ${S.adding?`<form id="newAddr" class="nform" novalidate><h3>New address</h3>
+      <label for="na-label">Name this address</label><input id="na-label" name="label" placeholder="e.g. Office" autocomplete="off">
+      <label for="na-street">Street and number</label><input id="na-street" name="street" autocomplete="street-address" required>
+      <div class="two"><span><label for="na-zip">Postcode</label><input id="na-zip" name="zip" inputmode="numeric" autocomplete="postal-code" required></span><span><label for="na-city">City</label><input id="na-city" name="city" autocomplete="address-level2" value="Berlin" required></span></div>
+      <label for="na-note">Floor, doorbell, notes for the driver</label><input id="na-note" name="note" autocomplete="off">
+      <p class="ferr" id="naErr" hidden>Add the street, postcode and city to save this address.</p>
+      <div class="frow"><button type="button" class="ghost" id="cancelAddr">Cancel</button><button type="submit" class="cta">Save address</button></div></form>`
+    :`<button type="button" class="addnew" id="addAddr">+ Add new address</button>`}`;
+    save=S.adding?'':'Use this address';
+  } else if(m==='slot'){
+    title='Delivery time';
+    const full=FULL[d.day]||[];
+    body=`<div class="days">${DAYS.map(x=>`<button type="button" class="day ${x.k===d.day?'on':''}" data-mday="${x.k}" aria-pressed="${x.k===d.day}">${x.label}<br><small style="font-weight:500">${x.date}</small></button>`).join('')}</div>
+    <div class="slots">${SLOTS.map(x=>{const off=full.includes(x), on=d.slot===x&&d.day===d.sday&&!off; return `<button type="button" class="slot ${on?'on':''}" data-mslot="${x}" ${off?'disabled':''} aria-pressed="${on}"><b class="num">${x}</b><small>${off?'Full':'Free, first order'}</small></button>`}).join('')}</div>
+    <p class="mnote">Every slot shows its price before you pick it. You can add items until the evening before.</p>`;
+    save='Save delivery time';
+  } else if(m==='pay'){
+    title='Payment method';
+    body=`<div class="opts" role="radiogroup" aria-label="Payment methods">${PAYS.map(x=>`<label class="opt"><input type="radio" name="mpay" value="${x.k}" ${d.pay===x.k?'checked':''}><span><b>${x.l}</b><span>${x.s}</span></span></label>`).join('')}</div>`;
+    save='Use this method';
+  }
+  return `<div class="mscrim" id="mscrim"></div><div class="modal" role="dialog" aria-modal="true" aria-labelledby="m-title"><div class="mhead"><h2 id="m-title">${title}</h2><button type="button" class="x" id="modalClose" aria-label="Close">×</button></div><div class="mbody">${body}</div>${save?`<div class="mfoot"><button type="button" class="cta" id="modalSave">${save}</button></div>`:''}</div>`;
+}
+function openModal(m){ S.modal=m; S.adding=false; S.draft={addr:S.addr, pay:S.pay, day:S.day, sday:S.day, slot:S.slot}; render(); setTimeout(()=>{const f=document.querySelector('#modal .modal input:checked, #modal .modal .slot.on, #modal .modal button'); f&&f.focus();},0); }
+function closeModal(){ const m=S.modal; S.modal=null; S.adding=false; render(); const b=document.querySelector(`[data-edit="${m}"]`); b&&b.focus(); }
 function render(){
   const t=totals();
   renderHeader(t);
@@ -434,6 +499,7 @@ function render(){
   if(S.view==='checkout' && Object.values(S.cart).every(q=>!q)) S.view='shop';
   v.innerHTML = S.view==='shop'?renderShop():S.view==='cart'?renderCart(t):S.view==='checkout'?renderCheckout(t):renderDone(t);
   renderDrawer(t);
+  document.getElementById('modal').innerHTML=modalHtml();
   const d=document.getElementById('drawer');
   d.classList.toggle('on',S.drawer); d.setAttribute('aria-hidden',String(!S.drawer));
   document.getElementById('scrim').classList.toggle('on',S.drawer);
@@ -474,7 +540,19 @@ document.addEventListener('click',e=>{
   if(ds.day){ S.day=ds.day; if((FULL[S.day]||[]).includes(S.slot)) S.slot=null; render(); return; }
   if(ds.slot){ S.slot=ds.slot; render(); return; }
   if(ds.go){ S.view=ds.go; S.drawer=false; render(); window.scrollTo(0,0); return; }
+  if(ds.edit){ openModal(ds.edit); return; }
+  if(ds.mday){ S.draft.day=ds.mday; render(); return; }
+  if(ds.mslot){ S.draft.slot=ds.mslot; S.draft.sday=S.draft.day; render(); return; }
   switch(b.id){
+    case 'modalClose': closeModal(); break;
+    case 'addAddr': S.adding=true; render(); setTimeout(()=>document.getElementById('na-label')?.focus(),0); break;
+    case 'cancelAddr': S.adding=false; render(); break;
+    case 'modalSave':
+      if(S.modal==='addr') S.addr=S.draft.addr;
+      if(S.modal==='pay') S.pay=S.draft.pay;
+      if(S.modal==='slot'){ if(S.draft.slot && S.draft.sday){ S.day=S.draft.sday; S.slot=S.draft.slot; } }
+      { const m=S.modal; closeModal(); toast(m==='addr'?'Delivery address updated':m==='slot'?'Delivery time updated':'Payment method updated'); }
+      break;
     case 'snackView': document.getElementById('snack').hidden=true; S.drawer=true; render(); break;
     case 'aiFab': toast('Maia is not part of this prototype'); break;
     case 'themeBtn': setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'); break;
@@ -491,8 +569,12 @@ document.addEventListener('click',e=>{
   }
 });
 document.getElementById('scrim').addEventListener('click',()=>{S.drawer=false;render();});
-document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&S.drawer){S.drawer=false;render();} });
-document.addEventListener('change',e=>{ if(e.target.name==='pay'){ S.pay=e.target.value; save(); } });
+document.addEventListener('keydown',e=>{ if(e.key!=='Escape') return; if(S.modal){closeModal();return;} if(S.drawer){S.drawer=false;render();} });
+document.addEventListener('click',e=>{ if(e.target.id==='mscrim') closeModal(); });
+document.addEventListener('submit',e=>{ if(e.target.id!=='newAddr') return; e.preventDefault(); const f=new FormData(e.target); const v=k=>(f.get(k)||'').toString().trim();
+  if(!v('street')||!v('zip')||!v('city')){ const er=document.getElementById('naErr'); er.hidden=false; (!v('street')?document.getElementById('na-street'):!v('zip')?document.getElementById('na-zip'):document.getElementById('na-city')).focus(); return; }
+  const id='a'+Date.now(); S.addrs.push({id,label:v('label')||'New address',name:'Touba Shahzad',street:v('street'),zip:v('zip'),city:v('city'),note:v('note')}); S.draft.addr=id; S.adding=false; render(); toast('Address saved'); });
+document.addEventListener('change',e=>{ if(e.target.name==='maddr') S.draft.addr=e.target.value; if(e.target.name==='mpay') S.draft.pay=e.target.value; });
 document.getElementById('q').addEventListener('input',e=>{ S.q=e.target.value; if(S.view!=='shop') S.view='shop'; document.getElementById('view').innerHTML=renderShop(); });
 render();
 </script>
