@@ -402,7 +402,7 @@ let S;
 const HOME={id:'home',label:'Home',name:'Touba Shahzad',street:'Fritz-Werner-Straße 35',zip:'12107',city:'Berlin',note:'3rd floor, ring “Shahzad”'};
 const PAYS=[{k:'card',l:'Visa ending 4242',s:'Expires 08/28',cta:'Pay with Visa ···· 4242'},{k:'apple',l:'Apple Pay',s:'Confirm with Face ID or Touch ID',cta:'Pay with Apple Pay'},{k:'gpay',l:'Google Pay',s:'Confirm on your phone',cta:'Pay with Google Pay'},{k:'paypal',l:'PayPal',s:'You log in to PayPal to confirm',cta:'Pay with PayPal'}];
 function fresh(){ return {cart:{...START}, view:'shop', drawer:false, day:'tue', slot:'06:00–07:00', pay:'card', q:'', addrs:[HOME], addr:'home', contact:{name:'Touba Shahzad', phone:'+49 151 2345 6789'}, modal:null, draft:{}, adding:false, editId:null}; }
-function load(){ try{ const s=JSON.parse(localStorage.getItem('kfo')); if(s&&s.cart) const f=fresh(); return {...f,...s, contact:(s.contact&&s.contact.phone)?s.contact:f.contact, drawer:false, modal:null, adding:false, editId:null}; }catch(e){} return fresh(); }
+function load(){ try{ const s=JSON.parse(localStorage.getItem('kfo')); if(s&&s.cart){ const f=fresh(); return {...f,...s, contact:(s.contact&&s.contact.phone)?s.contact:f.contact, drawer:false, modal:null, adding:false, editId:null}; } }catch(e){} return fresh(); }
 function save(){ try{ localStorage.setItem('kfo', JSON.stringify({cart:S.cart, view:S.view, day:S.day, slot:S.slot, pay:S.pay, addrs:S.addrs, addr:S.addr, contact:S.contact})); }catch(e){} }
 S = load();
 
