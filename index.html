@@ -222,6 +222,10 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .snack .goalv{position:absolute;right:16px;top:50%;transform:translateY(-50%);z-index:2;color:#1d1b19;font-weight:700;font-size:16px}
 .snack .fillb{z-index:1}
 .snack.done .goalv{display:none}
+:root[data-theme="dark"] .snack{background:#ffffff;color:#1d1b19;box-shadow:0 14px 36px rgba(0,0,0,.55)}
+:root[data-theme="dark"] .snack .msub{color:#6e6e6e}
+:root[data-theme="dark"] .snack .view{color:#c9600f}
+:root[data-theme="dark"] .snack .track{background:#ececec;box-shadow:inset 0 0 0 2px #ececec}
 .snack.done .fillb{background:#22c55e;color:#0b2e16}
 @media (max-width:640px){.snack{flex-direction:column;align-items:stretch;gap:10px;padding:14px 16px;bottom:calc(96px + env(safe-area-inset-bottom,0px))}.snack .track{flex-basis:auto}.snack .msg{font-size:15px}}
 </style>
