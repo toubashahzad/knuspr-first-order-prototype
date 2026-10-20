@@ -933,7 +933,8 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .pairtxt{display:flex;flex-direction:column;gap:2px;font-size:13px}.pairtxt b{font-size:15px}
 .pairadd{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:17px;border:0;background:var(--accent);color:#fff;font-size:20px;font-weight:700;cursor:pointer}
 .pdfoot{display:flex;gap:12px;align-items:center}
-.pdstep{margin:0;height:52px;min-width:140px;flex-shrink:0}
+.pdstep{margin:0;height:52px;flex:1}.pdstep button{width:64px}.pdstep .num{font-size:18px}
+.pdadd{flex:1;height:52px}
 .pdstep button{width:48px;height:52px}
 .pdstep button[disabled]{opacity:.35;cursor:not-allowed}
 .pdfoot .cta{flex:1}
@@ -1222,10 +1223,9 @@ function renderDone(t){
     <button type="button" class="ghost" id="again" style="max-width:280px">Start over as a first-time customer</button></div>`;
 }
 
-function pdFoot(){ const x=byId[S.pdId], q=S.pdQty, inCart=S.cart[x.id]||0;
-  const label = q===0 ? (inCart?'Remove from cart':'Add to cart') : inCart ? (q===inCart?'In your cart':`Update cart · ${eur(x.p*q)}`) : `Add to cart · ${eur(x.p*q)}`;
-  return `<div class="mfoot pdfoot"><div class="step pdstep"><button type="button" id="pdDec" aria-label="${q<=1?'Remove':'One less'}" ${q===0?'disabled':''}>${q<=1&&inCart?'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>':'−'}</button><span class="num">${q}</span><button type="button" id="pdInc" aria-label="One more">+</button></div><button type="button" class="cta" id="pdAdd" ${((q===inCart&&inCart)||(q===0&&!inCart))?'disabled':''}>${label}</button></div>`; }
-function openPd(id){ S.pdId=id; S.pdQty=S.cart[id]||1; S.modal='pd'; render(); setTimeout(()=>document.getElementById('modalClose')?.focus({preventScroll:true}),0); }
+function pdFoot(){ const x=byId[S.pdId], n=S.cart[x.id]||0;
+  return `<div class="mfoot pdfoot">${n?stepper(x.id,n,'pdstep'):`<button type="button" class="cta pdadd" data-add="${x.id}" aria-label="Add ${x.n}">+ Add</button>`}</div>`; }
+function openPd(id){ S.pdId=id; S.modal='pd'; render(); setTimeout(()=>document.getElementById('modalClose')?.focus({preventScroll:true}),0); }
 function modalHtml(){
   const m=S.modal, d=S.draft; if(!m) return '';
   let title='', body='', save='';
@@ -1244,17 +1244,21 @@ function modalHtml(){
     <button type="button" class="addnew" id="addAddr">+ Add new address</button>`;
     save=S.adding?'':'Use this address';
   } else if(m==='pd'){
-    const x=byId[S.pdId], q=S.pdQty, inCart=S.cart[x.id]||0, t=(x.tags||[]);
+    const x=byId[S.pdId], t=(x.tags||[]);
     title=x.n;
-    const labels=t.filter(k=>ATTR[k]).map(k=>`<span class="pdlab"><span class="attr ${ATTR[k][1]}" aria-hidden="true">${ATTR[k][2]}</span>${ATTR[k][0]}</span>`).join('');
+    const labels=t.filter(k=>ATTR[k]).map(k=>`<span class="pdlab"><span class="attr ${ATTR[k][1]}" aria-hidden="true">${ATTR[k][2]}</span>${k==='bio'?'Organic':ATTR[k][0]}</span>`).join('');
     const deal=x.pct?`<span class="pdeal ${x.save?'r-save':'r-sale'}">−${x.pct}%${x.save?' Save the food':''}</span>`:(t.includes('best')?'<span class="pdeal r-best">Best price</span>':'');
     const pairs=(PAIRS[x.id]||[]).map(id=>byId[id]).map(y=>`<div class="pair"><button type="button" class="pairimg" data-pd="${y.id}" aria-label="${y.n}"><img src="${y.img}" alt="" width="120" height="120"></button><div class="pairtxt"><b class="num">${priceHtml(y)}</b><span>${y.n}</span></div><button type="button" class="pairadd" data-pairadd="${y.id}" aria-label="Add ${y.n}">${S.cart[y.id]?`<span class="num">${S.cart[y.id]}</span>`:'+'}</button></div>`).join('');
-    body=`<div class="pdimg"><img src="${x.img}" alt="" width="360" height="360">${attrsHtml(x)}</div>
+    body=`<div class="pdimg"><img src="${x.img}" alt="" width="360" height="360"></div>
     <div class="pdinfo">
       <h2 class="pdname" id="m-title">${x.n}</h2>
       <div class="pdamt">${x.amt}</div>
       <div class="pdprow"><span class="pdprice num">${priceHtml(x)} ${deal}</span>${x.per?`<span class="pdper num">${x.per}</span>`:''}</div>
       ${labels?`<div class="pdlabels">${labels}</div>`:''}
+    </div>
+    <h3 class="pdh">Often bought with</h3>
+    <div class="pairs">${pairs}</div>
+    <h3 class="pdh">Product details</h3>
       <dl class="pdfacts">
         ${BRAND[x.id]?`<div><dt>Brand</dt><dd>${BRAND[x.id]}</dd></div>`:''}
         <div><dt>Country of origin</dt><dd>${ORIGIN[x.id]}</dd></div>
@@ -1262,9 +1266,7 @@ function modalHtml(){
         ${x.dep?`<div><dt>Deposit</dt><dd>${eur(x.dep)}, refunded when you return the bottles</dd></div>`:''}
         ${x.w?'<div><dt>Weighed item</dt><dd>Exact price after packing</dd></div>':''}
       </dl>
-    </div>
-    <h3 class="pdh">Often bought with</h3>
-    <div class="pairs">${pairs}</div>`;
+`;
     save='';
   } else if(m==='when'){
     title='When should we deliver?';
@@ -1354,6 +1356,7 @@ document.addEventListener('click',e=>{
   const im=e.target.closest('[data-pdimg]'); if(im && !e.target.closest('button')){ openPd(im.dataset.pdimg); return; }
   const b=e.target.closest('button,a'); if(!b) return;
   const ds=b.dataset;
+  if(b.closest('.pdfoot')){ if(ds.add) change(ds.add,1,true); else if(ds.inc) change(ds.inc,1,true); else if(ds.dec) change(ds.dec,-1); render(); (document.querySelector('.pdfoot [data-inc]')||document.querySelector('.pdfoot [data-add]'))?.focus(); return; }
   if(ds.add){ change(ds.add,1,true); render(); snack(ds.add); return; }
   if(ds.inc){ const inCard=!!b.closest('.card'); change(ds.inc,1,inCard); render(); if(inCard) snack(ds.inc); return; }
   if(ds.dec){ change(ds.dec,-1); render(); return; }
@@ -1374,9 +1377,6 @@ document.addEventListener('click',e=>{
   switch(b.id){
     case 'modalClose': closeModal(); break;
     case 'modalClose2': closeModal(); break;
-    case 'pdInc': S.pdQty++; render(); document.getElementById('pdInc')?.focus(); break;
-    case 'pdDec': S.pdQty=Math.max(0,S.pdQty-1); render(); document.getElementById('pdDec')?.focus(); break;
-    case 'pdAdd': { const id=S.pdId, before=S.cart[id]||0, q=S.pdQty; if(q===0){ delete S.cart[id]; } else S.cart[id]=q; S.modal=null; render(); if(q>before) snack(id); else toast(q===0?'Removed from cart':'Cart updated'); } break;
     case 'xtraBtn': case 'acctBtn': case 'catBtn': case 'favBtn': toast('Favourites list isn\'t part of this prototype'); break;
     case 'toSlotGrid': S.modal='slot'; S.draft={...S.draft, day:S.day||'today', sday:S.day, slot:S.slot}; S.fromWhen=true; render(); break;
     case 'bufInfo': { const n=document.getElementById('bufNote'); n.hidden=!n.hidden; b.setAttribute('aria-expanded',String(!n.hidden)); } break;
