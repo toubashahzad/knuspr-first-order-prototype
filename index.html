@@ -729,6 +729,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .mbody{padding:18px 20px;overflow:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:14px}
 .mfoot{padding:14px 20px 18px;border-top:1px solid var(--line)}
 .mnote{margin:0;font-size:13px;color:var(--muted)}
+.dsub{display:block;font-size:12px;color:var(--muted);font-weight:400}
 .cardf{display:flex;flex-direction:column;gap:6px;padding:4px 16px 16px 16px;border-top:0}
 .cardf label{font-size:13px;font-weight:600;margin-top:6px}
 .cardf input{height:44px;border:1.5px solid var(--line);border-radius:10px;padding:0 12px;font:inherit;color:var(--ink);background:var(--surface)}
@@ -979,7 +980,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
 </style>
 
 <div class="proto"><div class="wrap"><span>Clickable prototype for a case study. Prices are examples; no order is placed and nothing is charged.</span><span style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" id="themeBtn" aria-pressed="false">Dark mode</button><button type="button" id="reset">Start over as a first-time customer</button></span></div></div>
-<div class="strip"><div class="wrap"><span><b>First delivery free</b></span><span>€20 minimum order</span><span class="stripv"><b>€20 off</b> your first order at checkout</span></div></div>
+<div class="strip"><div class="wrap"><span><b>First delivery free</b></span><span>€20 minimum order</span><span class="stripv"><b>Up to €20 off</b> your first order</span></div></div>
 <header class="top"><div class="wrap hrow1">
   <a class="logo" href="#" id="home" aria-label="knuspr.de, back to the shop"><svg role="img" aria-hidden="true" style="height:40px;width:auto;display:block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 618.78 292.07"><g><path fill="var(--logo-ink)" d="M25.78,85.77h13.95v54.27l24.71-28.55h15.87L53.56,141.7l28.55,36.61H65.59l-25.86-35.07v35.07H25.78V85.77z"></path><path fill="var(--logo-ink)" d="M146.23,138.12v40.19H132.4v-41.35c0-9.22-5.76-14.59-13.44-14.59c-8.83,0-14.59,6.53-14.59,15.62v40.32H90.42 v-66.82h13.7v8.7c2.94-5.25,9.86-10.37,18.82-10.37C140.21,109.83,146.23,123.53,146.23,138.12z"></path><path fill="var(--logo-ink)" d="M160.82,151.69v-40.19h13.82v41.35c0,9.22,5.76,14.59,13.44,14.59c8.83,0,14.59-6.4,14.59-15.62v-40.32h13.95 v66.82h-13.7v-8.7c-2.94,5.38-9.86,10.37-18.82,10.37C166.83,179.98,160.82,166.28,160.82,151.69z"></path><path fill="var(--logo-ink)" d="M235.69,159.75c3.07,4.48,7.68,8.7,16,8.7c5.89,0,10.24-2.94,10.24-8.32c0-12.8-32.51-8.19-32.51-31.36 c0-11.78,9.98-18.95,22.91-18.95c12.54,0,19.2,7.3,21.76,12.42l-9.6,6.4c-1.92-3.07-5.5-7.42-12.93-7.42 c-5.12,0-8.96,2.69-8.96,7.3c0,12.8,32.64,7.42,32.64,30.98c0,12.42-10.5,20.48-24.19,20.48c-13.57,0-20.74-7.3-24.06-13.31 L235.69,159.75z"></path><path fill="var(--logo-ink)" d="M286.25,111.49h13.18v8.83c1.79-2.43,8.58-10.5,21.5-10.5c19.07,0,32.64,14.59,32.64,34.95 c0,20.74-12.67,35.2-31.75,35.2c-12.67,0-19.84-7.68-21.63-10.5v32.77h-13.95V111.49z M319.66,167.56 c11.65,0,19.84-9.34,19.84-22.79c0-13.7-8.58-22.53-19.97-22.53c-12.29,0-19.84,10.24-19.84,22.53 C299.69,159.24,308.53,167.56,319.66,167.56z"></path><path fill="var(--logo-ink)" d="M398,123.91c-14.59,0-18.82,11.14-18.82,25.6v28.8h-13.95v-66.82h13.7v10.5c2.56-6.66,9.6-12.16,19.07-12.16 V123.91z"></path></g><path fill="var(--logo-mute)" d="M297.22,244.87c1.87,0,3.4,1.54,3.4,3.4c0,1.86-1.54,3.4-3.4,3.4c-1.86,0-3.4-1.54-3.4-3.4 C293.81,246.41,295.35,244.87,297.22,244.87"></path><g><path fill="var(--logo-mute)" d="M348.45,250.63h-4.05v-7.78c-0.97,1.62-5.51,8.84-15.65,8.84c-12,0-20.51-9.16-20.51-21.97 c0-12.97,8.27-22.21,20.11-22.21c9.57,0,14.67,6.49,16.05,9.08v-24.56h4.05V250.63 M328.43,211.31c-9.16,0-15.97,7.62-15.97,18.4 c0,11.03,7.13,18.16,16.13,18.16c9.81,0,15.97-8.27,15.97-18.16C344.56,218.04,337.18,211.31,328.43,211.31z"></path></g><path fill="var(--logo-mute)" d="M377.88,207.5c12.08,0,19.78,9,19.78,21.08v1.7h-35.83c0,11.19,7.13,17.67,17.19,17.67 c7.78,0,12.08-3.81,14.51-7.21l2.67,1.86c-2.76,4.46-8.11,9.08-17.19,9.08c-12.4,0-21.4-8.84-21.4-21.97 C357.61,215.93,367.17,207.5,377.88,207.5 M393.44,226.71c-0.49-10.54-7.7-15.49-15.65-15.49c-7.62,0-14.92,5.19-15.73,15.49H393.44 z"></path><path fill="#DD811E" d="M523.35,106.92c0,0-0.92-2.38-3.52-4.14c-5.06-3.43-13.66-7.21-14.45-5.37c-5.04,11.79-26.23,23.03-43.98,26.11 c-1.34,0.23,15.21,15.53,16.06,18.19c0.84,2.66,23.68-0.77,37.71-16.38C528.78,110.19,523.35,106.92,523.35,106.92"></path><path fill="#DD811E" d="M513.76,70.61c14.68-8.69,14.63-15,14.63-15s-0.64-4.87-1.93-6.96c-3.22-5.22-11.7-9.66-11.63-7.82 c0.1,2.92-18.82,18.02-36.19,19.47c-1.35,0.11-5.6,12.46-5.79,15.27C472.66,78.39,495.09,81.66,513.76,70.61"></path><path fill="#F59D1D" d="M523.61,67.78c-1.29-0.43-2.7-0.86-4.23-1.36c-9.6-3.14-34.35-8.82-44.54-9.99c-1.04-0.12-1.93-0.19-2.64-0.21 c-8.12-0.19-10.43,1.41-14.75,7.47c-7.87,11.05-15.45,38.71-14.65,46.74c20.36-4.72,74.91-1.94,80.93,0.7 c0.2,0.09,0.39,0.18,0.58,0.28c1.77-7.83,5.44-24.57,6.82-34.16C532,71.26,528.91,69.54,523.61,67.78"></path><path fill="#DD811E" d="M539.94,216.77c1.34,1.2,6.5-3.93,9.59-9.01c2.08-3.42,2.65-7.32,2.65-7.32s3.53-5.3-15.17-13.15 c-19.28-8.09-41.39-1.39-41.03,1.39c0.36,2.77-9.79,24.38-8.49,24.02C504.87,207.86,530.41,208.26,539.94,216.77"></path><g><path fill="#F59D1D" d="M532.12,156.57c-4.1-18.84-1.15-28.41-8.27-32.08c-0.18-0.1-0.38-0.19-0.58-0.28 c-6.02-2.65-60.58-5.42-80.93-0.7c-3.64,0.84-6.19,1.93-7.17,3.29c-13.77,19.26-0.97,84.94,23.62,94.72 c1.62,0.65,4.19,0.54,7.44-0.14c20.02-4.16,65.71-29.92,72.39-34.1c0.89-0.56,1.57-1.12,2.08-1.71 C545.06,180.5,535.89,173.91,532.12,156.57"></path><path fill="#F59D1D" d="M527.55,59.75c4.34-9.62,7.88-20.04,5.84-25.28c-2.35-6.03-15.3-15-30.43-7.06 c-4.56,2.39-16.48,10.11-24.63,16.13c18.91,0.5,45.35,14.23,45.35,14.23S526.51,59.16,527.55,59.75"></path></g><path fill="#DD811E" d="M583.7,235.47c0,0-1.78-5.55-18.59-7.8c-21.37-2.86-40.86,8.99-39.64,11.51c1.22,2.53,9.76,12.26,11.04,11.84 c16.58-5.5,39.7,1.01,40.7,3.75C578.21,257.5,583.7,235.47,583.7,235.47"></path><g><path fill="#F59D1D" d="M568.34,217.7c-4.64-6.57-12.91-16.81-18.52-23.63c-0.5,0.59-1.18,1.15-2.08,1.71 c-6.68,4.18-52.37,29.94-72.39,34.1c4.65,8.58,22.25,27.49,33.49,33.35c6.61,3.44,9.38,3.82,16.54-0.04 c0.73-0.39,1.66-0.97,2.74-1.7c8.78-5.93,27.67-21.77,34.67-28.79c1.85-1.86,3.52-3.43,4.81-4.91 C570.33,224.62,571.29,221.88,568.34,217.7"></path><path fill="#F59D1D" d="M593.49,242.13c-3.59-5.02-11.09-9.25-17.76-12.31c-0.86,1.69-10.14,22.21-36.94,41.02 c14.51,1.2,37.26,0.98,43.29-1.14C598.93,263.76,597.32,247.47,593.49,242.13"></path></g></svg></a>
   <button type="button" class="addr" id="hdrAddr" data-edit="when" aria-label="Choose delivery time"></button>
@@ -1110,14 +1111,16 @@ function fillHtml(t){
   const fillers = P.filter(x=>!S.cart[x.id]).sort((a,b)=>Math.abs(a.p-t.toGo)-Math.abs(b.p-t.toGo)).slice(0,4);
   return `<div class="fill"><span class="lbl">Reach ${eur(MIN)}:</span>${fillers.map(x=>`<button type="button" class="chip" data-inc="${x.id}">${x.n} ${eur(x.p)}</button>`).join('')}</div>`;
 }
-function partialNote(t){ return t.off<WELCOME ? `${eur(t.off)} of €${WELCOME} used. Vouchers cover up to 50% of your order. Add ${eur(Math.round((WELCOME*2-t.items)*100)/100)} to use the full €${WELCOME}.` : ''; }
+function offNow(t){ return t.off<WELCOME ? `${eur(t.off)} off` : `€${WELCOME} off`; }
+function offLine(t){ return t.reached ? `<b>${offNow(t)}</b> at checkout${t.off<WELCOME?`. Add ${eur(Math.round((WELCOME*2-t.items)*100)/100)} to get the full €${WELCOME}`:''}` : `<b>50% off, up to €${WELCOME}</b> on your first order`; }
+function partialNote(t){ return t.off<WELCOME ? `${eur(t.off)} off now. Add ${eur(Math.round((WELCOME*2-t.items)*100)/100)} to get the full €${WELCOME}.` : ''; }
 function ticketHtml(t, atCheckout){
   const val = t.reached&&t.off<WELCOME ? `<span style="font-size:.72em">${eur(t.off)}</span>` : `€${WELCOME}<small>off</small>`;
   const part = t.reached ? partialNote(t) : '';
-  if(atCheckout && t.reached) return `<div class="ticket on"><span class="val">${val}</span><span class="txt"><b>First-order discount applied</b><span class="num">${part||`€${WELCOME} off for new customers, code WELCOME20`}</span></span></div>`;
+  if(atCheckout && t.reached) return `<div class="ticket on"><span class="val">${val}</span><span class="txt"><b>First-order discount applied</b><span class="num">${part||`50% of your order, up to €${WELCOME}. Code WELCOME20`}</span></span></div>`;
   return t.reached
-   ? `<div class="ticket on"><span class="val">${val}</span><span class="txt"><b>First-order discount: you're eligible</b><span class="num">${part||`€${WELCOME} off for new customers, taken off at checkout`}</span></span></div>`
-   : `<div class="ticket"><span class="val">€${WELCOME}<small>off</small></span><span class="txt"><b>First-order discount</b><span class="num">€${WELCOME} off for new customers, up to 50% of your order. Unlocks at €${MIN}, ${eur(t.toGo)} to go</span></span></div>`;
+   ? `<div class="ticket on"><span class="val">${val}</span><span class="txt"><b>First-order discount: you're eligible</b><span class="num">${part||`50% of your order, up to €${WELCOME}. Taken off at checkout`}</span></span></div>`
+   : `<div class="ticket"><span class="val">€${WELCOME}<small>off</small></span><span class="txt"><b>First-order discount</b><span class="num">50% off your first order, up to €${WELCOME}. Unlocks at €${MIN}, ${eur(t.toGo)} to go</span></span></div>`;
 }
 function costsHtml(t, final){
   const ca = t.weighed?'ca. ':'';
@@ -1126,7 +1129,7 @@ function costsHtml(t, final){
     ${t.dep?`<div><span>Bottle deposit</span><span>${eur(t.dep)}</span></div>`:''}
     <div><span>Delivery</span><span class="free">Free, first order</span></div>
     ${final
-      ? (t.reached?`<div><span>First-order discount</span><span class="off">−${eur(t.off)}</span></div>`:'')
+      ? (t.reached?`<div><span>First-order discount<small class="dsub">50% of your order, up to €${WELCOME}</small></span><span class="off">−${eur(t.off)}</span></div>`:'')
       : `<div class="pending"><span>First-order discount</span><span>${t.reached?'Applied at checkout':`Unlocks at €${MIN}`}</span></div>`}
     <div class="total"><span>${final?'You pay':'Total'}</span><span>${ca}${eur(final?t.total:t.cartTotal)}</span></div>
     ${t.weighed&&!final?`<p class="canote">ca. because some items are priced by weight. You pay the exact amount after packing.</p>`:''}
@@ -1144,7 +1147,7 @@ function finalCosts(t, done){
     <div><span>Items (${t.count})</span><span>${eur(t.items)}</span></div>
     ${t.dep?`<div><span>Bottle deposit</span><span>${eur(t.dep)}</span></div>`:''}
     <div><span>Delivery</span><span class="free">Free, first order</span></div>
-    ${t.reached?`<div><span>First-order discount</span><span class="off">−${eur(t.off)}</span></div>`:''}
+    ${t.reached?`<div><span>First-order discount<small class="dsub">50% of your order, up to €${WELCOME}</small></span><span class="off">−${eur(t.off)}</span></div>`:''}
     <div class="sub"><span>Order total</span><span>${eur(t.total)}</span></div>
     ${buf>0?`<div><span class="bufl">Weight buffer <button type="button" class="infob" id="bufInfo" aria-label="What is the weight buffer?" aria-expanded="false">i</button></span><span>+${eur(buf)}</span></div>
     <p class="bufnote" id="bufNote" hidden>Fruit, veg and meat are weighed when we pack them. The buffer covers a slightly heavier pick. Anything not used goes straight back to you.</p>`:''}
@@ -1185,7 +1188,7 @@ function renderDrawer(t){
     <div class="lines">${grouped(lines,(id,q)=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true"><img src="${x.img}" alt="" width="96" height="96"></span><span class="info"><b>${x.n}</b><small>${x.u}</small></span>${stepper(id,q,'sm')}<span class="amt num">${eur(x.p*q)}</span></div>`})}</div>
     ${fillHtml(t)}` : `<div class="goal"><div class="row"><b>Your cart is empty</b></div></div>`;
   document.getElementById('dfoot').innerHTML = `${lines.length?`<div class="dtotal num"><b>Total</b><b class="amt">${t.weighed?`<span class="ca">ca.</span>`:''}${eur(t.cartTotal)}</b></div>
-    ${t.reached?'<p class="dmsg g">✓ Free delivery and your €20 first-order discount at checkout</p>':''}
+    ${t.reached?`<p class="dmsg g">✓ Free delivery, and ${offNow(t)} your first order at checkout</p>`:''}
     ${t.weighed?'<p class="dmsg">ca. because some items are priced by weight. You pay the exact amount after packing.</p>':''}`:''}
     ${t.reached?'<button type="button" class="cta" id="toCheckout">Go to checkout</button>':`<button type="button" class="cta" id="toCheckout" disabled>Add ${eur(t.toGo)} more to check out</button>`}`;
 }
@@ -1194,7 +1197,7 @@ function pbannerHtml(t){
   const pct=Math.min(100,t.items/MIN*100);
   return `<div class="pban ${t.reached?'done':''}" role="status">
   <div class="ptrack num" role="img" aria-label="${eur(t.items)} of ${eur(MIN)}"><span class="pgoal">€${MIN}</span><span class="pfill" style="width:${pct}%">${eur(t.items)}</span></div>
-  <p class="pmsg num">${t.reached?'<b>Minimum reached.</b> Free delivery and your <b>€20 first-order discount</b> at checkout.':`Add <b>${eur(t.toGo)}</b> more to reach the <b>€${MIN} minimum order</b>.`}</p></div>`;
+  <p class="pmsg num">${t.reached?'<b>Minimum reached.</b> Free delivery, and ${offLine(t)}.':`Add <b>${eur(t.toGo)}</b> more to reach the <b>€${MIN} minimum order</b>.`}</p></div>`;
 }
 function recHtml(){
   const recs=P.filter(x=>!S.cart[x.id]).slice(0,4);
@@ -1258,7 +1261,7 @@ function renderCheckout(t){
         <p class="whennote">${S.slot?'Your time is held once you place the order.':'Pick a time to continue. Every option is free on your first order.'}</p></section>
       <section aria-labelledby="h-items"><div class="shrow"><h2 class="sh" id="h-items">Your items</h2><span class="shnote num">${t.count} items, still editable</span></div>
         <div class="sec">
-        ${t.reached?'':`<div class="warn">You're ${eur(t.toGo)} under the €${MIN} minimum. Add something to keep your slot and the €20 first-order discount.</div>`}
+        ${t.reached?'':`<div class="warn">You're ${eur(t.toGo)} under the €${MIN} minimum. Add something to keep your slot and your first-order discount.</div>`}
         <div class="lines">${lines.map(([id,q])=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true"><img src="${x.img}" alt="" width="96" height="96"></span><span class="info"><b>${x.n}</b><small>${x.u}</small><br><button type="button" class="rm" data-rm="${id}">Remove</button></span>${stepper(id,q,'sm')}<span class="amt num">${eur(x.p*q)}</span></div>`}).join('')}</div>
         <button type="button" class="ghost" data-go="shop" style="width:auto;padding:0 16px;align-self:flex-start">+ Add more items</button></div></section>
       <section aria-labelledby="h-pay"><h2 class="sh" id="h-pay">Payment</h2>
@@ -1340,8 +1343,8 @@ function modalHtml(){
   } else if(m==='pc'){
     const st=S.pcStep, z=st==='no'?(S.badZip||''):(S.zip||''), zone=zoneOf(z);
     title=st==='ok'?'Good news':st==='no'?'Not in your area yet':'Where should we deliver?';
-    body = st==='ok' ? `<div class="pcok"><span class="pcbig" aria-hidden="true">✓</span><h3>Yay, we deliver to ${zone} ${z}</h3><p>Shop as you like. You can add your exact address any time before checkout.</p>
-        <ul class="pcfacts"><li><b>Free</b> first delivery</li><li><b>€20</b> minimum order</li><li><b>€20 off</b> your first order at checkout</li></ul></div>`
+    body = st==='ok' ? `<div class="pcok"><span class="pcbig" aria-hidden="true">✓</span><h3>Yay, we deliver to ${zone} ${z}</h3><p>Shop as you like. You get the full €20 off from €40. You can add your exact address any time before checkout.</p>
+        <ul class="pcfacts"><li><b>Free</b> first delivery</li><li><b>€20</b> minimum order</li><li><b>50% off</b> your first order, up to €20</li></ul></div>`
       : st==='no' ? `<div class="pcok"><span class="pcbig no" aria-hidden="true">!</span><h3>We don’t deliver to ${z} yet</h3><p>Knuspr delivers in Berlin, Potsdam, the Frankfurt area and the Munich area. Try another postcode, or browse to see what we have.</p></div>`
       : `<form id="pcForm" class="pcform" novalidate><p class="mnote">Enter your postcode so you know we deliver to you before you start filling your cart.</p>
         <label for="pc-in">Postcode</label><input id="pc-in" name="pc" inputmode="numeric" autocomplete="postal-code" maxlength="5" placeholder="e.g. 12107" value="${z}">
@@ -1364,7 +1367,7 @@ function modalHtml(){
     save='';
   } else if(m==='disc' || m==='repl'){
     const D = m==='disc'
-      ? {t:'Vouchers and offers', ic:IC_V, h:'We apply your vouchers and offers once your order is finalised.', p:'Your cart shows the full price. At checkout we check which vouchers and offers your order qualifies for, like the €20 first-order discount for new customers, and take them off in your summary before you pay.'}
+      ? {t:'Vouchers and offers', ic:IC_V, h:'We apply your vouchers and offers once your order is finalised.', p:'Your cart shows the full price. At checkout we check which vouchers and offers your order qualifies for, like 50% off your first order, up to €20, and take them off in your summary before you pay.'}
       : {t:'Replacements', ic:IC_R, h:'If something is out of stock, we suggest a similar product.', p:'You see the replacement on your order before delivery and can turn it down. You only pay for what you keep.'};
     title=D.t;
     body=`<div class="infobig"><span class="infoart" aria-hidden="true">${D.ic.replace('width="24" height="24"','width="56" height="56"')}</span><h3>${D.h}</h3><p>${D.p}</p></div>`;
@@ -1423,7 +1426,7 @@ function snack(id){
   el.className='snack'+(t.reached?' done':'');
   const prev=Math.min(100,Math.max(0,(t.items-x.p)/MIN*100));
   const w=v=>`calc(${v}% - 4px)`;
-  el.innerHTML=`<div class="msg num">${t.reached?`<b>Minimum reached.</b> You get free delivery and your €20 first-order discount at checkout.<button type="button" class="view" id="snackView">View cart</button>`:`Still <b>${eur(t.toGo)}</b> to the €${MIN} minimum order.<span class="msub">Reach it for free delivery and your €20 first-order discount at checkout.</span>`}</div>
+  el.innerHTML=`<div class="msg num">${t.reached?`<b>Minimum reached.</b> Free delivery, and ${offLine(t)}.<button type="button" class="view" id="snackView">View cart</button>`:`Still <b>${eur(t.toGo)}</b> to the €${MIN} minimum order.<span class="msub">Reach it for free delivery and 50% off your first order, up to €20.</span>`}</div>
   <div class="track num" role="img" aria-label="${eur(t.items)} of ${eur(MIN)}"><span class="goalv">${eur(MIN).replace('.00','')}</span><span class="fillb" id="snackFill" style="width:${w(prev)}">${eur(t.items)}</span></div>`;
   requestAnimationFrame(()=>requestAnimationFrame(()=>{const f=document.getElementById('snackFill'); if(f) f.style.width=w(pct);}));
   el.hidden=false; clearTimeout(snackT); snackT=setTimeout(()=>el.hidden=true,5000);
@@ -1434,7 +1437,7 @@ function change(id,d,quiet){
   const before=totals().reached;
   S.cart[id]=Math.max(0,(S.cart[id]||0)+d); if(!S.cart[id]) delete S.cart[id];
   const after=totals().reached;
-  if(!before&&after&&!quiet) toast('Minimum reached: free delivery and your €20 first-order discount at checkout');
+  if(!before&&after&&!quiet) toast(`Minimum reached: free delivery and ${offNow(totals())} your first order at checkout`);
   if(before&&!after&&S.view==='checkout') toast(`Below the €${MIN} minimum again`);
 }
 
