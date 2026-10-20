@@ -473,7 +473,6 @@ document.getElementById('pwform').addEventListener('submit',async function(e){e.
 var v=document.getElementById('pwin').value.trim(),b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v)),
 x=Array.from(new Uint8Array(b)).map(function(n){return n.toString(16).padStart(2,'0')}).join('');
 if(x===H){try{sessionStorage.setItem('kfo-ok',H)}catch(e){}g.remove();}else{document.getElementById('pwerr').hidden=false;}});})();</script>
-
 <title>Knuspr First Order Prototype</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -713,8 +712,8 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .orderdone .costs{width:100%;text-align:left}
 @keyframes up{from{transform:translateY(12px);opacity:0}to{transform:none;opacity:1}}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;z-index:60}
-.snack{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom,0px));width:min(760px,calc(100% - 32px));background:#1f1f1f;color:#fff;border-radius:18px;box-shadow:0 14px 36px rgba(0,0,0,.28);padding:14px 16px 14px 24px;z-index:45;display:flex;align-items:center;gap:20px;animation:up .2s ease}
-@keyframes snackup{from{opacity:0;margin-bottom:-12px}to{opacity:1;margin-bottom:0}}
+.snack{position:fixed;left:50%;transform:translateX(-50%);top:96px;bottom:auto;width:min(760px,calc(100% - 32px));background:#1f1f1f;color:#fff;border-radius:18px;box-shadow:0 14px 36px rgba(0,0,0,.28);padding:14px 16px 14px 24px;z-index:45;display:flex;align-items:center;gap:20px;animation:up .2s ease}
+@keyframes snackup{from{opacity:0;margin-top:-12px}to{opacity:1;margin-top:0}}
 .snack{animation:snackup .2s ease}
 @media (prefers-reduced-motion:reduce){.snack{animation:none}.snack .fillb{transition:none}}
 .snack .msg{flex:1;min-width:0;font-size:17px;line-height:1.3}
@@ -733,7 +732,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
 :root[data-theme="dark"] .snack .view{color:#c9600f}
 :root[data-theme="dark"] .snack .track{background:#ececec;box-shadow:inset 0 0 0 2px #ececec}
 .snack.done .fillb{background:#22c55e;color:#0b2e16}
-@media (max-width:640px){.snack{flex-direction:column;align-items:stretch;gap:10px;padding:14px 16px;bottom:calc(96px + env(safe-area-inset-bottom,0px))}.snack .track{flex-basis:auto}.snack .msg{font-size:15px}}
+@media (max-width:640px){.snack{flex-direction:column;align-items:stretch;gap:10px;padding:14px 16px;bottom:auto}.snack .track{flex-basis:auto}.snack .msg{font-size:15px}}
 .sumrow{display:flex;align-items:flex-start;gap:14px}
 .sumic{width:40px;height:40px;border-radius:20px;background:var(--tint2);color:var(--brand);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .sumtxt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
@@ -1498,8 +1497,10 @@ function snack(id){
   el.innerHTML=`<div class="msg num">${t.reached?`<b>Minimum reached.</b> Free delivery, and ${offLine(t)}.<button type="button" class="view" id="snackView">View cart</button>`:`Still <b>${eur(t.toGo)}</b> to the €${MIN} minimum order.<span class="msub">Reach it for free delivery and 50% off your first order, up to €20.</span>`}</div>
   <div class="track num" role="img" aria-label="${eur(t.items)} of ${eur(MIN)}"><span class="goalv">${eur(MIN).replace('.00','')}</span><span class="fillb" id="snackFill" style="width:${w(prev)}">${eur(t.items)}</span></div>`;
   requestAnimationFrame(()=>requestAnimationFrame(()=>{const f=document.getElementById('snackFill'); if(f) f.style.width=w(pct);}));
-  el.hidden=false; clearTimeout(snackT); snackT=setTimeout(()=>el.hidden=true,5000);
+  el.hidden=false; placeSnack(); clearTimeout(snackT); snackT=setTimeout(()=>el.hidden=true,5000);
 }
+function placeSnack(){ const el=document.getElementById('snack'), sb=document.querySelector('.shopbar'); if(!el||el.hidden||!sb) return; el.style.top=Math.max(8,sb.getBoundingClientRect().bottom+12)+'px'; }
+window.addEventListener('scroll',placeSnack,{passive:true}); window.addEventListener('resize',placeSnack);
 let toastT;
 function toast(msg){ const el=document.getElementById('toast'); el.textContent=msg; el.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>el.hidden=true,1800); }
 function change(id,d,quiet){
