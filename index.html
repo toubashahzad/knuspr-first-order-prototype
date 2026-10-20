@@ -1227,7 +1227,7 @@ function renderDrawer(t){
   document.getElementById('toCartPage').innerHTML = `<span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M3 4h2l2.5 11h11L21 7H7"/></svg>${t.count?`<span class="badge num ${t.reached?'ok':''}">${t.count}</span>`:''}</span><span><b class="num">${eur(t.items)}</b><small>Open full cart</small></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>`;
   document.getElementById('dbody').innerHTML = lines.length ? `${goalHtml(t)}${xtraBanner()}
     <div class="lines">${grouped(lines,(id,q)=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true"><img src="${x.img}" alt="" width="96" height="96"></span><span class="info"><b>${x.n}</b><small>${x.u}</small></span>${stepper(id,q,'sm')}<span class="amt num">${eur(x.p*q)}</span></div>`})}</div>
-    ${fillHtml(t)}` : `<div class="emptyc"><b>Your cart is empty</b><span>Add a few things to get started.</span></div>${genHtml()}`;
+    ${fillHtml(t)}` : `${genHtml()}<div class="emptyc"><b>Your cart is empty</b><span>Add a few things to get started.</span></div>`;
   document.getElementById('dfoot').innerHTML = `${lines.length?`<div class="dtotal num"><b>Total</b><b class="amt">${t.weighed?`<span class="ca">ca.</span>`:''}${eur(t.cartTotal)}</b></div>
     ${t.reached?`<p class="dmsg g">✓ Free delivery, and ${offNow(t)} your first order at checkout</p>`:''}
     ${t.weighed?'<p class="dmsg">ca. because some items are priced by weight. You pay the exact amount after packing.</p>':''}`:''}
@@ -1254,7 +1254,7 @@ function renderCart(t){
       ${t.count?`<div class="cxban">${xtraBanner()}</div>`:''}
       ${lines.length?`<div class="lines">${grouped(lines,(id,q)=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true"><img src="${x.img}" alt="" width="96" height="96"></span><span class="info"><b>${x.n}</b><small>${x.u}</small><br><button type="button" class="rm" data-rm="${id}">Remove</button></span>${stepper(id,q,'sm')}<span class="amt num">${eur(x.p*q)}</span></div>`})}</div>
       <div style="margin-top:16px">${fillHtml(t)}</div>
-      <div class="cartacts"><button type="button" id="emptyCart">Empty the cart</button><button type="button" data-go="shop">+ Add more items</button></div>`:`<div class="emptyc"><b>Your cart is empty</b><span>Add a few things to get started.</span></div>${genHtml()}`}
+      <div class="cartacts"><button type="button" id="emptyCart">Empty the cart</button><button type="button" data-go="shop">+ Add more items</button></div>`:`${genHtml()}<div class="emptyc"><b>Your cart is empty</b><span>Add a few things to get started.</span></div>`}
       ${recHtml()}
     </section>
     <aside class="summary" aria-labelledby="h-csum"><h2 id="h-csum">Summary</h2>
