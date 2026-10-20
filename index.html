@@ -905,14 +905,18 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .pnameb{border:0;background:none;padding:0;text-align:left;font:inherit;font-weight:600;color:inherit;cursor:pointer}
 .pnameb:hover{color:var(--brand)}
 .pic[data-pdimg]{cursor:pointer}
-.modal.wide{width:min(820px,calc(100% - 32px));max-height:min(820px,calc(100% - 48px))}
-.pdgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start}
-@media (max-width:640px){.pdgrid{grid-template-columns:minmax(0,1fr)}}
-.pdimg{position:relative;background:#fff;border:1px solid var(--line);border-radius:16px;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.pdimg img{width:86%;height:86%;object-fit:contain}
-.pdinfo{display:flex;flex-direction:column;gap:12px}
-.pdprice{font-size:26px;font-weight:700;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.modal.wide{width:min(560px,calc(100% - 32px));max-height:min(820px,calc(100% - 48px))}
+
+.pdx{position:absolute;top:14px;right:14px;z-index:2;width:40px;height:40px;font-size:22px;background:rgba(255,255,255,.9);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.pdimg{position:relative;background:#fff;border-radius:14px;height:min(340px,42vh);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+.pdimg img{height:100%;width:auto;max-width:100%;object-fit:contain}
+.pdinfo{display:flex;flex-direction:column;gap:6px}
+.pdname{font-size:26px;line-height:1.2;font-weight:700;letter-spacing:-.01em}
+.pdamt{font-size:16px;color:var(--muted)}
+.pdprow{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.pdprice{font-size:22px;font-weight:700;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .pdprice small{font-size:14px}
+.pdper{font-size:16px;color:var(--muted)}
 .pdeal{font-size:13px;font-weight:700;color:#fff;border-radius:8px;padding:4px 10px}
 .pdlabels{display:flex;flex-wrap:wrap;gap:8px}
 .pdlab{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;border:1px solid var(--line);border-radius:999px;padding:3px 12px 3px 3px}
@@ -992,6 +996,7 @@ const QTY={ban:[0.18,'kg'],cuc:[1,'pc'],app:[0.16,'kg'],pep:[0.21,'kg'],mil:[1,'
 P.forEach(x=>{ x.img='img/'+x.id+'.jpg'; x.e=''; const [a,u]=QTY[x.id]; const per=x.p/a;
   const amt = u==='pc' ? (a===1?'1 piece':a+' pieces') : u==='l' ? (x.id==='wat'?'6 × 1.5 l':a+' l') : (a<1?Math.round(a*1000)+' g':a+' kg');
   const base = u==='pc' ? (a>1?` (1 piece = ${eur(per)})`:'') : ` (1 ${u} = ${eur(per)})`;
+  x.amt=(x.w?'1 piece approx. ':'')+amt; x.per = u==='pc' ? (a>1?eur(per)+' per piece':'') : eur(per)+' per '+(u==='l'?'litre':'kg');
   x.u = (x.w?`1 piece approx. ${amt}`:amt).replace(/ (?=[gl]\b|kg\b)/g,'\u00a0')+base.replace(/ /g,'\u00a0').replace(/^\u00a0/,' '); });
 const ATTR={
  bio:['BIO','a-bio','<span class="abio">BIO</span>'],
@@ -1220,7 +1225,7 @@ function renderDone(t){
 function pdFoot(){ const x=byId[S.pdId], q=S.pdQty, inCart=S.cart[x.id]||0;
   const label = q===0 ? (inCart?'Remove from cart':'Add to cart') : inCart ? (q===inCart?'In your cart':`Update cart · ${eur(x.p*q)}`) : `Add to cart · ${eur(x.p*q)}`;
   return `<div class="mfoot pdfoot"><div class="step pdstep"><button type="button" id="pdDec" aria-label="${q<=1?'Remove':'One less'}" ${q===0?'disabled':''}>${q<=1&&inCart?'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>':'−'}</button><span class="num">${q}</span><button type="button" id="pdInc" aria-label="One more">+</button></div><button type="button" class="cta" id="pdAdd" ${((q===inCart&&inCart)||(q===0&&!inCart))?'disabled':''}>${label}</button></div>`; }
-function openPd(id){ S.pdId=id; S.pdQty=S.cart[id]||1; S.modal='pd'; render(); setTimeout(()=>document.getElementById('pdAdd')?.focus(),0); }
+function openPd(id){ S.pdId=id; S.pdQty=S.cart[id]||1; S.modal='pd'; render(); setTimeout(()=>document.getElementById('modalClose')?.focus({preventScroll:true}),0); }
 function modalHtml(){
   const m=S.modal, d=S.draft; if(!m) return '';
   let title='', body='', save='';
@@ -1244,20 +1249,19 @@ function modalHtml(){
     const labels=t.filter(k=>ATTR[k]).map(k=>`<span class="pdlab"><span class="attr ${ATTR[k][1]}" aria-hidden="true">${ATTR[k][2]}</span>${ATTR[k][0]}</span>`).join('');
     const deal=x.pct?`<span class="pdeal ${x.save?'r-save':'r-sale'}">−${x.pct}%${x.save?' Save the food':''}</span>`:(t.includes('best')?'<span class="pdeal r-best">Best price</span>':'');
     const pairs=(PAIRS[x.id]||[]).map(id=>byId[id]).map(y=>`<div class="pair"><button type="button" class="pairimg" data-pd="${y.id}" aria-label="${y.n}"><img src="${y.img}" alt="" width="120" height="120"></button><div class="pairtxt"><b class="num">${priceHtml(y)}</b><span>${y.n}</span></div><button type="button" class="pairadd" data-pairadd="${y.id}" aria-label="Add ${y.n}">${S.cart[y.id]?`<span class="num">${S.cart[y.id]}</span>`:'+'}</button></div>`).join('');
-    body=`<div class="pdgrid">
-      <div class="pdimg"><img src="${x.img}" alt="${x.n}" width="360" height="360">${attrsHtml(x)}</div>
-      <div class="pdinfo">
-        <div class="pdprice num">${priceHtml(x)} ${deal}</div>
-        <div class="unit">${x.u}</div>
-        ${labels?`<div class="pdlabels">${labels}</div>`:''}
-        <dl class="pdfacts">
-          ${BRAND[x.id]?`<div><dt>Brand</dt><dd>${BRAND[x.id]}</dd></div>`:''}
-          <div><dt>Country of origin</dt><dd>${ORIGIN[x.id]}</dd></div>
-          ${t.includes('own')?'<div><dt>Own brand</dt><dd>Knuspr’s own label</dd></div>':''}
-          ${x.dep?`<div><dt>Deposit</dt><dd>${eur(x.dep)}, refunded when you return the bottles</dd></div>`:''}
-          ${x.w?'<div><dt>Weighed item</dt><dd>Exact price after packing</dd></div>':''}
-        </dl>
-      </div>
+    body=`<div class="pdimg"><img src="${x.img}" alt="" width="360" height="360">${attrsHtml(x)}</div>
+    <div class="pdinfo">
+      <h2 class="pdname" id="m-title">${x.n}</h2>
+      <div class="pdamt">${x.amt}</div>
+      <div class="pdprow"><span class="pdprice num">${priceHtml(x)} ${deal}</span>${x.per?`<span class="pdper num">${x.per}</span>`:''}</div>
+      ${labels?`<div class="pdlabels">${labels}</div>`:''}
+      <dl class="pdfacts">
+        ${BRAND[x.id]?`<div><dt>Brand</dt><dd>${BRAND[x.id]}</dd></div>`:''}
+        <div><dt>Country of origin</dt><dd>${ORIGIN[x.id]}</dd></div>
+        ${t.includes('own')?'<div><dt>Own brand</dt><dd>Knuspr’s own label</dd></div>':''}
+        ${x.dep?`<div><dt>Deposit</dt><dd>${eur(x.dep)}, refunded when you return the bottles</dd></div>`:''}
+        ${x.w?'<div><dt>Weighed item</dt><dd>Exact price after packing</dd></div>':''}
+      </dl>
     </div>
     <h3 class="pdh">Often bought with</h3>
     <div class="pairs">${pairs}</div>`;
@@ -1304,7 +1308,7 @@ function modalHtml(){
     body=`<div class="opts" role="radiogroup" aria-label="Payment methods">${PAYS.map(x=>`<label class="opt"><input type="radio" name="mpay" value="${x.k}" ${d.pay===x.k?'checked':''}><span><b>${x.l}</b><span>${x.s}</span></span></label>`).join('')}</div>`;
     save='Use this method';
   }
-  return `<div class="mscrim" id="mscrim"></div><div class="modal ${m==='pd'?'wide':''}" role="dialog" aria-modal="true" aria-labelledby="m-title"><div class="mhead"><h2 id="m-title">${title}</h2><button type="button" class="x" id="modalClose" aria-label="Close">×</button></div><div class="mbody">${body}</div>${m==='pd'?pdFoot():save?`<div class="mfoot"><button type="button" class="cta" id="modalSave">${save}</button></div>`:(m==='disc'||m==='repl')?'<div class="mfoot right"><button type="button" class="ghost" id="modalClose2">Close</button></div>':''}</div>`;
+  return `<div class="mscrim" id="mscrim"></div><div class="modal ${m==='pd'?'wide':''}" role="dialog" aria-modal="true" aria-labelledby="m-title">${m==='pd'?'<button type="button" class="x pdx" id="modalClose" aria-label="Close">×</button>':`<div class="mhead"><h2 id="m-title">${title}</h2><button type="button" class="x" id="modalClose" aria-label="Close">×</button></div>`}<div class="mbody">${body}</div>${m==='pd'?pdFoot():save?`<div class="mfoot"><button type="button" class="cta" id="modalSave">${save}</button></div>`:(m==='disc'||m==='repl')?'<div class="mfoot right"><button type="button" class="ghost" id="modalClose2">Close</button></div>':''}</div>`;
 }
 function openModal(m){ S.modal=m; S.adding=false; S.editId=null; S.editCid=null; S.draft={cid:S.cid, addr:S.addr, pay:S.pay, day:S.day, sday:S.day, slot:S.slot}; render(); setTimeout(()=>{const f=document.querySelector('#modal .modal input:checked, #modal .modal .slot.on, #modal .modal button'); f&&f.focus();},0); }
 function closeModal(){ const m=S.modal; S.modal=null; S.adding=false; render(); const b=document.querySelector(`[data-edit="${m}"],[data-info="${m}"]`); b&&b.focus(); }
