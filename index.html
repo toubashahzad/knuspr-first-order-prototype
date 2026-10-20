@@ -657,10 +657,10 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .lgh::after{content:"";flex:1;height:1px;background:var(--line)}
 .lgh span{order:2;font-weight:500;font-size:12px;color:var(--muted)}
 .lgh::after{order:1}
-.cartpage .lgroup{gap:0}
-.cartpage .lgroup .line:last-child{border-bottom:0}
-.cartpage .lgh{padding-top:16px}
-.cartpage .lgroup:first-child .lgh{padding-top:4px}
+.cartpage .lgroup,.co .lgroup{gap:0}
+.cartpage .lgroup .line:last-child,.co .lgroup .line:last-child{border-bottom:0}
+.cartpage .lgh,.co .lgh{padding-top:16px}
+.cartpage .lgroup:first-child .lgh,.co .lgroup:first-child .lgh{padding-top:4px}
 .rm{border:0;background:none;color:var(--muted);font-size:13px;text-decoration:underline;padding:0}
 .warn{background:var(--warn-tint);color:var(--warn);border-radius:10px;padding:10px 12px;font-size:14px;font-weight:600}
 .pay{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
@@ -729,6 +729,17 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .mbody{padding:18px 20px;overflow:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:14px}
 .mfoot{padding:14px 20px 18px;border-top:1px solid var(--line)}
 .mnote{margin:0;font-size:13px;color:var(--muted)}
+.tipbox{padding:16px;display:flex;flex-direction:column;gap:14px}
+.tiphead{display:flex;gap:12px;align-items:center}
+.tiphead p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.45}.tiphead b{color:var(--ink)}
+.tipic{width:44px;height:44px;border-radius:22px;background:var(--tint);color:var(--accent);display:grid;place-items:center;flex-shrink:0}
+.tips{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.tipc{position:relative;height:52px;border:1.5px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);font:inherit;font-weight:700;font-size:15px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;transition:border-color .15s,background .15s}
+.tipc small{font-size:10.5px;font-weight:600;color:var(--muted)}
+.tipc:hover{border-color:var(--accent)}
+.tipc.on{border-color:var(--accent);background:var(--tint2);color:var(--accent)}
+.tipc.on small{color:var(--accent)}
+@media (max-width:420px){.tipc{font-size:14px}.tipc small{font-size:9.5px}}
 .dsub{display:block;font-size:12px;color:var(--muted);font-weight:400}
 .cardf{display:flex;flex-direction:column;gap:6px;padding:4px 16px 16px 16px;border-top:0}
 .cardf label{font-size:13px;font-weight:600;margin-top:6px}
@@ -1083,7 +1094,7 @@ function curAddr(){ return S.addrs.find(x=>x.id===S.addr)||S.addrs[0]||null; }
 const ZONES=[[/^1[0-4]/,'Berlin'],[/^14[4-7]/,'Potsdam'],[/^(60|61|63|65)/,'Frankfurt area'],[/^(80|81|82|85)/,'Munich area']];
 function zoneOf(z){ const m=[...ZONES].reverse().find(([re])=>re.test(z)); return m?m[1]:null; }
 function mapSvg(label){ return `<div class="amap" role="img" aria-label="Map preview${label?': '+label:''}"><svg viewBox="0 0 400 170" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="400" height="170" fill="var(--mapbg)"/><path d="M-10 120 C80 100 140 140 230 118 S360 90 420 104" stroke="var(--mapriver)" stroke-width="14" fill="none"/><rect x="250" y="12" width="90" height="56" rx="10" fill="var(--mappark)"/><g stroke="var(--maproad)" stroke-linecap="round" fill="none"><path d="M0 60 H400" stroke-width="10"/><path d="M120 0 V170" stroke-width="10"/><path d="M0 20 L180 150" stroke-width="6"/><path d="M220 0 V170" stroke-width="6"/><path d="M300 80 L400 30" stroke-width="6"/><path d="M40 0 V170" stroke-width="4"/><path d="M0 150 H400" stroke-width="4"/></g></svg><span class="apin"><svg width="34" height="34" viewBox="0 0 24 24"><path d="M12 22s-7-6.4-7-12a7 7 0 0 1 14 0c0 5.6-7 12-7 12z" fill="var(--accent)"/><circle cx="12" cy="10" r="2.7" fill="#fff"/></svg></span>${label?`<span class="alab">${label}</span>`:''}</div>`; }
-function save(){ try{ localStorage.setItem('kfo2', JSON.stringify({favs:S.favs, cart:S.cart, view:S.view, day:S.day, slot:S.slot, dmode:S.dmode, pay:S.pay, addrs:S.addrs, addr:S.addr, zip:S.zip, contacts:S.contacts, cid:S.cid, email:S.email})); }catch(e){} }
+function save(){ try{ localStorage.setItem('kfo2', JSON.stringify({favs:S.favs, cart:S.cart, view:S.view, day:S.day, slot:S.slot, dmode:S.dmode, pay:S.pay, addrs:S.addrs, addr:S.addr, zip:S.zip, tip:S.tip, contacts:S.contacts, cid:S.cid, email:S.email})); }catch(e){} }
 S = load();
 
 function totals(){
@@ -1092,10 +1103,11 @@ function totals(){
   items=Math.round(items*100)/100;
   const reached = items >= MIN;
   const off = reached ? Math.min(WELCOME, Math.floor(items*0.5*100)/100) : 0;
-  const total = Math.round((items - off + dep)*100)/100;
+  const tip = count ? (S.tip||0) : 0;
+  const total = Math.round((items - off + dep + tip)*100)/100;
   const hold = Math.round((total + weighed*BUFFER)*100)/100;
   const cartTotal = Math.round((items + dep)*100)/100;
-  return {items, weighed, dep, count, reached, off, total, hold, cartTotal, toGo: Math.max(0, Math.round((MIN-items)*100)/100)};
+  return {items, weighed, dep, count, reached, off, tip, total, hold, cartTotal, toGo: Math.max(0, Math.round((MIN-items)*100)/100)};
 }
 
 function stepper(id,q,cls=''){ return `<div class="step ${cls}"><button type="button" data-dec="${id}" aria-label="${q===1?'Remove':'One less'} ${byId[id].n}">${q===1?'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>':'−'}</button><span class="num">${q}</span><button type="button" data-inc="${id}" aria-label="One more ${byId[id].n}">+</button></div>`; }
@@ -1148,6 +1160,7 @@ function finalCosts(t, done){
     ${t.dep?`<div><span>Bottle deposit</span><span>${eur(t.dep)}</span></div>`:''}
     <div><span>Delivery</span><span class="free">Free, first order</span></div>
     ${t.reached?`<div><span>First-order discount<small class="dsub">50% of your order, up to €${WELCOME}</small></span><span class="off">−${eur(t.off)}</span></div>`:''}
+    ${t.tip?`<div><span>Rider tip</span><span>+${eur(t.tip)}</span></div>`:''}
     <div class="sub"><span>Order total</span><span>${eur(t.total)}</span></div>
     ${buf>0?`<div><span class="bufl">Weight buffer <button type="button" class="infob" id="bufInfo" aria-label="What is the weight buffer?" aria-expanded="false">i</button></span><span>+${eur(buf)}</span></div>
     <p class="bufnote" id="bufNote" hidden>Fruit, veg and meat are weighed when we pack them. The buffer covers a slightly heavier pick. Anything not used goes straight back to you.</p>`:''}
@@ -1262,12 +1275,18 @@ function renderCheckout(t){
       <section aria-labelledby="h-items"><div class="shrow"><h2 class="sh" id="h-items">Your items</h2><span class="shnote num">${t.count} items, still editable</span></div>
         <div class="sec">
         ${t.reached?'':`<div class="warn">You're ${eur(t.toGo)} under the €${MIN} minimum. Add something to keep your slot and your first-order discount.</div>`}
-        <div class="lines">${lines.map(([id,q])=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true"><img src="${x.img}" alt="" width="96" height="96"></span><span class="info"><b>${x.n}</b><small>${x.u}</small><br><button type="button" class="rm" data-rm="${id}">Remove</button></span>${stepper(id,q,'sm')}<span class="amt num">${eur(x.p*q)}</span></div>`}).join('')}</div>
+        <div class="lines">${grouped(lines,(id,q)=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true"><img src="${x.img}" alt="" width="96" height="96"></span><span class="info"><b>${x.n}</b><small>${x.u}</small><br><button type="button" class="rm" data-rm="${id}">Remove</button></span>${stepper(id,q,'sm')}<span class="amt num">${eur(x.p*q)}</span></div>`})}</div>
         <button type="button" class="ghost" data-go="shop" style="width:auto;padding:0 16px;align-self:flex-start">+ Add more items</button></div></section>
       <section aria-labelledby="h-pay"><h2 class="sh" id="h-pay">Payment</h2>
         <div class="sec rows">
           <div role="radiogroup" aria-label="Payment method">${PAYS.map(x=>`<label class="prow ${S.pay===x.k?'on':''}"><span class="pmark pm-${x.k}" aria-hidden="true">${PMARK[x.k]}</span><span class="sumtxt"><b>${x.l}</b><span class="${S.pay===x.k?'chg num':''}">${S.pay===x.k?charge:x.s}</span></span><input type="radio" name="pay" value="${x.k}" ${S.pay===x.k?'checked':''}></label>${x.k==='card'&&S.pay==='card'?cardForm():''}`).join('')}</div>
           <div class="offrow"><span class="offlbl">Offers and savings</span>${ticketHtml(t,true)}</div>
+        </div>
+      </section>
+      <section aria-labelledby="h-tip"><h2 class="sh" id="h-tip">Tip your rider</h2>
+        <div class="sec tipbox">
+          <div class="tiphead"><span class="tipic" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="17" r="3"/><circle cx="18" cy="17" r="3"/><path d="M6 17l4-8h5l3 8M10 9 8.5 6H6M15 9l1.5-3H19"/></svg></span><p><b>100% goes to your rider.</b><br>They carry your order to the door, whatever the weather.</p></div>
+          <div class="tips" role="group" aria-label="Tip amount">${[0,1,2,3,5].map(v=>`<button type="button" class="tipc ${(S.tip||0)===v?'on':''}" data-tip="${v}" aria-pressed="${(S.tip||0)===v}">${v?`€${v}`:'No tip'}</button>`).join('')}</div>
         </div>
       </section>
     </div>
@@ -1446,6 +1465,7 @@ document.addEventListener('click',e=>{
   const b=e.target.closest('button,a'); if(!b) return;
   const ds=b.dataset;
   if(b.closest('.modal') && (ds.add||ds.inc||ds.dec)){ const id=ds.add||ds.inc||ds.dec, foot=!!b.closest('.pdfoot'); if(ds.dec) change(id,-1); else change(id,1,true); render(); const sc=foot?'.pdfoot ':'.pairs '; (document.querySelector(`${sc}[data-inc="${id}"]`)||document.querySelector(`${sc}[data-add="${id}"]`))?.focus({preventScroll:true}); return; }
+  if(ds.tip!==undefined){ S.tip=+ds.tip; render(); document.querySelector(`[data-tip="${ds.tip}"]`)?.focus({preventScroll:true}); return; }
   if(ds.add){ change(ds.add,1,true); render(); snack(ds.add); return; }
   if(ds.inc){ const inCard=!!b.closest('.card'); change(ds.inc,1,inCard); render(); if(inCard) snack(ds.inc); return; }
   if(ds.dec){ change(ds.dec,-1); render(); return; }
