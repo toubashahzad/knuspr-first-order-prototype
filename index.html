@@ -60,7 +60,8 @@ header.top .wrap{display:flex;align-items:center;gap:20px;padding-block:12px}
 .cartbtn .amt2{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
 .mini{width:84px;height:4px;border-radius:2px;background:var(--tint);overflow:hidden;display:block}
 .mini i{display:block;height:100%;background:var(--accent);border-radius:2px;transition:width .3s}
-.mini.done i{background:var(--good)}
+.mini.done i{background:#22c55e}
+:root[data-theme="dark"] .snack{box-shadow:0 0 0 1px #3a3a3a,0 14px 36px rgba(0,0,0,.5)}
 .cartpage{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:28px;align-items:start}
 @media (max-width:900px){.cartpage{grid-template-columns:minmax(0,1fr)}}
 .cartpage .lines{gap:0}
@@ -216,14 +217,14 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .snack .track{position:relative;flex:0 0 300px;height:40px;border-radius:20px;background:#fff;box-shadow:inset 0 0 0 2px #fff;overflow:hidden}
 .snack .fillb{position:absolute;inset:2px auto 2px 2px;min-width:84px;border-radius:18px;background:var(--accent);display:flex;align-items:center;padding-left:14px;color:#fff;font-weight:700;font-size:16px;white-space:nowrap;transition:width .6s cubic-bezier(.2,.8,.2,1)}
 .snack .goalv{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:#1d1b19;font-weight:700;font-size:16px}
-.snack.done .fillb{background:var(--good)}
+.snack.done .fillb{background:#22c55e;color:#0b2e16}
 @media (max-width:640px){.snack{flex-direction:column;align-items:stretch;gap:10px;padding:14px 16px;bottom:calc(96px + env(safe-area-inset-bottom,0px))}.snack .track{flex-basis:auto}.snack .msg{font-size:15px}}
 </style>
 </head>
 <body>
 
 
-<div class="proto"><div class="wrap"><span>Clickable prototype for a case study. Prices are examples; no order is placed and nothing is charged.</span><button type="button" id="reset">Start over as a first-time customer</button></div></div>
+<div class="proto"><div class="wrap"><span>Clickable prototype for a case study. Prices are examples; no order is placed and nothing is charged.</span><span style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" id="themeBtn" aria-pressed="false">Dark mode</button><button type="button" id="reset">Start over as a first-time customer</button></span></div></div>
 <div class="strip"><div class="wrap"><span><b>First delivery free</b></span><span>€39 minimum order</span><span class="stripv"><b>€20 off</b> your first order · applied in your cart</span></div></div>
 <header class="top"><div class="wrap">
   <a class="logo" href="#" id="home" aria-label="Back to the shop">knuspr<span>.</span></a>
@@ -427,6 +428,8 @@ function render(){
   save();
 }
 
+function setTheme(m){ document.documentElement.dataset.theme=m; const b=document.getElementById('themeBtn'); b.textContent=m==='dark'?'Light mode':'Dark mode'; b.setAttribute('aria-pressed',String(m==='dark')); try{localStorage.setItem('kfo-theme',m);}catch(e){} }
+(function(){ let m='light'; try{ m=localStorage.getItem('kfo-theme')||'light'; }catch(e){} setTheme(m); })();
 let snackT;
 function snack(id){
   const x=byId[id], t=totals(), el=document.getElementById('snack');
@@ -462,6 +465,7 @@ document.addEventListener('click',e=>{
   switch(b.id){
     case 'snackView': document.getElementById('snack').hidden=true; S.drawer=true; render(); break;
     case 'aiFab': toast('Maia is not part of this prototype'); break;
+    case 'themeBtn': setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'); break;
     case 'snackClose': document.getElementById('snack').hidden=true; break;
     case 'openCart': document.getElementById('snack').hidden=true; S.drawer=true; render(); break;
     case 'closeCart': S.drawer=false; render(); break;
