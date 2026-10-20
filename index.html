@@ -509,10 +509,9 @@ header.top .hrow1{padding-block:10px 4px}
 .xtra .xb{height:30px;padding:0 10px;border-radius:8px;background:#a8480f;color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center}
 .xtra .xt{display:flex;flex-direction:column;gap:1px}.xtra .xt b{font-size:14px}.xtra .xt small{font-size:12.5px;color:var(--muted)}
 .xtra svg{color:var(--brand)}
+.favbtn{position:relative;width:40px;height:40px;border-radius:20px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);display:grid;place-items:center;cursor:pointer;flex-shrink:0;padding:0}.favbtn:hover{border-color:var(--accent);color:var(--accent)}.favbtn .badge{position:absolute;top:-5px;right:-6px}
 .avatar{width:40px;height:40px;border-radius:20px;border:0;background:#3a2a1d;color:#fff;font:inherit;font-weight:700;font-size:15px;cursor:pointer}
 .catbtn{display:flex;align-items:center;gap:10px;height:48px;padding:0 18px;border:1.5px solid #a8480f;border-radius:12px;background:var(--surface);color:var(--brand);font:inherit;font-weight:600;font-size:16px;cursor:pointer;flex-shrink:0}
-.recbtn{display:flex;align-items:center;gap:8px;border:0;background:transparent;font:inherit;font-weight:600;font-size:16px;color:var(--ink);padding:10px 8px;cursor:pointer;flex-shrink:0}
-.recbtn svg{color:var(--brand)}
 .shopbar .search{height:48px}
 .logo{font-weight:700;font-size:24px;letter-spacing:-.5px;color:var(--ink);display:flex;align-items:baseline;gap:2px}
 .logo span{color:var(--accent)}
@@ -541,7 +540,7 @@ header.top .hrow1{padding-block:10px 4px}
 .cartacts button{height:40px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);padding:0 14px;font-weight:600}
 .badge{position:absolute;top:-7px;right:-9px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--accent);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
 @media (max-width:900px){.xtra .xt{display:none}}
-@media (max-width:760px){.xtra,.recbtn span{display:none} .catbtn{padding:0 12px;font-size:0;gap:0} .shopbar .hrow2{gap:8px}}
+@media (max-width:760px){.xtra{display:none} .catbtn{padding:0 12px;font-size:0;gap:0} .shopbar .hrow2{gap:8px}}
 
 /* shop */
 main{padding-block:24px 64px}
@@ -943,12 +942,12 @@ h1,h2,h3{margin:0;text-wrap:balance}
   <button type="button" class="addr" id="hdrAddr" data-edit="when" aria-label="Choose delivery time"></button>
   <span class="hspace"></span>
   <button type="button" class="xtra" id="xtraBtn"><span class="xb">xtra</span><span class="xt"><b>Xtra membership</b><small>Free delivery on every order, 10% off own brands</small></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+  <button type="button" class="favbtn" id="favBtn"></button>
   <button type="button" class="avatar" id="acctBtn" aria-label="Your account, Touba Shahzad">TS</button>
 </div></header>
 <div class="shopbar"><div class="wrap hrow2">
   <button type="button" class="catbtn" id="catBtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1.5"/><rect x="14" y="4" width="6" height="6" rx="1.5"/><rect x="4" y="14" width="6" height="6" rx="1.5"/><rect x="14" y="14" width="6" height="6" rx="1.5"/></svg>Categories</button>
   <label class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" placeholder="Search products" aria-label="Search products"></label>
-  <button type="button" class="recbtn" id="recBtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v8a2 2 0 0 0 2 2v8M11 3v8M15 3c-1.5 2-1.5 6 0 8v10"/></svg><span>Recipes</span></button>
   <button class="cartbtn" id="openCart" type="button"></button>
 </div></div>
 
@@ -1101,6 +1100,9 @@ function renderHeader(t){
   { const ad=S.addrs.find(x=>x.id===S.addr)||S.addrs[0], dy=DAYS.find(d=>d.k===S.day);
     document.getElementById('hdrAddr').innerHTML=`<b>${ad.street}</b><small>${S.slot?`Your slot: ${slotWord(dy)}, ${S.slot}`:'Choose a delivery time'}</small>`; }
   document.getElementById('openCart').innerHTML = `<span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M3 4h2l2.5 11h11L21 7H7"/></svg>${t.count?`<span class="badge num ${t.reached?'ok':''}">${t.count}</span>`:''}</span><span class="camt num">${eur(t.items)}</span>`;
+  { const nf=Object.values(S.favs||{}).filter(Boolean).length, fb=document.getElementById('favBtn');
+    fb.innerHTML=`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.2-9.4C1.6 7.6 4 4.5 7.3 4.5c2 0 3.6 1.1 4.7 2.7 1.1-1.6 2.7-2.7 4.7-2.7 3.3 0 5.7 3.1 4.5 6.6-1.7 4.8-9.2 9.4-9.2 9.4z"/></svg>${nf?`<span class="badge num">${nf}</span>`:''}`;
+    fb.setAttribute('aria-label',`Favourites, ${nf} saved`); }
   document.getElementById('openCart').setAttribute('aria-label', `Open cart, ${t.count} items, ${eur(t.items)}`);
 }
 
@@ -1371,7 +1373,7 @@ document.addEventListener('click',e=>{
     case 'pdInc': S.pdQty++; render(); document.getElementById('pdInc')?.focus(); break;
     case 'pdDec': S.pdQty=Math.max(0,S.pdQty-1); render(); document.getElementById('pdDec')?.focus(); break;
     case 'pdAdd': { const id=S.pdId, before=S.cart[id]||0, q=S.pdQty; if(q===0){ delete S.cart[id]; } else S.cart[id]=q; S.modal=null; render(); if(q>before) snack(id); else toast(q===0?'Removed from cart':'Cart updated'); } break;
-    case 'xtraBtn': case 'acctBtn': case 'catBtn': case 'recBtn': toast('Not part of this prototype'); break;
+    case 'xtraBtn': case 'acctBtn': case 'catBtn': case 'favBtn': toast('Favourites list isn\'t part of this prototype'); break;
     case 'toSlotGrid': S.modal='slot'; S.draft={...S.draft, day:S.day||'today', sday:S.day, slot:S.slot}; S.fromWhen=true; render(); break;
     case 'bufInfo': { const n=document.getElementById('bufNote'); n.hidden=!n.hidden; b.setAttribute('aria-expanded',String(!n.hidden)); } break;
     case 'addAddr': S.adding=true; S.editId=null; render(); setTimeout(()=>document.getElementById('na-label')?.focus(),0); break;
