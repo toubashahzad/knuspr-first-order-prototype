@@ -373,6 +373,14 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .pbanner.snack{position:static;transform:none;left:auto;bottom:auto;width:auto;margin:0 0 18px;animation:none;z-index:auto;box-shadow:none}
 .pbanner.snack .fillb{transition:none}
 @media (max-width:640px){.pbanner.snack{bottom:auto}}
+.pban{display:flex;align-items:center;gap:24px;background:var(--soft);border-radius:18px;padding:12px 24px 12px 12px;margin:0 0 18px}
+.ptrack{position:relative;flex:0 0 260px;height:36px;border-radius:18px;background:var(--surface);overflow:hidden}
+.pfill{position:absolute;left:0;top:0;bottom:0;min-width:88px;border-radius:18px;background:var(--accent);color:#fff;font-weight:700;font-size:15px;display:flex;align-items:center;padding-left:14px;white-space:nowrap;z-index:1}
+.pgoal{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-weight:600;font-size:15px;color:var(--muted);z-index:2}
+.pban.done .pfill{background:#22c55e;color:#0b2e16}
+.pban.done .pgoal{display:none}
+.pmsg{margin:0;font-size:16px;line-height:1.4;min-width:0}
+@media (max-width:700px){.pban{flex-direction:column;align-items:stretch;gap:10px;padding:12px}.ptrack{flex-basis:auto}.pmsg{font-size:14.5px}}
 </style>
 </head>
 <body>
@@ -537,8 +545,9 @@ function renderDrawer(t){
 
 function pbannerHtml(t){
   const pct=Math.min(100,t.items/MIN*100);
-  return `<div class="pbanner snack ${t.reached?'done':''}" role="status"><div class="msg num">${t.reached?'<b>Minimum reached.</b> You get free delivery and your €20 first-order discount at checkout.':`Still <b>${eur(t.toGo)}</b> to the €${MIN} minimum order.<span class="msub">Reach it for free delivery and your €20 first-order discount at checkout.</span>`}</div>
-  <div class="track num" role="img" aria-label="${eur(t.items)} of ${eur(MIN)}"><span class="goalv">€${MIN}</span><span class="fillb" style="width:calc(${pct}% - 4px)">${eur(t.items)}</span></div></div>`;
+  return `<div class="pban ${t.reached?'done':''}" role="status">
+  <div class="ptrack num" role="img" aria-label="${eur(t.items)} of ${eur(MIN)}"><span class="pgoal">€${MIN}</span><span class="pfill" style="width:${pct}%">${eur(t.items)}</span></div>
+  <p class="pmsg num">${t.reached?'<b>Minimum reached.</b> Free delivery and your <b>€20 first-order discount</b> at checkout.':`Add <b>${eur(t.toGo)}</b> more to reach the <b>€${MIN} minimum order</b>.`}</p></div>`;
 }
 function recHtml(){
   const recs=P.filter(x=>!S.cart[x.id]).slice(0,4);
