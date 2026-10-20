@@ -288,6 +288,21 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .promo:focus-within{box-shadow:inset 0 0 0 2px var(--accent);border-radius:0 0 16px 16px}
 .promo .ghost{width:auto;padding:0 18px;height:44px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.sh{display:flex;align-items:center;gap:10px}
+.hok{width:22px;height:22px;border-radius:11px;background:#22c55e;color:#fff;display:inline-flex;align-items:center;justify-content:center}
+.hmiss{font-size:12.5px;font-weight:700;color:var(--warn);background:var(--warn-tint);border-radius:999px;padding:3px 10px}
+.rok{width:20px;height:20px;border-radius:10px;background:var(--good-tint);color:var(--good);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.miss{color:var(--warn)!important;font-weight:600}
+.prow.static .editb{flex-shrink:0}
+.optw{position:relative}.optw .opt{padding-right:84px}.optw .editb.sm{position:absolute;right:12px;top:12px;padding:5px 10px;font-size:13px}
+.kinds{display:flex;gap:8px;flex-wrap:wrap}
+.kind{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:999px;padding:7px 14px;font-weight:600;font-size:14px;cursor:pointer}
+.kind input{position:absolute;opacity:0;pointer-events:none}
+.kind:has(input:checked){border-color:var(--accent);background:var(--tint2);color:var(--brand)}
+.kind:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.flabel{font-size:13px;font-weight:600;margin-top:6px}
+.nform.plain{border:0;padding:0}
+.fhelp{margin:4px 0 0;font-size:13px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -348,9 +363,9 @@ const FULL = {tue:['07:00–08:00','18:00–19:00'], wed:['19:00–20:00'], thu:
 let S;
 const HOME={id:'home',label:'Home',name:'Touba Shahzad',street:'Fritz-Werner-Straße 35',zip:'12107',city:'Berlin',note:'3rd floor, ring “Shahzad”'};
 const PAYS=[{k:'card',l:'Visa ending 4242',s:'Expires 08/28',cta:'Place order'},{k:'apple',l:'Apple Pay',s:'Confirm with Face ID or Touch ID',cta:'Pay with Apple Pay'},{k:'gpay',l:'Google Pay',s:'Confirm on your phone',cta:'Pay with Google Pay'},{k:'paypal',l:'PayPal',s:'You log in to PayPal to confirm',cta:'Pay with PayPal'}];
-function fresh(){ return {cart:{...START}, view:'shop', drawer:false, day:'tue', slot:'06:00–07:00', pay:'card', q:'', addrs:[HOME], addr:'home', modal:null, draft:{}, adding:false}; }
-function load(){ try{ const s=JSON.parse(localStorage.getItem('kfo')); if(s&&s.cart) return {...fresh(),...s, drawer:false, modal:null, adding:false}; }catch(e){} return fresh(); }
-function save(){ try{ localStorage.setItem('kfo', JSON.stringify({cart:S.cart, view:S.view, day:S.day, slot:S.slot, pay:S.pay, addrs:S.addrs, addr:S.addr})); }catch(e){} }
+function fresh(){ return {cart:{...START}, view:'shop', drawer:false, day:'tue', slot:'06:00–07:00', pay:'card', q:'', addrs:[HOME], addr:'home', contact:{name:'Touba Shahzad', phone:''}, modal:null, draft:{}, adding:false, editId:null}; }
+function load(){ try{ const s=JSON.parse(localStorage.getItem('kfo')); if(s&&s.cart) return {...fresh(),...s, drawer:false, modal:null, adding:false, editId:null}; }catch(e){} return fresh(); }
+function save(){ try{ localStorage.setItem('kfo', JSON.stringify({cart:S.cart, view:S.view, day:S.day, slot:S.slot, pay:S.pay, addrs:S.addrs, addr:S.addr, contact:S.contact})); }catch(e){} }
 S = load();
 
 const eur = v => '€' + v.toFixed(2);
@@ -447,26 +462,32 @@ function renderCart(t){
   </div>`;
 }
 
+function status(ok){ return ok?'<span class="hok" aria-label="done"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>':'<span class="hmiss">To do</span>'; }
+function rowState(ok){ return ok?'<span class="rok" title="Saved"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="sr">Saved</span></span>':''; }
 function renderCheckout(t){
   const lines = Object.entries(S.cart).filter(([,q])=>q>0);
   const day = DAYS.find(d=>d.k===S.day);
-  const ready = t.reached && S.slot;
+  const ready = t.reached && S.slot && S.contact && S.contact.phone;
   const ad = S.addrs.find(x=>x.id===S.addr)||S.addrs[0];
   const pm = PAYS.find(x=>x.k===S.pay)||PAYS[0];
+  const c = S.contact||{}; const whereOk = !!(c.name&&c.phone);
   const charge = `Will be charged ${t.weighed?'ca. ':''}${eur(t.total)}`;
   return `<button type="button" class="back" data-go="shop">← Back to shopping</button>
   <div class="co">
     <div class="costack">
-      <section aria-labelledby="h-addr"><h2 class="sh" id="h-addr">Delivery address</h2>
-        <div class="sec"><div class="sumrow"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span class="sumtxt"><b>${ad.name}</b><span>${ad.street}, ${ad.zip} ${ad.city}</span>${ad.note?`<small>${ad.note}</small>`:''}</span><button type="button" class="editb" data-edit="addr" aria-label="Change delivery address"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Edit</button></div></div></section>
-      <section aria-labelledby="h-slot"><h2 class="sh" id="h-slot">Delivery time</h2>
-        <div class="sec"><div class="sumrow"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span class="sumtxt">${S.slot?`<b>${day.label==='Tomorrow'?'Tomorrow, ':''}${day.date}</b><span class="num">${S.slot}</span><small class="g">Free, first order</small>`:'<b>No time chosen yet</b><span>Pick a 1-hour slot</span>'}</span><button type="button" class="editb" data-edit="slot" aria-label="Change delivery time"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>${S.slot?'Edit':'Choose'}</button></div></div></section>
+      <section aria-labelledby="h-addr"><h2 class="sh" id="h-addr">Where ${status(whereOk)}</h2>
+        <div class="sec rows">
+          <div class="prow static"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></span><span class="sumtxt"><b>${c.name||'Add your name'}</b>${c.phone?`<span class="num">${c.phone}</span>`:'<span class="miss">Add a phone number so the driver can reach you</span>'}</span>${rowState(c.name&&c.phone)}<button type="button" class="editb" data-edit="contact" aria-label="${c.phone?'Edit name and phone number':'Add phone number'}">${c.phone?'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Edit':'+ Add'}</button></div>
+          <div class="prow static"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span class="sumtxt"><b>${ad.label}</b><span>${ad.street}, ${ad.zip} ${ad.city}</span>${ad.note?`<small>${ad.note}</small>`:''}</span>${rowState(true)}<button type="button" class="editb" data-edit="addr" aria-label="Change delivery address"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Edit</button></div>
+        </div></section>
+      <section aria-labelledby="h-slot"><h2 class="sh" id="h-slot">When ${status(!!S.slot)}</h2>
+        <div class="sec rows"><div class="prow static"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span class="sumtxt">${S.slot?`<b>${day.label==='Tomorrow'?'Tomorrow, ':''}${day.date}</b><span class="num">${S.slot}</span><small class="g">Free, first order</small>`:'<b>No time chosen yet</b><span class="miss">Pick a 1-hour slot</span>'}</span>${rowState(!!S.slot)}<button type="button" class="editb" data-edit="slot" aria-label="Change delivery time">${S.slot?'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Edit':'Choose'}</button></div></div></section>
       <section aria-labelledby="h-items"><div class="shrow"><h2 class="sh" id="h-items">Your items</h2><span class="shnote num">${t.count} items, still editable</span></div>
         <div class="sec">
         ${t.reached?'':`<div class="warn">You're ${eur(t.toGo)} under the €39 minimum. Add something to keep your slot and the €20 voucher.</div>`}
         <div class="lines">${lines.map(([id,q])=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true">${x.e}</span><span class="info"><b>${x.n}</b><small>${x.u}</small><br><button type="button" class="rm" data-rm="${id}">Remove</button></span>${stepper(id,q,'sm')}<span class="amt num">${x.w?'ca. ':''}${eur(x.p*q)}</span></div>`}).join('')}</div>
         <button type="button" class="ghost" data-go="shop" style="width:auto;padding:0 16px;align-self:flex-start">+ Add more items</button></div></section>
-      <section aria-labelledby="h-pay"><h2 class="sh" id="h-pay">Payment</h2>
+      <section aria-labelledby="h-pay"><h2 class="sh" id="h-pay">Payment ${status(true)}</h2>
         <div class="sec rows">
           <div role="radiogroup" aria-label="Payment method" class="payrows">${PAYS.map(x=>`<label class="prow ${S.pay===x.k?'on':''}"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 10h19"/></svg></span><span class="sumtxt"><b>${x.l}</b><span class="${S.pay===x.k?'chg num':''}">${S.pay===x.k?charge:x.s}</span></span><input type="radio" name="pay" value="${x.k}" ${S.pay===x.k?'checked':''}></label>`).join('')}</div>
           <div class="prow static"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v8a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2z"/><path d="m9 15 6-6"/><circle cx="9.5" cy="9.5" r=".8"/><circle cx="14.5" cy="14.5" r=".8"/></svg></span><span class="sumtxt"><b>Offers and savings</b><span class="${t.reached?'g':''}">${t.reached?'Welcome voucher applied, €20 off':'€20 welcome voucher, applies at €39'}</span></span></div>
@@ -479,7 +500,7 @@ function renderCheckout(t){
       ${costsHtml(t,true)}
       ${holdHtml(t)}
       <button type="button" class="cta paybtn pb-${pm.k}" id="place" ${ready?'':'disabled'}>${pm.cta}</button>
-      <p class="hint">${!t.reached?`Add ${eur(t.toGo)} to reach the €39 minimum.`:!S.slot?'Choose a delivery time to place your order.':`Delivery ${day.date}, ${S.slot}. Nothing is charged until we pack.`}</p>
+      <p class="hint">${!t.reached?`Add ${eur(t.toGo)} to reach the €39 minimum.`:!S.slot?'Choose a delivery time to place your order.':!(S.contact&&S.contact.phone)?'Add your phone number under Where to place your order.':`Delivery ${day.date}, ${S.slot}. Nothing is charged until we pack.`}</p>
       </div>
     </aside>
   </div>`;
@@ -500,16 +521,27 @@ function modalHtml(){
   let title='', body='', save='';
   if(m==='addr'){
     title='Delivery address';
-    body=`<div class="opts" role="radiogroup" aria-label="Saved addresses">${S.addrs.map(x=>`<label class="opt"><input type="radio" name="maddr" value="${x.id}" ${d.addr===x.id?'checked':''}><span><b>${x.label}</b><span>${x.name}, ${x.street}, ${x.zip} ${x.city}</span>${x.note?`<small>${x.note}</small>`:''}</span></label>`).join('')}</div>
-    ${S.adding?`<form id="newAddr" class="nform" novalidate><h3>New address</h3>
-      <label for="na-label">Name this address</label><input id="na-label" name="label" placeholder="e.g. Office" autocomplete="off">
-      <label for="na-street">Street and number</label><input id="na-street" name="street" autocomplete="street-address" required>
-      <div class="two"><span><label for="na-zip">Postcode</label><input id="na-zip" name="zip" inputmode="numeric" autocomplete="postal-code" required></span><span><label for="na-city">City</label><input id="na-city" name="city" autocomplete="address-level2" value="Berlin" required></span></div>
-      <label for="na-note">Floor, doorbell, notes for the driver</label><input id="na-note" name="note" autocomplete="off">
+    const ed=S.editId?S.addrs.find(x=>x.id===S.editId):null, lab=ed?ed.label:'Home';
+    const kinds=['Home','Office','Other'];
+    body=S.adding?`<form id="newAddr" class="nform" novalidate><h3>${ed?'Edit address':'New address'}</h3>
+      <span class="flabel">Type</span><div class="kinds" role="radiogroup" aria-label="Address type">${kinds.map(k=>`<label class="kind"><input type="radio" name="label" value="${k}" ${(kinds.includes(lab)?lab:'Other')===k?'checked':''}>${k}</label>`).join('')}</div>
+      <label for="na-street">Street and number</label><input id="na-street" name="street" autocomplete="street-address" value="${ed?ed.street:''}" required>
+      <div class="two"><span><label for="na-zip">Postcode</label><input id="na-zip" name="zip" inputmode="numeric" autocomplete="postal-code" value="${ed?ed.zip:''}" required></span><span><label for="na-city">City</label><input id="na-city" name="city" autocomplete="address-level2" value="${ed?ed.city:'Berlin'}" required></span></div>
+      <label for="na-note">Floor, doorbell, notes for the driver</label><input id="na-note" name="note" autocomplete="off" value="${ed?ed.note.replace(/"/g,'&quot;'):''}">
       <p class="ferr" id="naErr" hidden>Add the street, postcode and city to save this address.</p>
       <div class="frow"><button type="button" class="ghost" id="cancelAddr">Cancel</button><button type="submit" class="cta">Save address</button></div></form>`
-    :`<button type="button" class="addnew" id="addAddr">+ Add new address</button>`}`;
+    :`<div class="opts" role="radiogroup" aria-label="Saved addresses">${S.addrs.map(x=>`<div class="optw"><label class="opt"><input type="radio" name="maddr" value="${x.id}" ${d.addr===x.id?'checked':''}><span><b>${x.label}</b><span>${x.street}, ${x.zip} ${x.city}</span>${x.note?`<small>${x.note}</small>`:''}</span></label><button type="button" class="editb sm" data-eaddr="${x.id}" aria-label="Edit ${x.label} address">Edit</button></div>`).join('')}</div>
+    <button type="button" class="addnew" id="addAddr">+ Add new address</button>`;
     save=S.adding?'':'Use this address';
+  } else if(m==='contact'){
+    title='Name and phone number';
+    body=`<form id="contactF" class="nform plain" novalidate>
+      <label for="ct-name">Full name</label><input id="ct-name" name="name" autocomplete="name" value="${(S.contact.name||'').replace(/"/g,'&quot;')}" required>
+      <label for="ct-phone">Phone number</label><input id="ct-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="e.g. +49 151 2345 6789" value="${S.contact.phone||''}" required>
+      <p class="fhelp">Only used by the driver if they can't find you.</p>
+      <p class="ferr" id="ctErr" hidden>Add your name and a phone number to save.</p>
+      <div class="frow"><button type="button" class="ghost" id="modalClose2">Cancel</button><button type="submit" class="cta">Save</button></div></form>`;
+    save='';
   } else if(m==='slot'){
     title='Delivery time';
     const full=FULL[d.day]||[];
@@ -524,7 +556,7 @@ function modalHtml(){
   }
   return `<div class="mscrim" id="mscrim"></div><div class="modal" role="dialog" aria-modal="true" aria-labelledby="m-title"><div class="mhead"><h2 id="m-title">${title}</h2><button type="button" class="x" id="modalClose" aria-label="Close">×</button></div><div class="mbody">${body}</div>${save?`<div class="mfoot"><button type="button" class="cta" id="modalSave">${save}</button></div>`:''}</div>`;
 }
-function openModal(m){ S.modal=m; S.adding=false; S.draft={addr:S.addr, pay:S.pay, day:S.day, sday:S.day, slot:S.slot}; render(); setTimeout(()=>{const f=document.querySelector('#modal .modal input:checked, #modal .modal .slot.on, #modal .modal button'); f&&f.focus();},0); }
+function openModal(m){ S.modal=m; S.adding=false; S.editId=null; S.draft={addr:S.addr, pay:S.pay, day:S.day, sday:S.day, slot:S.slot}; render(); setTimeout(()=>{const f=document.querySelector('#modal .modal input:checked, #modal .modal .slot.on, #modal .modal button'); f&&f.focus();},0); }
 function closeModal(){ const m=S.modal; S.modal=null; S.adding=false; render(); const b=document.querySelector(`[data-edit="${m}"]`); b&&b.focus(); }
 function render(){
   const t=totals();
@@ -575,12 +607,14 @@ document.addEventListener('click',e=>{
   if(ds.slot){ S.slot=ds.slot; render(); return; }
   if(ds.go){ S.view=ds.go; S.drawer=false; render(); window.scrollTo(0,0); return; }
   if(ds.edit){ openModal(ds.edit); return; }
+  if(ds.eaddr){ S.adding=true; S.editId=ds.eaddr; render(); setTimeout(()=>document.getElementById('na-street')?.focus(),0); return; }
   if(ds.mday){ S.draft.day=ds.mday; render(); return; }
   if(ds.mslot){ S.draft.slot=ds.mslot; S.draft.sday=S.draft.day; render(); return; }
   switch(b.id){
     case 'modalClose': closeModal(); break;
-    case 'addAddr': S.adding=true; render(); setTimeout(()=>document.getElementById('na-label')?.focus(),0); break;
-    case 'cancelAddr': S.adding=false; render(); break;
+    case 'modalClose2': closeModal(); break;
+    case 'addAddr': S.adding=true; S.editId=null; render(); setTimeout(()=>document.getElementById('na-label')?.focus(),0); break;
+    case 'cancelAddr': S.adding=false; S.editId=null; render(); break;
     case 'modalSave':
       if(S.modal==='addr') S.addr=S.draft.addr;
       if(S.modal==='pay') S.pay=S.draft.pay;
@@ -608,7 +642,13 @@ document.addEventListener('click',e=>{ if(e.target.id==='mscrim') closeModal(); 
 document.addEventListener('submit',e=>{ if(e.target.id==='promo'){ e.preventDefault(); const v=(e.target.promo.value||'').trim().toUpperCase(); if(!v){ toast('Enter a code first'); return; } toast(v==='WELCOME20'?'WELCOME20 is already applied':'That code isn’t valid. Check it and try again.'); e.target.promo.value=''; return; }
   if(e.target.id!=='newAddr') return; e.preventDefault(); const f=new FormData(e.target); const v=k=>(f.get(k)||'').toString().trim();
   if(!v('street')||!v('zip')||!v('city')){ const er=document.getElementById('naErr'); er.hidden=false; (!v('street')?document.getElementById('na-street'):!v('zip')?document.getElementById('na-zip'):document.getElementById('na-city')).focus(); return; }
-  const id='a'+Date.now(); S.addrs.push({id,label:v('label')||'New address',name:'Touba Shahzad',street:v('street'),zip:v('zip'),city:v('city'),note:v('note')}); S.draft.addr=id; S.adding=false; render(); toast('Address saved'); });
+  const data={label:v('label')||'Home',street:v('street'),zip:v('zip'),city:v('city'),note:v('note')};
+  if(S.editId){ Object.assign(S.addrs.find(x=>x.id===S.editId),data); S.draft.addr=S.editId; }
+  else { const id='a'+Date.now(); S.addrs.push({id,name:S.contact.name,...data}); S.draft.addr=id; }
+  S.adding=false; S.editId=null; render(); toast('Address saved'); });
+document.addEventListener('submit',e=>{ if(e.target.id!=='contactF') return; e.preventDefault(); const f=new FormData(e.target); const n=(f.get('name')||'').toString().trim(), ph=(f.get('phone')||'').toString().trim();
+  if(!n||ph.replace(/\D/g,'').length<6){ document.getElementById('ctErr').hidden=false; (!n?document.getElementById('ct-name'):document.getElementById('ct-phone')).focus(); return; }
+  S.contact={name:n,phone:ph}; closeModal(); toast('Name and phone number saved'); });
 document.addEventListener('change',e=>{ if(e.target.name==='pay'){ S.pay=e.target.value; render(); document.querySelector(`input[name=pay][value=${S.pay}]`)?.focus(); return; } if(e.target.name==='maddr') S.draft.addr=e.target.value; if(e.target.name==='mpay') S.draft.pay=e.target.value; });
 document.getElementById('q').addEventListener('input',e=>{ S.q=e.target.value; if(S.view!=='shop') S.view='shop'; document.getElementById('view').innerHTML=renderShop(); });
 render();
