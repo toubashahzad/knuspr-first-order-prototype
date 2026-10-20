@@ -471,7 +471,7 @@ function costsHtml(t, final){
 }
 function weighedCount(){ return Object.entries(S.cart).filter(([id,q])=>q>0&&byId[id]&&byId[id].w).length; }
 function infoCards(){ return `<div class="infocards">
-  <div class="infocard"><span aria-hidden="true">${'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v8a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2z"/><path d="m9 15 6-6"/><circle cx="9.5" cy="9.5" r=".8"/><circle cx="14.5" cy="14.5" r=".8"/></svg>'}</span><p><b>Your €20 first-order discount isn’t in this total yet.</b> We can only take it off at checkout, on the next step, once your cart is at €39 or more.</p></div>
+  <div class="infocard"><span aria-hidden="true">${'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v8a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2z"/><path d="m9 15 6-6"/><circle cx="9.5" cy="9.5" r=".8"/><circle cx="14.5" cy="14.5" r=".8"/></svg>'}</span><p><b>Your €20 first-order discount isn’t in this total yet.</b> We take it off at checkout, once your order is finalised.</p></div>
   <div class="infocard"><span aria-hidden="true">${'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h11l-3-3M20 17H9l3 3"/></svg>'}</span><p>If something is out of stock, we suggest a similar product. You can turn it down.</p></div>
 </div>`; }
 function finalCosts(t, done){
