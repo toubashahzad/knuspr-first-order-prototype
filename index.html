@@ -510,6 +510,7 @@ header.top .hrow1{padding-block:10px 4px}
 .xtra .xt{display:flex;flex-direction:column;gap:1px}.xtra .xt b{font-size:14px}.xtra .xt small{font-size:12.5px;color:var(--muted)}
 .xtra svg{color:var(--brand)}
 .favbtn{position:relative;width:40px;height:40px;border-radius:20px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);display:grid;place-items:center;cursor:pointer;flex-shrink:0;padding:0}.favbtn:hover{border-color:var(--accent);color:var(--accent)}.favbtn .badge{position:absolute;top:-5px;right:-6px}
+.avatar.guest{width:auto;padding:0 16px;border-radius:20px;background:transparent;color:var(--ink);border:1.5px solid var(--line);font-size:14px}.avatar.guest:hover{border-color:var(--accent);color:var(--accent)}
 .avatar{width:40px;height:40px;border-radius:20px;border:0;background:#3a2a1d;color:#fff;font:inherit;font-weight:700;font-size:15px;cursor:pointer}
 .catbtn{display:flex;align-items:center;gap:10px;height:48px;padding:0 18px;border:1.5px solid #a8480f;border-radius:12px;background:var(--surface);color:var(--brand);font:inherit;font-weight:600;font-size:16px;cursor:pointer;flex-shrink:0}
 .shopbar .search{height:48px}
@@ -728,6 +729,11 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .mbody{padding:18px 20px;overflow:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:14px}
 .mfoot{padding:14px 20px 18px;border-top:1px solid var(--line)}
 .mnote{margin:0;font-size:13px;color:var(--muted)}
+.cardf{display:flex;flex-direction:column;gap:6px;padding:4px 16px 16px 16px;border-top:0}
+.cardf label{font-size:13px;font-weight:600;margin-top:6px}
+.cardf input{height:44px;border:1.5px solid var(--line);border-radius:10px;padding:0 12px;font:inherit;color:var(--ink);background:var(--surface)}
+.cardf input:focus-visible{outline:2px solid var(--accent);outline-offset:0}
+.cardf .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.cardf .two span{display:flex;flex-direction:column;gap:6px}
 .amap{position:relative;height:170px;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
 .amap svg{display:block;width:100%;height:100%}
 .apin{position:absolute;left:50%;top:50%;transform:translate(-50%,-90%);filter:drop-shadow(0 2px 3px rgba(0,0,0,.25))}
@@ -934,7 +940,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .attrs .abio{font-size:10.5px}
 .unit{margin-top:-4px}
 :root[data-theme="dark"] .xtra{border-color:var(--tint)}
-:root[data-theme="dark"] .avatar{background:#f2f2f2;color:#1d1b19}
+:root[data-theme="dark"] .avatar:not(.guest){background:#f2f2f2;color:#1d1b19}
 .pnameb{border:0;background:none;padding:0;text-align:left;font:inherit;font-weight:600;color:inherit;cursor:pointer}
 .pnameb:hover{color:var(--brand)}
 .pic[data-pdimg]{cursor:pointer}
@@ -980,7 +986,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
   <span class="hspace"></span>
   <button type="button" class="xtra" id="xtraBtn"><span class="xb">xtra</span><span class="xt"><b>Xtra membership</b><small>Free delivery on every order, 10% off own brands</small></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
   <button type="button" class="favbtn" id="favBtn"></button>
-  <button type="button" class="avatar" id="acctBtn" aria-label="Your account, Touba Shahzad">TS</button>
+  <button type="button" class="avatar" id="acctBtn"></button>
 </div></header>
 <div class="shopbar"><div class="wrap hrow2">
   <button type="button" class="catbtn" id="catBtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1.5"/><rect x="14" y="4" width="6" height="6" rx="1.5"/><rect x="4" y="14" width="6" height="6" rx="1.5"/><rect x="14" y="14" width="6" height="6" rx="1.5"/></svg>Categories</button>
@@ -1068,15 +1074,15 @@ const FULL = {today:['06:00–07:00','07:00–08:00','08:00–09:00','12:00–13
 
 let S;
 const HOME={id:'home',label:'Home',name:'Touba Shahzad',street:'Fritz-Werner-Straße 35',zip:'12107',city:'Berlin',note:'3rd floor, ring “Shahzad”'};
-const PAYS=[{k:'card',l:'Visa ending 4242',s:'Expires 08/28',cta:'Pay with Visa ···· 4242'},{k:'apple',l:'Apple Pay',s:'Confirm with Face ID or Touch ID',cta:'Pay with Apple Pay'},{k:'gpay',l:'Google Pay',s:'Confirm on your phone',cta:'Pay with Google Pay'},{k:'paypal',l:'PayPal',s:'You log in to PayPal to confirm',cta:'Pay with PayPal'}];
+const PAYS=[{k:'apple',l:'Apple Pay',s:'Confirm with Face ID or Touch ID'},{k:'gpay',l:'Google Pay',s:'Confirm on your phone'},{k:'paypal',l:'PayPal',s:'You log in to PayPal to confirm'},{k:'card',l:'Credit or debit card',s:'Visa, Mastercard, American Express'}];
 function cur(){ const c=(S.contacts||[]).find(x=>x.id===S.cid)||(S.contacts||[])[0]||{first:'',last:'',phone:''}; return {...c, name:[c.first,c.last].filter(Boolean).join(' ')}; }
-function fresh(){ return {cart:{...START}, view:'shop', drawer:false, day:'today', slot:null, dmode:null, pay:'card', q:'', addrs:[], addr:null, zip:null, contacts:[{id:'me',first:'Touba',last:'Shahzad',phone:'+49 151 2345 6789'}], cid:'me', modal:'pc', pcStep:'ask', draft:{}, adding:false, editId:null}; }
-function load(){ try{ const s=JSON.parse(localStorage.getItem('kfo')); if(s&&s.cart){ const f=fresh(); return {...f,...s, contacts:(s.contacts&&s.contacts.length)?s.contacts:f.contacts, cid:(s.contacts&&s.cid)?s.cid:'me', dmode:s.dmode||(s.slot?'custom':null), drawer:false, modal:s.zip?null:'pc', pcStep:'ask', adding:false, editId:null}; } }catch(e){} return fresh(); }
+function fresh(){ return {cart:{...START}, view:'shop', drawer:false, day:'today', slot:null, dmode:null, pay:'apple', q:'', card:{}, addrs:[], addr:null, zip:null, contacts:[], cid:null, modal:'pc', pcStep:'ask', draft:{}, adding:false, editId:null}; }
+function load(){ try{ const s=JSON.parse(localStorage.getItem('kfo')); if(s&&s.cart){ const f=fresh(); return {...f,...s, contacts:s.contacts||[], cid:s.cid||null, card:{}, dmode:s.dmode||(s.slot?'custom':null), drawer:false, modal:s.zip?null:'pc', pcStep:'ask', adding:false, editId:null}; } }catch(e){} return fresh(); }
 function curAddr(){ return S.addrs.find(x=>x.id===S.addr)||S.addrs[0]||null; }
 const ZONES=[[/^1[0-4]/,'Berlin'],[/^14[4-7]/,'Potsdam'],[/^(60|61|63|65)/,'Frankfurt area'],[/^(80|81|82|85)/,'Munich area']];
 function zoneOf(z){ const m=[...ZONES].reverse().find(([re])=>re.test(z)); return m?m[1]:null; }
 function mapSvg(label){ return `<div class="amap" role="img" aria-label="Map preview${label?': '+label:''}"><svg viewBox="0 0 400 170" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="400" height="170" fill="var(--mapbg)"/><path d="M-10 120 C80 100 140 140 230 118 S360 90 420 104" stroke="var(--mapriver)" stroke-width="14" fill="none"/><rect x="250" y="12" width="90" height="56" rx="10" fill="var(--mappark)"/><g stroke="var(--maproad)" stroke-linecap="round" fill="none"><path d="M0 60 H400" stroke-width="10"/><path d="M120 0 V170" stroke-width="10"/><path d="M0 20 L180 150" stroke-width="6"/><path d="M220 0 V170" stroke-width="6"/><path d="M300 80 L400 30" stroke-width="6"/><path d="M40 0 V170" stroke-width="4"/><path d="M0 150 H400" stroke-width="4"/></g></svg><span class="apin"><svg width="34" height="34" viewBox="0 0 24 24"><path d="M12 22s-7-6.4-7-12a7 7 0 0 1 14 0c0 5.6-7 12-7 12z" fill="var(--accent)"/><circle cx="12" cy="10" r="2.7" fill="#fff"/></svg></span>${label?`<span class="alab">${label}</span>`:''}</div>`; }
-function save(){ try{ localStorage.setItem('kfo', JSON.stringify({favs:S.favs, cart:S.cart, view:S.view, day:S.day, slot:S.slot, dmode:S.dmode, pay:S.pay, addrs:S.addrs, addr:S.addr, zip:S.zip, contacts:S.contacts, cid:S.cid})); }catch(e){} }
+function save(){ try{ localStorage.setItem('kfo', JSON.stringify({favs:S.favs, cart:S.cart, view:S.view, day:S.day, slot:S.slot, dmode:S.dmode, pay:S.pay, addrs:S.addrs, addr:S.addr, zip:S.zip, contacts:S.contacts, cid:S.cid, email:S.email})); }catch(e){} }
 S = load();
 
 function totals(){
@@ -1157,6 +1163,7 @@ function renderHeader(t){
   { const nf=Object.values(S.favs||{}).filter(Boolean).length, fb=document.getElementById('favBtn');
     fb.innerHTML=`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.2-9.4C1.6 7.6 4 4.5 7.3 4.5c2 0 3.6 1.1 4.7 2.7 1.1-1.6 2.7-2.7 4.7-2.7 3.3 0 5.7 3.1 4.5 6.6-1.7 4.8-9.2 9.4-9.2 9.4z"/></svg>${nf?`<span class="badge num">${nf}</span>`:''}`;
     fb.setAttribute('aria-label',`Favourites, ${nf} saved`); }
+  { const c=cur(), a=document.getElementById('acctBtn'); a.classList.toggle('guest',!c.name); a.textContent=c.name?(c.first[0]+c.last[0]).toUpperCase():'Sign in'; a.setAttribute('aria-label',c.name?`Your account, ${c.name}`:'Sign in or register'); }
   document.getElementById('openCart').setAttribute('aria-label', `Open cart, ${t.count} items, ${eur(t.items)}`);
 }
 
@@ -1213,14 +1220,20 @@ function renderCart(t){
 
 const QUICK={fast:{day:'today',slot:'14:00–15:00'},bundle:{day:'today',slot:'20:00–21:00'}};
 function slotWord(dy){ return dy.k==='today'?'today':dy.k==='tue'?'tomorrow':dy.date; }
-const PBTN={card:'<span class="pbl">Pay with</span> <b class="pbv">VISA</b> <span class="pbl num">···· 4242</span>',apple:'<span class="pbl">Pay with</span> <b class="pba">Apple Pay</b>',gpay:'<span class="pbl">Pay with</span> <b class="pbg"><i style="color:#4285F4">G</i> Pay</b>',paypal:'<span class="pbl">Pay with</span> <b class="pbp"><i style="color:#003087">Pay</i><i style="color:#009cde">Pal</i></b>'};
-const PMARK={card:'VISA',apple:'Pay',gpay:'G Pay',paypal:'PayPal'};
+const PBTN={card:'<span class="pbl">Pay with card</span>',apple:'<span class="pbl">Pay with</span> <b class="pba">Apple Pay</b>',gpay:'<span class="pbl">Pay with</span> <b class="pbg"><i style="color:#4285F4">G</i> Pay</b>',paypal:'<span class="pbl">Pay with</span> <b class="pbp"><i style="color:#003087">Pay</i><i style="color:#009cde">Pal</i></b>'};
+const PMARK={card:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/></svg>',apple:'Pay',gpay:'G Pay',paypal:'PayPal'};
 function status(ok){ return ok?'<span class="hok" aria-label="done"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>':'<span class="hmiss">To do</span>'; }
 function rowState(ok){ return ok?'<span class="rok" title="Saved"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="sr">Saved</span></span>':''; }
+function cardOk(){ const c=S.card||{}; return (c.num||'').replace(/\D/g,'').length>=15 && /^(0[1-9]|1[0-2])\s*\/\s*\d{2}$/.test(c.exp||'') && /^\d{3,4}$/.test(c.cvc||'') && (c.name||'').trim().length>1; }
+function isReady(t){ return t.reached && S.slot && cur().phone && curAddr() && (S.pay!=='card'||cardOk()); }
+function cardForm(){ const c=S.card||{}, q=v=>(v||'').replace(/"/g,'&quot;'); return `<div class="cardf"><label for="cf-num">Card number</label><input id="cf-num" data-card="num" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456" value="${q(c.num)}">
+  <div class="two"><span><label for="cf-exp">Expiry</label><input id="cf-exp" data-card="exp" inputmode="numeric" autocomplete="cc-exp" placeholder="MM / YY" value="${q(c.exp)}"></span><span><label for="cf-cvc">Security code</label><input id="cf-cvc" data-card="cvc" inputmode="numeric" autocomplete="cc-csc" placeholder="3 digits on the back" value="${q(c.cvc)}"></span></div>
+  <label for="cf-name">Name on card</label><input id="cf-name" data-card="name" autocomplete="cc-name" value="${q(c.name)}"></div>`; }
+function payHint(t,day){ return !t.reached?`Add ${eur(t.toGo)} to reach the €39 minimum.`:!cur().phone?'Add your name and phone number under Where.':!curAddr()?'Add your exact address under Where.':!S.slot?'Choose a delivery time to place your order.':(S.pay==='card'&&!cardOk())?'Enter your card details to pay by card.':`Delivery ${day.date}, ${S.slot}.`; }
 function renderCheckout(t){
   const lines = Object.entries(S.cart).filter(([,q])=>q>0);
   const day = DAYS.find(d=>d.k===S.day);
-  const ready = t.reached && S.slot && cur().phone && curAddr();
+  const ready = isReady(t);
   const ad = curAddr();
   const pm = PAYS.find(x=>x.k===S.pay)||PAYS[0];
   const c = cur(); const whereOk = !!(c.name&&c.phone);
@@ -1230,7 +1243,7 @@ function renderCheckout(t){
     <div class="costack">
       <section aria-labelledby="h-addr"><h2 class="sh" id="h-addr">Where</h2>
         <div class="sec rows">
-          <button type="button" class="prow drow wrow" data-edit="contact" aria-label="Change contact"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></span><span class="sumtxt"><b>${c.name||'Add your name'}</b>${c.phone?`<span class="num">${c.phone}</span>`:'<span class="miss">Add a phone number so the driver can reach you</span>'}</span>${rowState(c.name&&c.phone)}<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+          <button type="button" class="prow drow wrow" data-edit="contact" aria-label="Change contact"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></span><span class="sumtxt"><b>${c.name||'Your details'}</b>${c.phone?`<span class="num">${c.phone}</span>`:'<span class="miss">Add your name, phone and email</span>'}</span>${rowState(c.name&&c.phone)}<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
           <button type="button" class="prow drow wrow" data-edit="addr" aria-label="Change delivery address"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span class="sumtxt">${ad?`<b>${ad.label}</b><span>${ad.street}, ${ad.zip} ${ad.city}</span>${ad.note?`<small>${ad.note}</small>`:''}`:`<b>${zoneOf(S.zip||'')||''} ${S.zip||''}</b><span class="miss">Add your exact address</span>`}</span>${rowState(!!ad)}<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
         </div></section>
       <section aria-labelledby="h-slot"><h2 class="sh" id="h-slot">When</h2>
@@ -1247,7 +1260,7 @@ function renderCheckout(t){
         <button type="button" class="ghost" data-go="shop" style="width:auto;padding:0 16px;align-self:flex-start">+ Add more items</button></div></section>
       <section aria-labelledby="h-pay"><h2 class="sh" id="h-pay">Payment</h2>
         <div class="sec rows">
-          <div role="radiogroup" aria-label="Payment method">${PAYS.map(x=>`<label class="prow ${S.pay===x.k?'on':''}"><span class="pmark pm-${x.k}" aria-hidden="true">${PMARK[x.k]}</span><span class="sumtxt"><b>${x.l}</b><span class="${S.pay===x.k?'chg num':''}">${S.pay===x.k?charge:x.s}</span></span><input type="radio" name="pay" value="${x.k}" ${S.pay===x.k?'checked':''}></label>`).join('')}</div>
+          <div role="radiogroup" aria-label="Payment method">${PAYS.map(x=>`<label class="prow ${S.pay===x.k?'on':''}"><span class="pmark pm-${x.k}" aria-hidden="true">${PMARK[x.k]}</span><span class="sumtxt"><b>${x.l}</b><span class="${S.pay===x.k?'chg num':''}">${S.pay===x.k?charge:x.s}</span></span><input type="radio" name="pay" value="${x.k}" ${S.pay===x.k?'checked':''}></label>${x.k==='card'&&S.pay==='card'?cardForm():''}`).join('')}</div>
           <div class="offrow"><span class="offlbl">Offers and savings</span>${ticketHtml(t,true)}</div>
         </div>
       </section>
@@ -1256,7 +1269,7 @@ function renderCheckout(t){
       <div class="summary">
       ${finalCosts(t,false)}
       <button type="button" class="cta paybtn pb-${pm.k}" id="place" ${ready?'':'disabled'}>${PBTN[pm.k]}</button>
-      <p class="hint">${!t.reached?`Add ${eur(t.toGo)} to reach the €39 minimum.`:!S.slot?'Choose a delivery time to place your order.':!cur().phone?'Add your phone number under Where to place your order.':`Delivery ${day.date}, ${S.slot}.`}</p>
+      <p class="hint" id="payHint">${payHint(t,day)}</p>
       </div>
     </aside>
   </div>`;
@@ -1354,14 +1367,17 @@ function modalHtml(){
     body=`<div class="infobig"><span class="infoart" aria-hidden="true">${D.ic.replace('width="24" height="24"','width="56" height="56"')}</span><h3>${D.h}</h3><p>${D.p}</p></div>`;
     save='';
   } else if(m==='contact'){
-    title='Contact';
+    if(!S.contacts.length) S.adding=true;
+    const firstC=!S.contacts.length;
+    title=firstC?'Your details':'Contact';
     const ed=S.editCid?S.contacts.find(x=>x.id===S.editCid):null, q=v=>(v||'').replace(/"/g,'&quot;');
-    body=S.adding?`<form id="contactF" class="nform" novalidate><h3>${ed?'Edit contact':'New contact'}</h3>
+    body=S.adding?`<form id="contactF" class="nform ${firstC?'plain':''}" novalidate>${firstC?'<p class="mnote">We create your Knuspr account with these, so next time you just sign in.</p>':`<h3>${ed?'Edit contact':'New contact'}</h3>`}
       <div class="two"><span><label for="ct-first">First name</label><input id="ct-first" name="first" autocomplete="given-name" value="${q(ed&&ed.first)}" required></span><span><label for="ct-last">Last name</label><input id="ct-last" name="last" autocomplete="family-name" value="${q(ed&&ed.last)}" required></span></div>
       <label for="ct-phone">Phone number</label><input id="ct-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="e.g. +49 151 2345 6789" value="${q(ed&&ed.phone)}" required>
       <p class="fhelp">The driver calls this number if they can't find the door.</p>
-      <p class="ferr" id="ctErr" hidden>Add a first name, last name and phone number to save.</p>
-      <div class="frow"><button type="button" class="ghost" id="cancelCt">Cancel</button><button type="submit" class="cta">Save contact</button></div></form>`
+      ${firstC?`<label for="ct-email">Email</label><input id="ct-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" value="${q(S.email)}" required><p class="fhelp">For your receipt and to sign in next time.</p>`:''}
+      <p class="ferr" id="ctErr" hidden>Add your first name, last name, phone number${firstC?' and email':''} to save.</p>
+      <div class="frow">${firstC?'':'<button type="button" class="ghost" id="cancelCt">Cancel</button>'}<button type="submit" class="cta">${firstC?'Save details':'Save contact'}</button></div></form>`
     :`<div class="opts" role="radiogroup" aria-label="Contacts">${S.contacts.map(x=>`<div class="optw"><label class="opt"><input type="radio" name="mct" value="${x.id}" ${d.cid===x.id?'checked':''}><span><b>${x.first} ${x.last}</b><span class="num">${x.phone}</span></span></label><button type="button" class="editb sm" data-ect="${x.id}" aria-label="Edit ${x.first} ${x.last}">Edit</button></div>`).join('')}</div>
     <button type="button" class="addnew" id="addCt">+ Add new contact</button>`;
     save=S.adding?'':'Use this contact';
@@ -1443,7 +1459,9 @@ document.addEventListener('click',e=>{
   switch(b.id){
     case 'modalClose': closeModal(); break;
     case 'modalClose2': closeModal(); break;
-    case 'xtraBtn': case 'acctBtn': case 'catBtn': case 'favBtn': toast('Favourites list isn\'t part of this prototype'); break;
+    case 'favBtn': toast('Favourites list isn\'t part of this prototype'); break;
+    case 'acctBtn': toast(cur().name?'Account page isn\'t part of this prototype':'Sign-in isn\'t part of this prototype. You can create your account at checkout.'); break;
+    case 'xtraBtn': case 'catBtn': toast('Not part of this prototype'); break;
     case 'pcGo': S.modal=null; render(); document.getElementById('q')?.focus(); break;
     case 'pcBrowse': S.modal=null; S.zip=null; render(); break;
     case 'pcRetry': S.pcStep='ask'; render(); setTimeout(()=>document.getElementById('pc-in')?.focus(),0); break;
@@ -1492,11 +1510,13 @@ document.addEventListener('submit',e=>{ if(e.target.id!=='pcForm') return; e.pre
   if(v.length!==5){ document.getElementById('pcErr').hidden=false; document.getElementById('pc-in').focus(); return; }
   S.zip=v; S.pcStep=zoneOf(v)?'ok':'no'; if(S.pcStep==='no') S.zip=null, S.badZip=v; render(); });
 document.addEventListener('submit',e=>{ if(e.target.id!=='contactF') return; e.preventDefault(); const f=new FormData(e.target); const v=k=>(f.get(k)||'').toString().trim();
-  if(!v('first')||!v('last')||v('phone').replace(/\D/g,'').length<6){ document.getElementById('ctErr').hidden=false; (!v('first')?document.getElementById('ct-first'):!v('last')?document.getElementById('ct-last'):document.getElementById('ct-phone')).focus(); return; }
+  const firstC=!S.contacts.length;
+  if(!v('first')||!v('last')||v('phone').replace(/\D/g,'').length<6||(firstC&&!/^\S+@\S+\.\S+$/.test(v('email')))){ document.getElementById('ctErr').hidden=false; (!v('first')?document.getElementById('ct-first'):!v('last')?document.getElementById('ct-last'):document.getElementById('ct-phone')).focus(); return; }
   const data={first:v('first'),last:v('last'),phone:v('phone')};
-  if(S.editCid){ Object.assign(S.contacts.find(x=>x.id===S.editCid),data); S.draft.cid=S.editCid; } else { const id='c'+Date.now(); S.contacts.push({id,...data}); S.draft.cid=id; }
+  if(S.editCid){ Object.assign(S.contacts.find(x=>x.id===S.editCid),data); S.draft.cid=S.editCid; } else { const id='c'+Date.now(); S.contacts.push({id,...data}); S.draft.cid=id; if(firstC){ S.cid=id; S.email=v('email'); S.adding=false; S.modal=null; render(); toast('Details saved. Your account is ready.'); return; } }
   S.adding=false; S.editCid=null; render(); toast('Contact saved'); });
 document.addEventListener('change',e=>{ if(e.target.name==='dmode'){ const q=QUICK[e.target.value]; S.dmode=e.target.value; S.day=q.day; S.slot=q.slot; render(); document.querySelector(`input[name=dmode][value=${S.dmode}]`)?.focus(); return; } if(e.target.name==='pay'){ S.pay=e.target.value; render(); document.querySelector(`input[name=pay][value=${S.pay}]`)?.focus(); return; } if(e.target.name==='maddr') S.draft.addr=e.target.value; if(e.target.name==='mct') S.draft.cid=e.target.value; if(e.target.name==='mpay') S.draft.pay=e.target.value; });
+document.addEventListener('input',e=>{ const k=e.target.dataset&&e.target.dataset.card; if(!k) return; S.card=S.card||{}; S.card[k]=e.target.value; const t=totals(), b=document.getElementById('place'); if(b) b.disabled=!isReady(t); const h=document.getElementById('payHint'); if(h) h.textContent=payHint(t,DAYS.find(d=>d.k===S.day)); });
 document.getElementById('q').addEventListener('input',e=>{ S.q=e.target.value; if(S.view!=='shop') S.view='shop'; document.getElementById('view').innerHTML=renderShop(); });
 render();
 if(S.modal==='pc') setTimeout(()=>document.getElementById('pc-in')?.focus(),0);
