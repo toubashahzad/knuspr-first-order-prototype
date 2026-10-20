@@ -650,6 +650,16 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .slot[disabled]{opacity:.45;cursor:not-allowed}
 .slot[disabled] small{color:var(--muted)}
 .lines{display:flex;flex-direction:column;gap:12px}
+.lgroup{display:flex;flex-direction:column;gap:12px}
+.lgroup+.lgroup{margin-top:6px}
+.lgh{display:flex;align-items:center;gap:10px;margin:0;font-size:13.5px;font-weight:600;color:var(--ink);letter-spacing:0}
+.lgh::after{content:"";flex:1;height:1px;background:var(--line)}
+.lgh span{order:2;font-weight:500;font-size:12px;color:var(--muted)}
+.lgh::after{order:1}
+.cartpage .lgroup{gap:0}
+.cartpage .lgroup .line:last-child{border-bottom:0}
+.cartpage .lgh{padding-top:16px}
+.cartpage .lgroup:first-child .lgh{padding-top:4px}
 .rm{border:0;background:none;color:var(--muted);font-size:13px;text-decoration:underline;padding:0}
 .warn{background:var(--warn-tint);color:var(--warn);border-radius:10px;padding:10px 12px;font-size:14px;font-weight:600}
 .pay{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
@@ -878,7 +888,8 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .t-local{background:#f1ecfa;color:#5b3c99}
 .t-dep{background:var(--soft);color:var(--muted)}
 .t-sale{background:#e5484d;color:#fff}
-.price .sale{color:#d1343a}
+.price .sale,.pdprice .sale,.pairtxt .sale{color:#d1343a}
+.pdprice .oldp{font-size:16px;font-weight:500;color:var(--muted)}.pairtxt .oldp{font-size:12px;font-weight:500;color:var(--muted)}
 .price .oldp{font-size:13px;font-weight:500;color:var(--muted);margin-left:4px}
 :root[data-theme="dark"] .t-bio{background:#1f3324;color:#8fd49a}
 :root[data-theme="dark"] .t-best{background:#1e2a44;color:#9db7f0}
@@ -988,11 +999,21 @@ const P = [
  {id:'wat', n:'Bad Liebenwerda sparkling water', u:'6 × 1.5 l', p:5.59, dep:1.50, tags:['dep']},
  {id:'avo', n:'Avocado ready to eat, 2 pc', u:'2 pc', p:3.29, tags:['vegan','gf']},
  {id:'cho', n:'Alnatura BIO dark chocolate 70%', u:'100 g', p:2.39, tags:['bio','vegan']},
+ {id:'oni', n:'Yellow onions, 1 kg net', u:'1 kg', p:1.49, tags:['vegan','gf']},
+ {id:'but', n:'Miil sweet cream butter', u:'250 g', p:1.19, tags:['own','best']},
+ {id:'oat', n:'Oatly oat drink Barista', u:'1 l', p:1.99, old:2.59, pct:23, tags:['vegan']},
+ {id:'spa', n:'Kitchin spaghetti No. 5', u:'500 g', p:0.69, tags:['own','vegan']},
+ {id:'flo', n:'Diamant wheat flour type 405', u:'1 kg', p:1.39},
+ {id:'pea', n:'iglo garden peas, frozen', u:'400 g', p:2.99, tags:['vegan','gf']},
+ {id:'piz', n:'Wagner Steinofen pizza salami, frozen', u:'320 g', p:3.69},
 ];
-const ORIGIN={ban:'Ecuador, Peru',cuc:'Germany, Spain, Netherlands',app:'Italy, South Africa',pep:'Netherlands',mil:'EU',egg:'Germany',bre:'Germany',gou:'EU',chi:'Czech Republic',yog:'EU',pas:'Italy',tom:'Italy',cof:'Italy',wat:'Germany',avo:'Chile',cho:'Germany'};
-const BRAND={mil:'Miil',egg:'Löwendorfer',bre:'Märkisches Landbrot',gou:'Miil',yog:'Miil',pas:'Kitchin',tom:'Kitchin',cof:'Lavazza',wat:'Bad Liebenwerda',avo:'EATME',cho:'Alnatura'};
-const PAIRS={ban:['yog','cho','app'],cuc:['tom','pep','avo'],app:['ban','yog','cho'],pep:['cuc','tom','chi'],mil:['cof','egg','bre'],egg:['bre','mil','gou'],bre:['gou','egg','mil'],gou:['bre','tom','pas'],chi:['pep','pas','tom'],yog:['ban','app','cho'],pas:['tom','gou','pep'],tom:['pas','gou','chi'],cof:['mil','cho','bre'],wat:['cho','avo','cof'],avo:['tom','bre','cuc'],cho:['cof','mil','ban']};
-const QTY={ban:[0.18,'kg'],cuc:[1,'pc'],app:[0.16,'kg'],pep:[0.21,'kg'],mil:[1,'l'],egg:[10,'pc'],bre:[0.75,'kg'],gou:[0.15,'kg'],chi:[0.49,'kg'],yog:[0.4,'kg'],pas:[0.5,'kg'],tom:[0.5,'kg'],cof:[1,'kg'],wat:[9,'l'],avo:[2,'pc'],cho:[0.1,'kg']};
+const ORIGIN={ban:'Ecuador, Peru',cuc:'Germany, Spain, Netherlands',app:'Italy, South Africa',pep:'Netherlands',mil:'EU',egg:'Germany',bre:'Germany',gou:'EU',chi:'Czech Republic',yog:'EU',pas:'Italy',tom:'Italy',cof:'Italy',wat:'Germany',avo:'Chile',cho:'Germany',oni:'Germany',but:'Germany',oat:'Sweden',spa:'Italy',flo:'Germany',pea:'Germany',piz:'Germany'};
+const BRAND={mil:'Miil',egg:'Löwendorfer',bre:'Märkisches Landbrot',gou:'Miil',yog:'Miil',pas:'Kitchin',tom:'Kitchin',cof:'Lavazza',wat:'Bad Liebenwerda',avo:'EATME',cho:'Alnatura',but:'Miil',oat:'Oatly',spa:'Kitchin',flo:'Diamant',pea:'iglo',piz:'Wagner'};
+const PAIRS={ban:['oat','flo','but','yog'],cuc:['oni','oat','spa'],app:['flo','but','oat'],pep:['oni','spa','piz'],mil:['flo','but','oat'],egg:['flo','but','oat'],bre:['but','oat','cof'],gou:['but','piz','spa'],chi:['oni','spa','pea'],yog:['oat','flo','cof'],pas:['oni','spa','pea'],tom:['spa','oni','piz'],cof:['oat','but','wat'],wat:['piz','cof','oat'],avo:['oni','oat','spa'],cho:['oat','cof','flo'],oni:['spa','pea','but'],but:['flo','oat','piz'],oat:['cof','flo','but'],spa:['oni','pea','piz'],flo:['but','oat','spa'],pea:['oni','piz','spa'],piz:['pea','oni','wat']};
+const CATS=[['veg','Fruit & vegetables'],['dairy','Dairy, eggs & alternatives'],['bake','Bread & bakery'],['meat','Meat & fish'],['pantry','Pasta, sauces & baking'],['frozen','Frozen'],['sweet','Sweets & snacks'],['drink','Coffee & drinks']];
+const CAT={ban:'veg',cuc:'veg',app:'veg',pep:'veg',avo:'veg',oni:'veg',mil:'dairy',egg:'dairy',gou:'dairy',yog:'dairy',but:'dairy',oat:'dairy',bre:'bake',chi:'meat',pas:'pantry',tom:'pantry',spa:'pantry',flo:'pantry',pea:'frozen',piz:'frozen',cho:'sweet',cof:'drink',wat:'drink'};
+function grouped(lines,row){ return CATS.map(([k,name])=>{ const g=lines.filter(([id])=>CAT[id]===k); return g.length?`<div class="lgroup"><h3 class="lgh">${name}<span class="num">${g.length}</span></h3>${g.map(([id,q])=>row(id,q)).join('')}</div>`:''; }).join(''); }
+const QTY={ban:[0.18,'kg'],cuc:[1,'pc'],app:[0.16,'kg'],pep:[0.21,'kg'],mil:[1,'l'],egg:[10,'pc'],bre:[0.75,'kg'],gou:[0.15,'kg'],chi:[0.49,'kg'],yog:[0.4,'kg'],pas:[0.5,'kg'],tom:[0.5,'kg'],cof:[1,'kg'],wat:[9,'l'],avo:[2,'pc'],cho:[0.1,'kg'],oni:[1,'kg'],but:[0.25,'kg'],oat:[1,'l'],spa:[0.5,'kg'],flo:[1,'kg'],pea:[0.4,'kg'],piz:[0.32,'kg']};
 P.forEach(x=>{ x.img='img/'+x.id+'.jpg'; x.e=''; const [a,u]=QTY[x.id]; const per=x.p/a;
   const amt = u==='pc' ? (a===1?'1 piece':a+' pieces') : u==='l' ? (x.id==='wat'?'6 × 1.5 l':a+' l') : (a<1?Math.round(a*1000)+' g':a+' kg');
   const base = u==='pc' ? (a>1?` (1 piece = ${eur(per)})`:'') : ` (1 ${u} = ${eur(per)})`;
@@ -1123,7 +1144,7 @@ function renderDrawer(t){
   const lines = Object.entries(S.cart).filter(([,q])=>q>0);
   document.getElementById('toCartPage').innerHTML = `<span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M3 4h2l2.5 11h11L21 7H7"/></svg>${t.count?`<span class="badge num ${t.reached?'ok':''}">${t.count}</span>`:''}</span><span><b class="num">${eur(t.items)}</b><small>Open full cart</small></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>`;
   document.getElementById('dbody').innerHTML = lines.length ? `${goalHtml(t)}
-    <div class="lines">${lines.map(([id,q])=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true"><img src="${x.img}" alt="" width="96" height="96"></span><span class="info"><b>${x.n}</b><small>${x.u}</small></span>${stepper(id,q,'sm')}<span class="amt num">${eur(x.p*q)}</span></div>`}).join('')}</div>
+    <div class="lines">${grouped(lines,(id,q)=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true"><img src="${x.img}" alt="" width="96" height="96"></span><span class="info"><b>${x.n}</b><small>${x.u}</small></span>${stepper(id,q,'sm')}<span class="amt num">${eur(x.p*q)}</span></div>`})}</div>
     ${fillHtml(t)}` : `<div class="goal"><div class="row"><b>Your cart is empty</b></div></div>`;
   document.getElementById('dfoot').innerHTML = `${lines.length?`<div class="dtotal num"><b>Total</b><b class="amt">${t.weighed?`<span class="ca">ca.</span>`:''}${eur(t.cartTotal)}</b></div>
     ${t.reached?'<p class="dmsg g">✓ Free delivery and your €20 first-order discount at checkout</p>':''}
@@ -1148,7 +1169,7 @@ function renderCart(t){
   <div class="cartpage">
     <section aria-labelledby="h-cart"><div class="sechead"><h1 id="h-cart">Your cart</h1><p class="num">${t.count} items</p></div>
       ${t.count&&!t.reached?`<div class="cgoal">${goalHtml(t)}</div>`:''}
-      ${lines.length?`<div class="lines">${lines.map(([id,q])=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true"><img src="${x.img}" alt="" width="96" height="96"></span><span class="info"><b>${x.n}</b><small>${x.u}</small><br><button type="button" class="rm" data-rm="${id}">Remove</button></span>${stepper(id,q,'sm')}<span class="amt num">${eur(x.p*q)}</span></div>`}).join('')}</div>
+      ${lines.length?`<div class="lines">${grouped(lines,(id,q)=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true"><img src="${x.img}" alt="" width="96" height="96"></span><span class="info"><b>${x.n}</b><small>${x.u}</small><br><button type="button" class="rm" data-rm="${id}">Remove</button></span>${stepper(id,q,'sm')}<span class="amt num">${eur(x.p*q)}</span></div>`})}</div>
       <div style="margin-top:16px">${fillHtml(t)}</div>
       <div class="cartacts"><button type="button" id="emptyCart">Empty the cart</button><button type="button" data-go="shop">+ Add more items</button></div>`:'<p>Your cart is empty.</p>'}
       ${recHtml()}
@@ -1224,7 +1245,7 @@ function renderDone(t){
 
 function pdFoot(){ const x=byId[S.pdId], n=S.cart[x.id]||0;
   return `<div class="mfoot pdfoot">${n?stepper(x.id,n,'pdstep'):`<button type="button" class="cta pdadd" data-add="${x.id}" aria-label="Add ${x.n}">+ Add</button>`}</div>`; }
-function openPd(id){ S.pdId=id; S.modal='pd'; render(); setTimeout(()=>document.getElementById('modalClose')?.focus({preventScroll:true}),0); }
+function openPd(id){ S.pdId=id; S.pdPairs=[...(PAIRS[id]||[]),...P.map(y=>y.id)].filter((k,i,a)=>k!==id&&a.indexOf(k)===i&&!S.cart[k]).slice(0,3); S.modal='pd'; render(); setTimeout(()=>document.getElementById('modalClose')?.focus({preventScroll:true}),0); }
 function modalHtml(){
   const m=S.modal, d=S.draft; if(!m) return '';
   let title='', body='', save='';
@@ -1247,7 +1268,7 @@ function modalHtml(){
     title=x.n;
     const labels=t.filter(k=>ATTR[k]).map(k=>`<span class="pdlab"><span class="attr ${ATTR[k][1]}" aria-hidden="true">${ATTR[k][2]}</span>${k==='bio'?'Organic':ATTR[k][0]}</span>`).join('');
     const deal=x.pct?`<span class="pdeal ${x.save?'r-save':'r-sale'}">−${x.pct}%${x.save?' Save the food':''}</span>`:(t.includes('best')?'<span class="pdeal r-best">Best price</span>':'');
-    const pairs=(PAIRS[x.id]||[]).map(id=>byId[id]).map(y=>`<div class="pair"><button type="button" class="pairimg" data-pd="${y.id}" aria-label="${y.n}"><img src="${y.img}" alt="" width="120" height="120"></button><div class="pairtxt"><b class="num">${priceHtml(y)}</b><span>${y.n}</span></div>${S.cart[y.id]?stepper(y.id,S.cart[y.id]):`<button type="button" class="add" data-add="${y.id}" aria-label="Add ${y.n}">+ Add</button>`}</div>`).join('');
+    const pairs=(S.pdPairs||[]).map(id=>byId[id]).map(y=>`<div class="pair"><button type="button" class="pairimg" data-pd="${y.id}" aria-label="${y.n}"><img src="${y.img}" alt="" width="120" height="120"></button><div class="pairtxt"><b class="num">${priceHtml(y)}</b><span>${y.n}</span></div>${S.cart[y.id]?stepper(y.id,S.cart[y.id]):`<button type="button" class="add" data-add="${y.id}" aria-label="Add ${y.n}">+ Add</button>`}</div>`).join('');
     body=`<div class="pdimg"><img src="${x.img}" alt="" width="360" height="360"></div>
     <div class="pdinfo">
       <h2 class="pdname" id="m-title">${x.n}</h2>
@@ -1255,8 +1276,8 @@ function modalHtml(){
       <div class="pdprow"><span class="pdprice num">${priceHtml(x)} ${deal}</span>${x.per?`<span class="pdper num">${x.per}</span>`:''}</div>
       ${labels?`<div class="pdlabels">${labels}</div>`:''}
     </div>
-    <h3 class="pdh">Often bought with</h3>
-    <div class="pairs">${pairs}</div>
+    ${pairs?`<h3 class="pdh">Often bought with</h3>
+    <div class="pairs">${pairs}</div>`:''}
     <h3 class="pdh">Product details</h3>
       <dl class="pdfacts">
         ${BRAND[x.id]?`<div><dt>Brand</dt><dd>${BRAND[x.id]}</dd></div>`:''}
