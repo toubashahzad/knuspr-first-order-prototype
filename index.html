@@ -514,7 +514,7 @@ function renderDrawer(t){
   document.getElementById('dfoot').innerHTML = `${lines.length?`<div class="dtotal num"><b>Total</b><b class="amt">${t.weighed?`<span class="ca">ca.</span>`:''}${eur(t.cartTotal)}</b></div>
     ${t.reached?'<p class="dmsg g">✓ Free delivery and your €20 first-order discount at checkout</p>':''}
     ${t.weighed?'<p class="dmsg">ca. because weighed items get their exact price after packing.</p>':''}`:''}
-    ${t.reached?'<button type="button" class="cta" id="toCheckout">Go to checkout</button>':`<button type="button" class="cta alt" id="closeCart2">Add ${eur(t.toGo)} more to check out</button>`}`;
+    ${t.reached?'<button type="button" class="cta" id="toCheckout">Go to checkout</button>':`<button type="button" class="cta" id="toCheckout" disabled>Add ${eur(t.toGo)} more to check out</button>`}`;
 }
 
 function recHtml(){
