@@ -444,10 +444,10 @@ function fillHtml(t){
   return `<div class="fill"><span class="lbl">Reach ${eur(MIN)}:</span>${fillers.map(x=>`<button type="button" class="chip" data-inc="${x.id}">${x.e} ${x.n} ${eur(x.p)}</button>`).join('')}</div>`;
 }
 function ticketHtml(t, atCheckout){
-  if(atCheckout && t.reached) return `<div class="ticket on"><span class="val">€20<small>off</small></span><span class="txt"><b>First-order voucher applied</b><span>€20 off for new customers, code WELCOME20</span></span></div>`;
+  if(atCheckout && t.reached) return `<div class="ticket on"><span class="val">€20<small>off</small></span><span class="txt"><b>First-order discount applied</b><span>€20 off for new customers, code WELCOME20</span></span></div>`;
   return t.reached
-   ? `<div class="ticket on"><span class="val">€20<small>off</small></span><span class="txt"><b>First-order voucher: you're eligible</b><span>€20 off for new customers, taken off at checkout</span></span></div>`
-   : `<div class="ticket"><span class="val">€20<small>off</small></span><span class="txt"><b>First-order voucher</b><span class="num">€20 off for new customers. Unlocks at €${MIN}, ${eur(t.toGo)} to go</span></span></div>`;
+   ? `<div class="ticket on"><span class="val">€20<small>off</small></span><span class="txt"><b>First-order discount: you're eligible</b><span>€20 off for new customers, taken off at checkout</span></span></div>`
+   : `<div class="ticket"><span class="val">€20<small>off</small></span><span class="txt"><b>First-order discount</b><span class="num">€20 off for new customers. Unlocks at €${MIN}, ${eur(t.toGo)} to go</span></span></div>`;
 }
 function costsHtml(t, final){
   const ca = t.weighed?'ca. ':'';
@@ -456,15 +456,15 @@ function costsHtml(t, final){
     ${t.dep?`<div><span>Bottle deposit</span><span>${eur(t.dep)}</span></div>`:''}
     <div><span>Delivery</span><span class="free">Free, first order</span></div>
     ${final
-      ? (t.reached?`<div><span>First-order voucher</span><span class="off">−${eur(t.off)}</span></div>`:'')
-      : `<div class="pending"><span>First-order voucher</span><span>${t.reached?'Applied at checkout':'Unlocks at €39'}</span></div>`}
+      ? (t.reached?`<div><span>First-order discount</span><span class="off">−${eur(t.off)}</span></div>`:'')
+      : `<div class="pending"><span>First-order discount</span><span>${t.reached?'Applied at checkout':'Unlocks at €39'}</span></div>`}
     <div class="total"><span>${final?'You pay':'Total'}</span><span>${ca}${eur(final?t.total:t.cartTotal)}</span></div>
     ${t.weighed&&!final?`<p class="canote">ca. because ${weighedCount()} ${weighedCount()===1?'item is':'items are'} priced by weight. You pay the exact amount after packing.</p>`:''}
   </div>`;
 }
 function weighedCount(){ return Object.entries(S.cart).filter(([id,q])=>q>0&&byId[id]&&byId[id].w).length; }
 function infoCards(){ return `<div class="infocards">
-  <div class="infocard"><span aria-hidden="true">${'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v8a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2z"/><path d="m9 15 6-6"/><circle cx="9.5" cy="9.5" r=".8"/><circle cx="14.5" cy="14.5" r=".8"/></svg>'}</span><p>As a new customer, your €20 first-order voucher comes off at checkout once your cart is at €39 or more.</p></div>
+  <div class="infocard"><span aria-hidden="true">${'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v8a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2z"/><path d="m9 15 6-6"/><circle cx="9.5" cy="9.5" r=".8"/><circle cx="14.5" cy="14.5" r=".8"/></svg>'}</span><p>As a new customer, your €20 first-order discount comes off at checkout once your cart is at €39 or more.</p></div>
   <div class="infocard"><span aria-hidden="true">${'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h11l-3-3M20 17H9l3 3"/></svg>'}</span><p>If something is out of stock, we suggest a similar product. You can turn it down.</p></div>
 </div>`; }
 function finalCosts(t, done){
@@ -473,7 +473,7 @@ function finalCosts(t, done){
     <div><span>Items (${t.count})</span><span>${eur(t.items)}</span></div>
     ${t.dep?`<div><span>Bottle deposit</span><span>${eur(t.dep)}</span></div>`:''}
     <div><span>Delivery</span><span class="free">Free, first order</span></div>
-    ${t.reached?`<div><span>First-order voucher</span><span class="off">−${eur(t.off)}</span></div>`:''}
+    ${t.reached?`<div><span>First-order discount</span><span class="off">−${eur(t.off)}</span></div>`:''}
     <div class="sub"><span>Order total</span><span>${eur(t.total)}</span></div>
     ${buf>0?`<div><span class="bufl">Weight buffer <button type="button" class="infob" id="bufInfo" aria-label="What is the weight buffer?" aria-expanded="false">i</button></span><span>+${eur(buf)}</span></div>
     <p class="bufnote" id="bufNote" hidden>Fruit, veg and meat are weighed when we pack them. The buffer covers a slightly heavier pick. Anything not used goes straight back to you.</p>`:''}
@@ -507,7 +507,7 @@ function renderDrawer(t){
   document.getElementById('dbody').innerHTML = lines.length ? `${goalHtml(t)}
     <div class="lines">${lines.map(([id,q])=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true">${x.e}</span><span class="info"><b>${x.n}</b><small>${x.u}</small></span>${stepper(id,q,'sm')}<span class="amt num">${x.w?'ca. ':''}${eur(x.p*q)}</span></div>`}).join('')}</div>
     ${fillHtml(t)}` : `<div class="goal"><div class="row"><b>Your cart is empty</b></div></div>`;
-  document.getElementById('dfoot').innerHTML = `${lines.length?`<div class="dtotal num"><span><b>Total</b><small>${t.reached?'<span class="g">✓ Free delivery and €20 first-order voucher at checkout</span>':'Free delivery + €20 first-order voucher once you reach €39'}</small></span><b>${t.weighed?'ca. ':''}${eur(t.cartTotal)}</b></div>${t.weighed?`<p class="canote">ca. because some items are priced by weight. You pay the exact amount after packing.</p>`:''}`:''}
+  document.getElementById('dfoot').innerHTML = `${lines.length?`<div class="dtotal num"><span><b>Total</b><small>${t.reached?'<span class="g">✓ Free delivery and €20 first-order discount at checkout</span>':'Free delivery + €20 first-order discount once you reach €39'}</small></span><b>${t.weighed?'ca. ':''}${eur(t.cartTotal)}</b></div>${t.weighed?`<p class="canote">ca. because some items are priced by weight. You pay the exact amount after packing.</p>`:''}`:''}
     <button type="button" class="cta" id="toCheckout" ${t.reached?'':'disabled'}>${t.reached?'Go to checkout':`Add ${eur(t.toGo)} to check out`}</button>`;
 }
 
@@ -560,7 +560,7 @@ function renderCheckout(t){
         <div class="sec rows"><div class="prow static"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span class="sumtxt">${S.slot?`<b>${day.label==='Tomorrow'?'Tomorrow, ':''}${day.date}</b><span class="num">${S.slot}</span><small class="g">Free, first order</small>`:'<b>No time chosen yet</b><span class="miss">Pick a 1-hour slot</span>'}</span>${rowState(!!S.slot)}<button type="button" class="editb" data-edit="slot" aria-label="Change delivery time">${S.slot?'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Edit':'Choose'}</button></div></div></section>
       <section aria-labelledby="h-items"><div class="shrow"><h2 class="sh" id="h-items">Your items</h2><span class="shnote num">${t.count} items, still editable</span></div>
         <div class="sec">
-        ${t.reached?'':`<div class="warn">You're ${eur(t.toGo)} under the €39 minimum. Add something to keep your slot and the €20 first-order voucher.</div>`}
+        ${t.reached?'':`<div class="warn">You're ${eur(t.toGo)} under the €39 minimum. Add something to keep your slot and the €20 first-order discount.</div>`}
         <div class="lines">${lines.map(([id,q])=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true">${x.e}</span><span class="info"><b>${x.n}</b><small>${x.u}</small><br><button type="button" class="rm" data-rm="${id}">Remove</button></span>${stepper(id,q,'sm')}<span class="amt num">${x.w?'ca. ':''}${eur(x.p*q)}</span></div>`}).join('')}</div>
         <button type="button" class="ghost" data-go="shop" style="width:auto;padding:0 16px;align-self:flex-start">+ Add more items</button></div></section>
       <section aria-labelledby="h-pay"><h2 class="sh" id="h-pay">Payment</h2>
@@ -654,7 +654,7 @@ function snack(id){
   el.className='snack'+(t.reached?' done':'');
   const prev=Math.min(100,Math.max(0,(t.items-x.p)/MIN*100));
   const w=v=>`calc(${v}% - 4px)`;
-  el.innerHTML=`<div class="msg num">${t.reached?`<b>Minimum reached.</b> You get free delivery and your €20 first-order voucher at checkout.<button type="button" class="view" id="snackView">View cart</button>`:`Still <b>${eur(t.toGo)}</b> to the €${MIN} minimum order.<span class="msub">Reach it for free delivery and your €20 first-order voucher at checkout.</span>`}</div>
+  el.innerHTML=`<div class="msg num">${t.reached?`<b>Minimum reached.</b> You get free delivery and your €20 first-order discount at checkout.<button type="button" class="view" id="snackView">View cart</button>`:`Still <b>${eur(t.toGo)}</b> to the €${MIN} minimum order.<span class="msub">Reach it for free delivery and your €20 first-order discount at checkout.</span>`}</div>
   <div class="track num" role="img" aria-label="${eur(t.items)} of ${eur(MIN)}"><span class="goalv">${eur(MIN).replace('.00','')}</span><span class="fillb" id="snackFill" style="width:${w(prev)}">${eur(t.items)}</span></div>`;
   requestAnimationFrame(()=>requestAnimationFrame(()=>{const f=document.getElementById('snackFill'); if(f) f.style.width=w(pct);}));
   el.hidden=false; clearTimeout(snackT); snackT=setTimeout(()=>el.hidden=true,5000);
@@ -665,7 +665,7 @@ function change(id,d,quiet){
   const before=totals().reached;
   S.cart[id]=Math.max(0,(S.cart[id]||0)+d); if(!S.cart[id]) delete S.cart[id];
   const after=totals().reached;
-  if(!before&&after&&!quiet) toast('Minimum reached: free delivery and your €20 first-order voucher at checkout');
+  if(!before&&after&&!quiet) toast('Minimum reached: free delivery and your €20 first-order discount at checkout');
   if(before&&!after&&S.view==='checkout') toast('Below the €39 minimum again');
 }
 
