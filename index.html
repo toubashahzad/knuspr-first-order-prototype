@@ -359,6 +359,17 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .bufl{display:inline-flex;align-items:center;gap:6px}
 .infob{width:18px;height:18px;border-radius:9px;border:1.5px solid var(--muted);background:transparent;color:var(--muted);font-size:11px;font-weight:700;line-height:1;padding:0;display:inline-flex;align-items:center;justify-content:center;font-style:italic}
 .bufnote{margin:0;font-size:12.5px;color:var(--muted);background:var(--soft);border-radius:8px;padding:8px 10px;line-height:1.4}
+.infocard{background:var(--soft)!important;box-shadow:none!important;align-items:flex-start}
+.infocard .iic{color:var(--ink)!important;margin-top:1px}
+.infocard p b{display:inline;font-size:inherit}
+.ilink{display:inline-flex;align-items:center;gap:6px;margin-top:6px;border:0;background:none;padding:0;font-weight:700;font-size:13.5px;color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+.ilink::before{content:"→";text-decoration:none;display:inline-block}
+.ilink:hover{color:var(--brand)}
+.infobig{display:flex;flex-direction:column;gap:10px}
+.infoart{align-self:center;width:120px;height:120px;border-radius:60px;background:var(--tint2);color:var(--brand);display:flex;align-items:center;justify-content:center;margin:4px 0 8px}
+.infobig h3{font-size:19px;line-height:1.3}
+.infobig p{margin:0;color:var(--muted);line-height:1.5}
+.mfoot.right{display:flex;justify-content:flex-end}.mfoot.right .ghost{width:auto;padding:0 28px}
 </style>
 </head>
 <body>
@@ -470,9 +481,10 @@ function costsHtml(t, final){
   </div>`;
 }
 function weighedCount(){ return Object.entries(S.cart).filter(([id,q])=>q>0&&byId[id]&&byId[id].w).length; }
+const IC_V='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v8a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2z"/><path d="m9 15 6-6"/><circle cx="9.5" cy="9.5" r=".8"/><circle cx="14.5" cy="14.5" r=".8"/></svg>', IC_R='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h11l-3-3M20 17H9l3 3"/></svg>';
 function infoCards(){ return `<div class="infocards">
-  <div class="infocard"><span aria-hidden="true">${'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v8a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2z"/><path d="m9 15 6-6"/><circle cx="9.5" cy="9.5" r=".8"/><circle cx="14.5" cy="14.5" r=".8"/></svg>'}</span><p><b>Your €20 first-order discount isn’t in this total yet.</b> We take it off at checkout, once your order is finalised.</p></div>
-  <div class="infocard"><span aria-hidden="true">${'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h11l-3-3M20 17H9l3 3"/></svg>'}</span><p>If something is out of stock, we suggest a similar product. You can turn it down.</p></div>
+  <div class="infocard"><span class="iic" aria-hidden="true">${IC_V}</span><div><p>Your €20 first-order discount comes off at checkout, once your order is finalised.</p><button type="button" class="ilink" data-info="disc">How the discount works</button></div></div>
+  <div class="infocard"><span class="iic" aria-hidden="true">${IC_R}</span><div><p>If something is out of stock, we suggest a similar product. You can turn it down.</p><button type="button" class="ilink" data-info="repl">How replacements work</button></div></div>
 </div>`; }
 function finalCosts(t, done){
   const buf = Math.round((t.hold - t.total)*100)/100;
@@ -615,6 +627,13 @@ function modalHtml(){
     :`<div class="opts" role="radiogroup" aria-label="Saved addresses">${S.addrs.map(x=>`<div class="optw"><label class="opt"><input type="radio" name="maddr" value="${x.id}" ${d.addr===x.id?'checked':''}><span><b>${x.label}</b><span>${x.street}, ${x.zip} ${x.city}</span>${x.note?`<small>${x.note}</small>`:''}</span></label><button type="button" class="editb sm" data-eaddr="${x.id}" aria-label="Edit ${x.label} address">Edit</button></div>`).join('')}</div>
     <button type="button" class="addnew" id="addAddr">+ Add new address</button>`;
     save=S.adding?'':'Use this address';
+  } else if(m==='disc' || m==='repl'){
+    const D = m==='disc'
+      ? {t:'First-order discount', ic:IC_V, h:'We take the €20 off once your order is finalised.', p:'New customers get €20 off a first order of €39 or more. Your cart shows the full price. The discount appears in your checkout summary, before you pay.'}
+      : {t:'Replacements', ic:IC_R, h:'If something is out of stock, we suggest a similar product.', p:'You see the replacement on your order before delivery and can turn it down. You only pay for what you keep.'};
+    title=D.t;
+    body=`<div class="infobig"><span class="infoart" aria-hidden="true">${D.ic.replace('width="24" height="24"','width="56" height="56"')}</span><h3>${D.h}</h3><p>${D.p}</p></div>`;
+    save='';
   } else if(m==='contact'){
     title='Name and phone number';
     body=`<form id="contactF" class="nform plain" novalidate>
@@ -636,10 +655,10 @@ function modalHtml(){
     body=`<div class="opts" role="radiogroup" aria-label="Payment methods">${PAYS.map(x=>`<label class="opt"><input type="radio" name="mpay" value="${x.k}" ${d.pay===x.k?'checked':''}><span><b>${x.l}</b><span>${x.s}</span></span></label>`).join('')}</div>`;
     save='Use this method';
   }
-  return `<div class="mscrim" id="mscrim"></div><div class="modal" role="dialog" aria-modal="true" aria-labelledby="m-title"><div class="mhead"><h2 id="m-title">${title}</h2><button type="button" class="x" id="modalClose" aria-label="Close">×</button></div><div class="mbody">${body}</div>${save?`<div class="mfoot"><button type="button" class="cta" id="modalSave">${save}</button></div>`:''}</div>`;
+  return `<div class="mscrim" id="mscrim"></div><div class="modal" role="dialog" aria-modal="true" aria-labelledby="m-title"><div class="mhead"><h2 id="m-title">${title}</h2><button type="button" class="x" id="modalClose" aria-label="Close">×</button></div><div class="mbody">${body}</div>${save?`<div class="mfoot"><button type="button" class="cta" id="modalSave">${save}</button></div>`:(m==='disc'||m==='repl')?'<div class="mfoot right"><button type="button" class="ghost" id="modalClose2">Close</button></div>':''}</div>`;
 }
 function openModal(m){ S.modal=m; S.adding=false; S.editId=null; S.draft={addr:S.addr, pay:S.pay, day:S.day, sday:S.day, slot:S.slot}; render(); setTimeout(()=>{const f=document.querySelector('#modal .modal input:checked, #modal .modal .slot.on, #modal .modal button'); f&&f.focus();},0); }
-function closeModal(){ const m=S.modal; S.modal=null; S.adding=false; render(); const b=document.querySelector(`[data-edit="${m}"]`); b&&b.focus(); }
+function closeModal(){ const m=S.modal; S.modal=null; S.adding=false; render(); const b=document.querySelector(`[data-edit="${m}"],[data-info="${m}"]`); b&&b.focus(); }
 function render(){
   const t=totals();
   renderHeader(t);
@@ -689,6 +708,7 @@ document.addEventListener('click',e=>{
   if(ds.slot){ S.slot=ds.slot; render(); return; }
   if(ds.go){ S.view=ds.go; S.drawer=false; render(); window.scrollTo(0,0); return; }
   if(ds.edit){ openModal(ds.edit); return; }
+  if(ds.info){ openModal(ds.info); S.lastInfo=ds.info; return; }
   if(ds.eaddr){ S.adding=true; S.editId=ds.eaddr; render(); setTimeout(()=>document.getElementById('na-street')?.focus(),0); return; }
   if(ds.mday){ S.draft.day=ds.mday; render(); return; }
   if(ds.mslot){ S.draft.slot=ds.mslot; S.draft.sday=S.draft.day; render(); return; }
