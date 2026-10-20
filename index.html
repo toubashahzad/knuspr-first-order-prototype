@@ -559,7 +559,7 @@ function renderCart(t){
   return `<button type="button" class="back" data-go="shop">← Back to shopping</button>
   <div class="cartpage">
     <section aria-labelledby="h-cart"><div class="sechead"><h1 id="h-cart">Your cart</h1><p class="num">${t.count} items</p></div>
-      ${t.count?pbannerHtml(t):''}
+      ${t.count&&!t.reached?pbannerHtml(t):''}
       ${lines.length?`<div class="lines">${lines.map(([id,q])=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true">${x.e}</span><span class="info"><b>${x.n}</b><small>${x.u}</small><br><button type="button" class="rm" data-rm="${id}">Remove</button></span>${stepper(id,q,'sm')}<span class="amt num">${eur(x.p*q)}</span></div>`}).join('')}</div>
       <div style="margin-top:16px">${fillHtml(t)}</div>
       <div class="cartacts"><button type="button" id="emptyCart">Empty the cart</button><button type="button" data-go="shop">+ Add more items</button></div>`:'<p>Your cart is empty.</p>'}
