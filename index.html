@@ -729,6 +729,15 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .mbody{padding:18px 20px;overflow:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:14px}
 .mfoot{padding:14px 20px 18px;border-top:1px solid var(--line)}
 .mnote{margin:0;font-size:13px;color:var(--muted)}
+.xban{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:10px 16px 10px 10px;border:0;border-radius:16px;background:linear-gradient(115deg,#f59d1d 0%,#dd6a12 45%,#8a3a0c 100%);color:#fff;font:inherit;font-size:14px;text-align:left;cursor:pointer;box-shadow:0 6px 16px -8px rgba(138,58,12,.6)}
+.xban:hover{filter:brightness(1.05)}
+.xban .xbadge{flex-shrink:0;height:32px;padding:0 12px;border:1.5px solid rgba(255,255,255,.85);border-radius:999px;display:flex;align-items:center;font-weight:800;font-style:italic;font-size:14px;background:rgba(255,255,255,.12)}
+.xban .xbt{flex:1;font-weight:600;line-height:1.35}
+.cxban{margin:4px 0 12px}
+.savepill{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:4px;padding:9px 14px;border-radius:999px;background:#e8f5ec;color:#1f7a44;font-size:14px;font-weight:500}
+.savepill b{font-weight:700}
+.costs .savepill{justify-content:center}
+:root[data-theme="dark"] .savepill{background:#173a24;color:#7fd4a0}
 .tipbox{padding:16px;display:flex;flex-direction:column;gap:14px}
 .tiphead{display:flex;gap:12px;align-items:center}
 .tiphead p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.45}.tiphead b{color:var(--ink)}
@@ -1153,6 +1162,9 @@ function infoCards(){ return `<div class="infocards">
   <div class="infocard"><span class="iic" aria-hidden="true">${IC_V}</span><div><p>Any vouchers and offers you have are applied at checkout, once your order is finalised.</p><button type="button" class="ilink" data-info="disc">Vouchers and offers</button></div></div>
   <div class="infocard"><span class="iic" aria-hidden="true">${IC_R}</span><div><p>If something is out of stock, we suggest a similar product. You can turn it down.</p><button type="button" class="ilink" data-info="repl">How replacements work</button></div></div>
 </div>`; }
+function savedAmt(t){ let v=0; for(const [id,q] of Object.entries(S.cart)){ const x=byId[id]; if(x&&x.old&&q) v+=(x.old-x.p)*q; } return Math.round((v+(t.reached?t.off:0))*100)/100; }
+function xtraSave(){ let v=0; for(const [id,q] of Object.entries(S.cart)){ const x=byId[id]; if(x&&q&&(x.tags||[]).includes('own')) v+=x.p*q*0.1; } return Math.round(v*100)/100; }
+function xtraBanner(){ const v=xtraSave(); return `<button type="button" class="xban" id="xtraBan"><span class="xbadge">xtra</span><span class="xbt">${v>0?`Save <b class="num">${eur(v)}</b> on this order with a free trial of Xtra.`:'Free delivery on every order with a free trial of Xtra.'}</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>`; }
 function finalCosts(t, done){
   const buf = Math.round((t.hold - t.total)*100)/100;
   return `<div class="costs num">
@@ -1165,6 +1177,7 @@ function finalCosts(t, done){
     ${buf>0?`<div><span class="bufl">Weight buffer <button type="button" class="infob" id="bufInfo" aria-label="What is the weight buffer?" aria-expanded="false">i</button></span><span>+${eur(buf)}</span></div>
     <p class="bufnote" id="bufNote" hidden>Fruit, veg and meat are weighed when we pack them. The buffer covers a slightly heavier pick. Anything not used goes straight back to you.</p>`:''}
     <div class="total grand"><span>${done?'Total paid':'You pay'}</span><span>${eur(t.hold)}</span></div>
+    ${savedAmt(t)>0?`<div class="savepill"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg><span>You ${done?'saved':'save'} <b class="num">${eur(savedAmt(t))}</b> on this order</span></div>`:''}
     ${buf>0?`<p class="canote">${done?`If your weighed items come in lighter, we refund the difference after packing. Your receipt shows the exact amount.`:`This is the most you'll pay. If your weighed items come in lighter, we refund the difference after packing.`}</p>`:''}
   </div>`;
 }
@@ -1197,7 +1210,7 @@ function renderShop(){
 function renderDrawer(t){
   const lines = Object.entries(S.cart).filter(([,q])=>q>0);
   document.getElementById('toCartPage').innerHTML = `<span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M3 4h2l2.5 11h11L21 7H7"/></svg>${t.count?`<span class="badge num ${t.reached?'ok':''}">${t.count}</span>`:''}</span><span><b class="num">${eur(t.items)}</b><small>Open full cart</small></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>`;
-  document.getElementById('dbody').innerHTML = lines.length ? `${goalHtml(t)}
+  document.getElementById('dbody').innerHTML = lines.length ? `${goalHtml(t)}${xtraBanner()}
     <div class="lines">${grouped(lines,(id,q)=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true"><img src="${x.img}" alt="" width="96" height="96"></span><span class="info"><b>${x.n}</b><small>${x.u}</small></span>${stepper(id,q,'sm')}<span class="amt num">${eur(x.p*q)}</span></div>`})}</div>
     ${fillHtml(t)}` : `<div class="goal"><div class="row"><b>Your cart is empty</b></div></div>`;
   document.getElementById('dfoot').innerHTML = `${lines.length?`<div class="dtotal num"><b>Total</b><b class="amt">${t.weighed?`<span class="ca">ca.</span>`:''}${eur(t.cartTotal)}</b></div>
@@ -1223,6 +1236,7 @@ function renderCart(t){
   <div class="cartpage">
     <section aria-labelledby="h-cart"><div class="sechead"><h1 id="h-cart">Your cart</h1><p class="num">${t.count} items</p></div>
       ${t.count&&!t.reached?`<div class="cgoal">${goalHtml(t)}</div>`:''}
+      ${t.count?`<div class="cxban">${xtraBanner()}</div>`:''}
       ${lines.length?`<div class="lines">${grouped(lines,(id,q)=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true"><img src="${x.img}" alt="" width="96" height="96"></span><span class="info"><b>${x.n}</b><small>${x.u}</small><br><button type="button" class="rm" data-rm="${id}">Remove</button></span>${stepper(id,q,'sm')}<span class="amt num">${eur(x.p*q)}</span></div>`})}</div>
       <div style="margin-top:16px">${fillHtml(t)}</div>
       <div class="cartacts"><button type="button" id="emptyCart">Empty the cart</button><button type="button" data-go="shop">+ Add more items</button></div>`:'<p>Your cart is empty.</p>'}
@@ -1487,6 +1501,7 @@ document.addEventListener('click',e=>{
     case 'modalClose2': closeModal(); break;
     case 'favBtn': toast('Favourites list isn\'t part of this prototype'); break;
     case 'acctBtn': toast(cur().name?'Account page isn\'t part of this prototype':'Sign-in isn\'t part of this prototype. You can create your account at checkout.'); break;
+    case 'xtraBan': toast('The Xtra trial isn\'t part of this prototype'); break;
     case 'xtraBtn': case 'catBtn': toast('Not part of this prototype'); break;
     case 'pcGo': S.modal=null; render(); document.getElementById('q')?.focus(); break;
     case 'pcBrowse': S.modal=null; S.zip=null; render(); break;
