@@ -22,3 +22,7 @@ Prices and products are examples. This is not affiliated with Knuspr, no order i
 ## Run locally
 
 Open `index.html` in a browser.
+
+## Components
+
+See [components/](components/README.md) for the building blocks used in the prototype.
