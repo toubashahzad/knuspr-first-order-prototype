@@ -26,3 +26,7 @@ Open `index.html` in a browser.
 ## Components
 
 See [components/](components/README.md) for the building blocks used in the prototype.
+
+## Licence
+
+© 2026 Touba Shahzad. All rights reserved. This code and the prototype may not be used, copied or modified without written permission.
