@@ -267,7 +267,6 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .paybtn.pb-apple:not([disabled]):hover,.paybtn.pb-gpay:not([disabled]):hover{background:#222}
 .paybtn.pb-paypal:not([disabled]):hover{background:#f2ba36}
 :root[data-theme="dark"] .paybtn.pb-apple,:root[data-theme="dark"] .paybtn.pb-gpay{background:#fff;color:#000}
-.cta.paybtn[disabled]{background:var(--line);color:var(--muted)}
 .costack{display:flex;flex-direction:column;gap:28px}
 .sh{font-size:20px;font-weight:700;margin:0 0 12px}
 .shrow{display:flex;justify-content:space-between;align-items:baseline;gap:12px}.shnote{font-size:13px;color:var(--muted)}
@@ -303,6 +302,41 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .flabel{font-size:13px;font-weight:600;margin-top:6px}
 .nform.plain{border:0;padding:0}
 .fhelp{margin:4px 0 0;font-size:13px;color:var(--muted)}
+.cards1{display:flex;flex-direction:column;gap:12px}
+.cards1 .prow{border-bottom:0;border-radius:16px}
+.cards1 .sec + .sec{margin-top:0}
+.paycards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:600px){.paycards{grid-template-columns:minmax(0,1fr)}}
+.pcard{display:flex;align-items:center;gap:14px;padding:16px 18px;border:1.5px solid var(--line);border-radius:16px;background:var(--surface);cursor:pointer}
+.pcard.on{border-color:var(--accent);background:var(--tint2);box-shadow:inset 0 0 0 1px var(--accent)}
+.pcard input{width:20px;height:20px;accent-color:var(--accent);margin:0;flex-shrink:0}
+.pcard:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.pcard .chg{color:var(--ink);font-weight:700}
+.pmark{width:52px;height:34px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800;flex-shrink:0;letter-spacing:.2px}
+.pm-card{background:#1a1f71;color:#fff;font-style:italic;font-size:13px}
+.pm-apple{background:#000;color:#fff}
+.pm-gpay{background:#fff;color:#3c4043;border:1px solid #dadce0}
+.pm-paypal{background:#ffc439;color:#003087}
+#h-off + .ticket{margin-bottom:12px}
+.ticket{padding:4px 0}
+.ticket .val{width:110px;font-size:28px}
+.ticket::before,.ticket::after{left:103px}
+.ticket .txt b{font-size:16px}.ticket .txt span{font-size:14px}
+.promo2{flex-direction:row;align-items:center;gap:14px;padding:10px 12px 10px 18px}
+.promo2 input{flex:1;min-width:0;height:44px;border:0;background:transparent;font:inherit;color:var(--ink);outline:0}
+.promo2:focus-within{border-color:var(--accent)}
+.promo2 .ghost{width:auto;padding:0 18px;height:44px}
+.paybtn{display:flex;align-items:center;justify-content:center;gap:6px}
+.paybtn .pbl{font-weight:600}
+.paybtn b{font-weight:800}.paybtn i{font-style:normal}
+.paybtn.pb-card{background:#1a1f71;color:#fff}.paybtn .pbv{font-style:italic;letter-spacing:.5px}
+.paybtn.pb-card:not([disabled]):hover{background:#252b8f}
+.paybtn.pb-gpay{background:#fff!important;color:#3c4043!important;border:1.5px solid #dadce0}
+.paybtn.pb-gpay:not([disabled]):hover{background:#f6f7f8!important}
+:root[data-theme="dark"] .paybtn.pb-apple{background:#fff;color:#000}
+:root[data-theme="dark"] .paybtn.pb-gpay{background:#000!important;color:#fff!important;border-color:#5f6368}
+.cta.paybtn[disabled]{background:var(--line)!important;color:var(--muted)!important;border-color:transparent}
+.cta.paybtn[disabled] i{color:inherit!important}
 </style>
 </head>
 <body>
@@ -362,7 +396,7 @@ const FULL = {tue:['07:00–08:00','18:00–19:00'], wed:['19:00–20:00'], thu:
 
 let S;
 const HOME={id:'home',label:'Home',name:'Touba Shahzad',street:'Fritz-Werner-Straße 35',zip:'12107',city:'Berlin',note:'3rd floor, ring “Shahzad”'};
-const PAYS=[{k:'card',l:'Visa ending 4242',s:'Expires 08/28',cta:'Place order'},{k:'apple',l:'Apple Pay',s:'Confirm with Face ID or Touch ID',cta:'Pay with Apple Pay'},{k:'gpay',l:'Google Pay',s:'Confirm on your phone',cta:'Pay with Google Pay'},{k:'paypal',l:'PayPal',s:'You log in to PayPal to confirm',cta:'Pay with PayPal'}];
+const PAYS=[{k:'card',l:'Visa ending 4242',s:'Expires 08/28',cta:'Pay with Visa ···· 4242'},{k:'apple',l:'Apple Pay',s:'Confirm with Face ID or Touch ID',cta:'Pay with Apple Pay'},{k:'gpay',l:'Google Pay',s:'Confirm on your phone',cta:'Pay with Google Pay'},{k:'paypal',l:'PayPal',s:'You log in to PayPal to confirm',cta:'Pay with PayPal'}];
 function fresh(){ return {cart:{...START}, view:'shop', drawer:false, day:'tue', slot:'06:00–07:00', pay:'card', q:'', addrs:[HOME], addr:'home', contact:{name:'Touba Shahzad', phone:''}, modal:null, draft:{}, adding:false, editId:null}; }
 function load(){ try{ const s=JSON.parse(localStorage.getItem('kfo')); if(s&&s.cart) return {...fresh(),...s, drawer:false, modal:null, adding:false, editId:null}; }catch(e){} return fresh(); }
 function save(){ try{ localStorage.setItem('kfo', JSON.stringify({cart:S.cart, view:S.view, day:S.day, slot:S.slot, pay:S.pay, addrs:S.addrs, addr:S.addr, contact:S.contact})); }catch(e){} }
@@ -462,6 +496,8 @@ function renderCart(t){
   </div>`;
 }
 
+const PBTN={card:'<span class="pbl">Pay with</span> <b class="pbv">VISA</b> <span class="pbl num">···· 4242</span>',apple:'<span class="pbl">Pay with</span> <b class="pba">Apple Pay</b>',gpay:'<span class="pbl">Pay with</span> <b class="pbg"><i style="color:#4285F4">G</i> Pay</b>',paypal:'<span class="pbl">Pay with</span> <b class="pbp"><i style="color:#003087">Pay</i><i style="color:#009cde">Pal</i></b>'};
+const PMARK={card:'VISA',apple:'Pay',gpay:'G Pay',paypal:'PayPal'};
 function status(ok){ return ok?'<span class="hok" aria-label="done"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>':'<span class="hmiss">To do</span>'; }
 function rowState(ok){ return ok?'<span class="rok" title="Saved"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="sr">Saved</span></span>':''; }
 function renderCheckout(t){
@@ -476,9 +512,9 @@ function renderCheckout(t){
   <div class="co">
     <div class="costack">
       <section aria-labelledby="h-addr"><h2 class="sh" id="h-addr">Where ${status(whereOk)}</h2>
-        <div class="sec rows">
-          <div class="prow static"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></span><span class="sumtxt"><b>${c.name||'Add your name'}</b>${c.phone?`<span class="num">${c.phone}</span>`:'<span class="miss">Add a phone number so the driver can reach you</span>'}</span>${rowState(c.name&&c.phone)}<button type="button" class="editb" data-edit="contact" aria-label="${c.phone?'Edit name and phone number':'Add phone number'}">${c.phone?'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Edit':'+ Add'}</button></div>
-          <div class="prow static"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span class="sumtxt"><b>${ad.label}</b><span>${ad.street}, ${ad.zip} ${ad.city}</span>${ad.note?`<small>${ad.note}</small>`:''}</span>${rowState(true)}<button type="button" class="editb" data-edit="addr" aria-label="Change delivery address"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Edit</button></div>
+        <div class="cards1">
+          <div class="sec rows"><div class="prow static"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></span><span class="sumtxt"><b>${c.name||'Add your name'}</b>${c.phone?`<span class="num">${c.phone}</span>`:'<span class="miss">Add a phone number so the driver can reach you</span>'}</span>${rowState(c.name&&c.phone)}<button type="button" class="editb" data-edit="contact" aria-label="${c.phone?'Edit name and phone number':'Add phone number'}">${c.phone?'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Edit':'+ Add'}</button></div></div>
+          <div class="sec rows"><div class="prow static"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span class="sumtxt"><b>${ad.label}</b><span>${ad.street}, ${ad.zip} ${ad.city}</span>${ad.note?`<small>${ad.note}</small>`:''}</span>${rowState(true)}<button type="button" class="editb" data-edit="addr" aria-label="Change delivery address"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Edit</button></div></div>
         </div></section>
       <section aria-labelledby="h-slot"><h2 class="sh" id="h-slot">When ${status(!!S.slot)}</h2>
         <div class="sec rows"><div class="prow static"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span class="sumtxt">${S.slot?`<b>${day.label==='Tomorrow'?'Tomorrow, ':''}${day.date}</b><span class="num">${S.slot}</span><small class="g">Free, first order</small>`:'<b>No time chosen yet</b><span class="miss">Pick a 1-hour slot</span>'}</span>${rowState(!!S.slot)}<button type="button" class="editb" data-edit="slot" aria-label="Change delivery time">${S.slot?'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Edit':'Choose'}</button></div></div></section>
@@ -488,18 +524,18 @@ function renderCheckout(t){
         <div class="lines">${lines.map(([id,q])=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true">${x.e}</span><span class="info"><b>${x.n}</b><small>${x.u}</small><br><button type="button" class="rm" data-rm="${id}">Remove</button></span>${stepper(id,q,'sm')}<span class="amt num">${x.w?'ca. ':''}${eur(x.p*q)}</span></div>`}).join('')}</div>
         <button type="button" class="ghost" data-go="shop" style="width:auto;padding:0 16px;align-self:flex-start">+ Add more items</button></div></section>
       <section aria-labelledby="h-pay"><h2 class="sh" id="h-pay">Payment ${status(true)}</h2>
-        <div class="sec rows">
-          <div role="radiogroup" aria-label="Payment method" class="payrows">${PAYS.map(x=>`<label class="prow ${S.pay===x.k?'on':''}"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 10h19"/></svg></span><span class="sumtxt"><b>${x.l}</b><span class="${S.pay===x.k?'chg num':''}">${S.pay===x.k?charge:x.s}</span></span><input type="radio" name="pay" value="${x.k}" ${S.pay===x.k?'checked':''}></label>`).join('')}</div>
-          <div class="prow static"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v8a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2z"/><path d="m9 15 6-6"/><circle cx="9.5" cy="9.5" r=".8"/><circle cx="14.5" cy="14.5" r=".8"/></svg></span><span class="sumtxt"><b>Offers and savings</b><span class="${t.reached?'g':''}">${t.reached?'Welcome voucher applied, €20 off':'€20 welcome voucher, applies at €39'}</span></span></div>
-          <form class="prow promo" id="promo"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg></span><label for="promoIn" class="sr">Gift card or promo code</label><input id="promoIn" name="promo" placeholder="Enter gift card or promo code" autocomplete="off" spellcheck="false"><button type="submit" class="ghost">Apply</button></form>
-        </div>
+        <div class="paycards" role="radiogroup" aria-label="Payment method">${PAYS.map(x=>`<label class="pcard ${S.pay===x.k?'on':''}"><span class="pmark pm-${x.k}" aria-hidden="true">${PMARK[x.k]}</span><span class="sumtxt"><b>${x.l}</b><span class="${S.pay===x.k?'chg num':''}">${S.pay===x.k?charge:x.s}</span></span><input type="radio" name="pay" value="${x.k}" ${S.pay===x.k?'checked':''}></label>`).join('')}</div>
+      </section>
+      <section aria-labelledby="h-off"><h2 class="sh" id="h-off">Offers and savings ${t.reached?status(true):''}</h2>
+        ${ticketHtml(t)}
+        <form class="sec promo2" id="promo"><span class="sumic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg></span><label for="promoIn" class="sr">Gift card or promo code</label><input id="promoIn" name="promo" placeholder="Enter gift card or promo code" autocomplete="off" spellcheck="false"><button type="submit" class="ghost">Apply</button></form>
       </section>
     </div>
     <aside aria-labelledby="h-sum" class="sumwrap"><h2 class="sh" id="h-sum">Summary</h2>
       <div class="summary">
       ${costsHtml(t,true)}
       ${holdHtml(t)}
-      <button type="button" class="cta paybtn pb-${pm.k}" id="place" ${ready?'':'disabled'}>${pm.cta}</button>
+      <button type="button" class="cta paybtn pb-${pm.k}" id="place" ${ready?'':'disabled'}>${PBTN[pm.k]}</button>
       <p class="hint">${!t.reached?`Add ${eur(t.toGo)} to reach the €39 minimum.`:!S.slot?'Choose a delivery time to place your order.':!(S.contact&&S.contact.phone)?'Add your phone number under Where to place your order.':`Delivery ${day.date}, ${S.slot}. Nothing is charged until we pack.`}</p>
       </div>
     </aside>
