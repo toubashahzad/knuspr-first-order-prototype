@@ -46,11 +46,12 @@ a{color:var(--brand)}
 .strip .wrap{display:flex;justify-content:center;align-items:center;gap:10px 22px;flex-wrap:wrap;padding-block:8px;text-align:center;line-height:1.3}
 .strip .wrap>span{display:inline-flex;align-items:center;gap:6px}
 .strip b{font-weight:600}
-header.top{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:20}
+header.top{background:var(--surface)}
+.shopbar{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:20}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
 header.top .wrap{display:flex;align-items:center;gap:20px;padding-block:10px}
 header.top .hrow1{padding-block:10px 4px}
-header.top .hrow2{padding-block:6px 12px;gap:14px}
+.shopbar .hrow2{display:flex;align-items:center;padding-block:10px 12px;gap:14px}
 .hspace{flex:1}
 .xtra{display:flex;align-items:center;gap:12px;padding:7px 14px 7px 8px;border:1.5px solid #f2cfae;border-radius:12px;background:var(--tint2);color:var(--ink);text-align:left;font:inherit;cursor:pointer}
 .xtra:hover{border-color:var(--accent)}
@@ -61,7 +62,7 @@ header.top .hrow2{padding-block:6px 12px;gap:14px}
 .catbtn{display:flex;align-items:center;gap:10px;height:48px;padding:0 18px;border:1.5px solid #a8480f;border-radius:12px;background:var(--surface);color:var(--brand);font:inherit;font-weight:600;font-size:16px;cursor:pointer;flex-shrink:0}
 .recbtn{display:flex;align-items:center;gap:8px;border:0;background:transparent;font:inherit;font-weight:600;font-size:16px;color:var(--ink);padding:10px 8px;cursor:pointer;flex-shrink:0}
 .recbtn svg{color:var(--brand)}
-header.top .search{height:48px}
+.shopbar .search{height:48px}
 .logo{font-weight:700;font-size:24px;letter-spacing:-.5px;color:var(--ink);display:flex;align-items:baseline;gap:2px}
 .logo span{color:var(--accent)}
 .addr{display:flex;flex-direction:column;align-items:flex-start;font-size:13px;min-width:0;border:0;background:transparent;padding:6px 26px 6px 8px;margin-left:-8px;border-radius:10px;text-align:left;color:var(--ink);position:relative;cursor:pointer}
@@ -89,7 +90,7 @@ header.top .search{height:48px}
 .cartacts button{height:40px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);padding:0 14px;font-weight:600}
 .badge{position:absolute;top:-7px;right:-9px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--accent);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
 @media (max-width:900px){.xtra .xt{display:none}}
-@media (max-width:760px){.xtra,.recbtn span{display:none} .catbtn{padding:0 12px;font-size:0;gap:0} header.top .hrow2{gap:8px}}
+@media (max-width:760px){.xtra,.recbtn span{display:none} .catbtn{padding:0 12px;font-size:0;gap:0} .shopbar .hrow2{gap:8px}}
 
 /* shop */
 main{padding-block:24px 64px}
@@ -220,7 +221,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .stripv{display:inline-flex;align-items:center;gap:6px;border:1.5px dashed var(--accent);border-radius:8px;padding:3px 10px;background:var(--surface);color:var(--brand)}
 .voucher{display:flex;align-items:center;gap:10px;background:var(--good-tint);color:var(--good);border-radius:10px;padding:10px 12px;font-size:14px;font-weight:600}
 .voucher.wait{background:var(--tint2);color:var(--muted)}
-.summary{position:sticky;top:calc(env(safe-area-inset-top,0px) + 152px);background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.summary{position:sticky;top:calc(env(safe-area-inset-top,0px) + 92px);background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px}
 .summary h2{font-size:18px}
 .hint{font-size:13px;color:var(--muted);text-align:center;margin:0}
 
@@ -292,8 +293,8 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .costack{display:flex;flex-direction:column;gap:28px}
 .sh{font-size:20px;font-weight:700;margin:0 0 12px}
 .shrow{display:flex;justify-content:space-between;align-items:baseline;gap:12px}.shnote{font-size:13px;color:var(--muted)}
-.sumwrap .summary{top:calc(env(safe-area-inset-top,0px) + 152px)}
-.sumwrap{position:sticky;top:calc(env(safe-area-inset-top,0px) + 152px);align-self:start}
+.sumwrap .summary{top:calc(env(safe-area-inset-top,0px) + 92px)}
+.sumwrap{position:sticky;top:calc(env(safe-area-inset-top,0px) + 92px);align-self:start}
 .sumwrap .summary{position:static}
 .sec.rows{padding:0;gap:0}
 .payrows{display:flex;flex-direction:column}
@@ -464,12 +465,13 @@ h1,h2,h3{margin:0;text-wrap:balance}
   <span class="hspace"></span>
   <button type="button" class="xtra" id="xtraBtn"><span class="xb">xtra</span><span class="xt"><b>Xtra membership</b><small>Free delivery on every order, 10% off own brands</small></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
   <button type="button" class="avatar" id="acctBtn" aria-label="Your account, Touba Shahzad">TS</button>
-</div><div class="wrap hrow2">
+</div></header>
+<div class="shopbar"><div class="wrap hrow2">
   <button type="button" class="catbtn" id="catBtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1.5"/><rect x="14" y="4" width="6" height="6" rx="1.5"/><rect x="4" y="14" width="6" height="6" rx="1.5"/><rect x="14" y="14" width="6" height="6" rx="1.5"/></svg>Categories</button>
   <label class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" placeholder="Search products" aria-label="Search products"></label>
   <button type="button" class="recbtn" id="recBtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v8a2 2 0 0 0 2 2v8M11 3v8M15 3c-1.5 2-1.5 6 0 8v10"/></svg><span>Recipes</span></button>
   <button class="cartbtn" id="openCart" type="button"></button>
-</div></header>
+</div></div>
 
 <main class="wrap" id="view"></main>
 
