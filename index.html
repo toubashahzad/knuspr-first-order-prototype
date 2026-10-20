@@ -1231,7 +1231,7 @@ function renderDrawer(t){
   document.getElementById('dbody').innerHTML = lines.length ? `${goalHtml(t)}
     <div class="lines">${grouped(lines,(id,q)=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true"><img src="${x.img}" alt="" width="96" height="96"></span><span class="info"><b>${x.n}</b><small>${x.u}</small></span>${stepper(id,q,'sm')}<span class="amt num">${eur(x.p*q)}</span></div>`})}</div>
     ${fillHtml(t)}` : `${genHtml()}<div class="emptyc"><b>Your cart is empty</b><span>Add a few things to get started.</span></div>`;
-  document.getElementById('dfoot').innerHTML = `${lines.length?`${xtraBanner()}<div class="dtotal num"><b>Total</b><b class="amt">${t.weighed?`<span class="ca">ca.</span>`:''}${eur(t.cartTotal)}</b></div>
+  document.getElementById('dfoot').innerHTML = `${lines.length?`<div class="dtotal num"><b>Total</b><b class="amt">${t.weighed?`<span class="ca">ca.</span>`:''}${eur(t.cartTotal)}</b></div>
     ${t.reached?`<p class="dmsg g">✓ Free delivery, and ${offNow(t)} your first order at checkout</p>`:''}
     ${t.weighed?'<p class="dmsg">ca. because some items are priced by weight. You pay the exact amount after packing.</p>':''}`:''}
     ${t.reached?'<button type="button" class="cta" id="toCheckout">Go to checkout</button>':`<button type="button" class="cta" id="toCheckout" disabled>Add ${eur(t.toGo)} more to check out</button>`}`;
@@ -1256,7 +1256,6 @@ function renderCart(t){
       ${t.count&&!t.reached?`<div class="cgoal">${goalHtml(t)}</div>`:''}
       ${lines.length?`<div class="lines">${grouped(lines,(id,q)=>{const x=byId[id]; return `<div class="line"><span class="thumb" aria-hidden="true"><img src="${x.img}" alt="" width="96" height="96"></span><span class="info"><b>${x.n}</b><small>${x.u}</small><br><button type="button" class="rm" data-rm="${id}">Remove</button></span>${stepper(id,q,'sm')}<span class="amt num">${eur(x.p*q)}</span></div>`})}</div>
       <div style="margin-top:16px">${fillHtml(t)}</div>
-      <div class="cxban">${xtraBanner()}</div>
       <div class="cartacts"><button type="button" id="emptyCart">Empty the cart</button><button type="button" data-go="shop">+ Add more items</button></div>`:`${genHtml()}<div class="emptyc"><b>Your cart is empty</b><span>Add a few things to get started.</span></div>`}
       ${recHtml()}
     </section>
